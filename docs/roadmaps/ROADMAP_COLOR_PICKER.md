@@ -31,9 +31,9 @@ Créer un contrôle de sélection de couleur cohérent avec PaperNestExtension e
 
 - [x] Étudier précisément l’implémentation actuelle du champ couleur dans PaperNest.
 - [x] Créer ou adapter `BaseColorPicker`.
-- [ ] Remplacer l’ancien champ couleur par `PaperNestColorPicker`.
-- [ ] Supprimer le code devenu inutile.
-- [ ] Vérifier les formulaires utilisant une couleur.
+- [x] Remplacer l’ancien champ couleur par `PaperNestColorPicker`.
+- [x] Supprimer le code devenu inutile.
+- [x] Vérifier les formulaires utilisant une couleur.
 
 ## Validation
 
@@ -43,7 +43,7 @@ Créer un contrôle de sélection de couleur cohérent avec PaperNestExtension e
 - [x] Tester l’effacement et `on_clear`.
 - [x] Tester le focus, le clavier, le survol, `disabled` et `read_only`.
 - [x] Valider le comportement réel avec l’utilisateur.
-- [ ] Mettre à jour la roadmap globale après validation.
+- [x] Mettre à jour la roadmap globale après validation.
 
 ## Critères de finalisation
 
