@@ -178,13 +178,17 @@ class _PaperNestColorPickerControlState
   }
 
   Widget _buildPrefixIcon() {
-    final custom = widget.control.buildIconOrWidget("prefix_icon");
-    if (custom != null) return custom;
+    return widget.control.buildIconOrWidget("prefix_icon") ??
+        const Icon(Icons.color_lens_outlined);
+  }
 
-    if (_value != null) {
-      return Padding(
-        padding: const EdgeInsets.all(12),
-        child: DecoratedBox(
+  Widget _buildValueContent(TextStyle textStyle) {
+    if (_value == null) return const SizedBox.shrink();
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        DecoratedBox(
           decoration: BoxDecoration(
             color: _value,
             shape: BoxShape.circle,
@@ -192,12 +196,17 @@ class _PaperNestColorPickerControlState
               color: Theme.of(context).colorScheme.outlineVariant,
             ),
           ),
-          child: const SizedBox(width: 24, height: 24),
+          child: const SizedBox(width: 18, height: 18),
         ),
-      );
-    }
-
-    return const Icon(Icons.color_lens_outlined);
+        const SizedBox(width: 10),
+        Text(
+          _colorHex(_value!),
+          style: textStyle,
+          textAlign:
+              widget.control.getTextAlign("text_align", TextAlign.start),
+        ),
+      ],
+    );
   }
 
   Widget? _buildClearButton() {
@@ -329,12 +338,7 @@ class _PaperNestColorPickerControlState
             isHovering: _hovered,
             isEmpty: _value == null,
             decoration: decoration,
-            child: Text(
-              _value == null ? "" : _colorHex(_value!),
-              style: textStyle,
-              textAlign:
-                  widget.control.getTextAlign("text_align", TextAlign.start),
-            ),
+            child: _buildValueContent(textStyle),
           ),
         ),
       ),
