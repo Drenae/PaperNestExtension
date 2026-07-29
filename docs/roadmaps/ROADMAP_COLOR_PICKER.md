@@ -4,38 +4,47 @@
 
 Créer un contrôle de sélection de couleur cohérent avec PaperNestExtension et destiné à remplacer le champ couleur actuel de PaperNest.
 
-## Fait
+## Implémentation de l’extension
 
-- [x] Besoin identifié dans PaperNest.
-- [x] Principe général validé.
-- [x] Valeur cible définie au format `#RRGGBB`.
-- [x] Intégration d’un bouton d’effacement prévue.
-- [x] Événement `on_clear` prévu.
+- [x] API Python définie.
+- [x] Architecture Flutter définie.
+- [x] Rendu fermé sous forme de champ Material.
+- [x] Ouverture du `MaterialPicker` sur toute la surface.
+- [x] Indicateur circulaire de la couleur sélectionnée.
+- [x] Valeur normalisée au format `#RRGGBB`.
+- [x] Suppression des valeurs publiques `#AARRGGBB`.
+- [x] Gestion de la valeur initiale.
+- [x] Gestion des changements programmatiques.
+- [x] Gestion du focus.
+- [x] Gestion du clavier avec Entrée et Espace.
+- [x] Gestion de la touche Échap.
+- [x] Gestion du survol.
+- [x] Gestion de l’état désactivé.
+- [x] Gestion de l’état `read_only`.
+- [x] Implémentation de `clear_button`.
+- [x] Implémentation de l’événement `on_clear`.
+- [x] Compatibilité temporaire avec l’ancien événement `on_cleared`.
+- [x] Implémentation de `on_change`, `on_focus`, `on_blur` et `on_escape`.
+- [x] Exemple de l’extension mis à jour.
 
-## À étudier et développer
+## Intégration PaperNest
 
-- [ ] Étudier l’implémentation actuelle du champ couleur dans PaperNest.
-- [ ] Définir précisément l’API Python.
-- [ ] Définir l’architecture Flutter.
-- [ ] Définir le rendu du champ fermé.
-- [ ] Afficher un indicateur visuel de la couleur sélectionnée.
-- [ ] Définir le comportement du sélecteur de couleur.
-- [ ] Gérer la normalisation et la validation des couleurs `#RRGGBB`.
-- [ ] Gérer la valeur initiale et les changements programmatiques.
-- [ ] Gérer le focus.
-- [ ] Gérer le clavier.
-- [ ] Gérer le survol.
-- [ ] Gérer les états désactivé et lecture seule si nécessaires.
-- [ ] Implémenter `clear_button`.
-- [ ] Implémenter `on_clear`.
-- [ ] Ajouter les événements nécessaires.
-- [ ] Créer ou mettre à jour l’exemple de l’extension.
-- [ ] Tester le contrôle sous Windows.
-- [ ] Intégrer le contrôle dans PaperNest.
-- [ ] Remplacer l’ancien champ couleur devenu inutile.
+- [ ] Étudier précisément l’implémentation actuelle du champ couleur dans PaperNest.
+- [ ] Créer ou adapter `BaseColorPicker`.
+- [ ] Remplacer l’ancien champ couleur par `PaperNestColorPicker`.
+- [ ] Supprimer le code devenu inutile.
+- [ ] Vérifier les formulaires utilisant une couleur.
+
+## Validation
+
+- [ ] Construire l’extension sous Windows.
+- [ ] Tester l’ouverture du sélecteur.
+- [ ] Tester la sélection et la normalisation `#RRGGBB`.
+- [ ] Tester l’effacement et `on_clear`.
+- [ ] Tester le focus, le clavier, le survol, `disabled` et `read_only`.
 - [ ] Valider le comportement réel avec l’utilisateur.
-- [ ] Mettre à jour le changelog et la roadmap globale.
+- [ ] Mettre à jour la roadmap globale après validation.
 
 ## Critères de finalisation
 
-Le contrôle ne sera marqué comme terminé qu’après validation de l’API Python, de l’implémentation Flutter, de l’exemple, du build Windows et de son intégration dans PaperNest.
+Le contrôle ne sera marqué comme terminé qu’après validation du build Windows et de son intégration réelle dans PaperNest.
