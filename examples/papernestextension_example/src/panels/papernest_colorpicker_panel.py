@@ -14,9 +14,10 @@ class PaperNestColorPickerPanel(AppSection):
             hint_text="Sélectionner une couleur",
             value=ft.Colors.YELLOW_800,
             clear_button=True,
+            clear_tooltip="Effacer la couleur",
             enable_label=True,
             on_change=self.on_color_change,
-            on_cleared=self.on_color_cleared,
+            on_clear=self.on_color_clear,
             expand=True,
         )
 
@@ -27,8 +28,8 @@ class PaperNestColorPickerPanel(AppSection):
             content=ft.Column(
                 controls=[
                     ft.Text(
-                        "Le contrôle reprend la base du PaperNestDatePicker et "
-                        "ouvre un MaterialPicker dans un dialogue."
+                        "Toute la surface ouvre le MaterialPicker. La valeur est "
+                        "toujours renvoyée au format #RRGGBB."
                     ),
                     self.color_picker,
                     self.color_picker_result,
@@ -40,6 +41,6 @@ class PaperNestColorPickerPanel(AppSection):
         self.color_picker_result.value = f"Valeur : {self.color_picker.value}"
         self.color_picker_result.update()
 
-    def on_color_cleared(self, event: ft.ControlEvent) -> None:
+    def on_color_clear(self, event: ft.ControlEvent) -> None:
         self.color_picker_result.value = "Valeur : None"
         self.color_picker_result.update()
