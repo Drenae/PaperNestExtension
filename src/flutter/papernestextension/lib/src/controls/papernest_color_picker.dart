@@ -21,6 +21,9 @@ class _PaperNestColorPickerControlState
   bool _focused = false;
   bool _hovered = false;
 
+  bool get _readOnly => widget.control.getBool("read_only", false)!;
+  bool get _interactive => !widget.control.disabled && !_readOnly;
+
   @override
   void initState() {
     super.initState();
@@ -68,21 +71,15 @@ class _PaperNestColorPickerControlState
   }
 
   String _colorHex(Color color) {
-    final value = color.value;
-    final alpha = (value >> 24) & 0xff;
-    final rgb = value & 0x00ffffff;
-    if (alpha == 0xff) {
-      return '#${rgb.toRadixString(16).padLeft(6, '0').toUpperCase()}';
-    }
-    return '#${value.toRadixString(16).padLeft(8, '0').toUpperCase()}';
+    final rgb = color.value & 0x00ffffff;
+    return '#${rgb.toRadixString(16).padLeft(6, '0').toUpperCase()}';
   }
 
   Future<void> _openPicker() async {
-    if (widget.control.disabled) return;
+    if (!_interactive) return;
     if (!_focusNode.hasFocus) _focusNode.requestFocus();
 
-    var temporaryColor =
-        _value ?? Theme.of(context).colorScheme.primary;
+    var temporaryColor = _value ?? Theme.of(context).colorScheme.primary;
 
     final selected = await showDialog<Color>(
       context: context,
@@ -138,12 +135,18 @@ class _PaperNestColorPickerControlState
   }
 
   void _clearValue() {
-    if (widget.control.disabled || _value == null) return;
+    if (!_interactive || _value == null) return;
     setState(() => _value = null);
     widget.control.updateProperties({"value": null});
+    widget.control.triggerEvent("clear");
     widget.control.triggerEvent("cleared");
     widget.control.triggerEvent("change", "");
     _focusNode.requestFocus();
+  }
+
+  void _handleEscape() {
+    widget.control.triggerEvent("escape");
+    if (_value != null) _clearValue();
   }
 
   InputBorder _border(BuildContext context, {required bool focused}) {
@@ -199,7 +202,7 @@ class _PaperNestColorPickerControlState
 
   Widget? _buildClearButton() {
     final clearButton = widget.control.getBool("clear_button", false)!;
-    if (!clearButton || _value == null || widget.control.disabled) return null;
+    if (!clearButton || _value == null || !_interactive) return null;
 
     final icon = widget.control.buildIconOrWidget("clear_icon") ??
         const Icon(Icons.clear_rounded);
@@ -282,9 +285,9 @@ class _PaperNestColorPickerControlState
       focusNode: _focusNode,
       autofocus: widget.control.getBool("autofocus", false)!,
       enabled: !widget.control.disabled,
-      mouseCursor: widget.control.disabled
-          ? SystemMouseCursors.basic
-          : SystemMouseCursors.click,
+      mouseCursor: _interactive
+          ? SystemMouseCursors.click
+          : SystemMouseCursors.basic,
       onShowFocusHighlight: (value) {
         if (_focused != value && mounted) setState(() => _focused = value);
       },
@@ -294,6 +297,7 @@ class _PaperNestColorPickerControlState
       shortcuts: const <ShortcutActivator, Intent>{
         SingleActivator(LogicalKeyboardKey.enter): ActivateIntent(),
         SingleActivator(LogicalKeyboardKey.space): ActivateIntent(),
+        SingleActivator(LogicalKeyboardKey.escape): DismissIntent(),
       },
       actions: <Type, Action<Intent>>{
         ActivateIntent: CallbackAction<ActivateIntent>(
@@ -302,15 +306,21 @@ class _PaperNestColorPickerControlState
             return null;
           },
         ),
+        DismissIntent: CallbackAction<DismissIntent>(
+          onInvoke: (_) {
+            _handleEscape();
+            return null;
+          },
+        ),
       },
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          mouseCursor: widget.control.disabled
-              ? SystemMouseCursors.basic
-              : SystemMouseCursors.click,
+          mouseCursor: _interactive
+              ? SystemMouseCursors.click
+              : SystemMouseCursors.basic,
           canRequestFocus: false,
-          onTap: widget.control.disabled ? null : _openPicker,
+          onTap: _interactive ? _openPicker : null,
           hoverColor: widget.control.getColor("hover_color", context),
           focusColor: widget.control.getColor("focus_color", context),
           borderRadius: widget.control.getBorderRadius("border_radius"),
