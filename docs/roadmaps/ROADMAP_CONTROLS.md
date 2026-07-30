@@ -2,7 +2,7 @@
 
 ## État
 
-Les contrôles historiques nécessaires à PaperNest sont terminés et validés. Une nouvelle étude est ouverte pour transformer `BaseIconField` en contrôle autonome `PaperNestIconPicker`.
+Les contrôles historiques nécessaires à PaperNest sont terminés et validés. Deux nouveaux besoins réels sont désormais à l’étude : transformer `BaseIconField` en picker autonome et créer une sidebar déployable au survol adaptée à PaperNest.
 
 ## Contrôles terminés
 
@@ -18,15 +18,17 @@ Roadmaps détaillées terminées :
 - `ROADMAP_DATE_PICKER.md`
 - `ROADMAP_FILE_PICKER.md`
 
-## Contrôle à l’étude
+## Contrôles à l’étude
 
 - [ ] `PaperNestIconPicker`
+- [ ] Sidebar déployable au survol — nom public final à définir
 
-Roadmap détaillée :
+Roadmaps détaillées :
 
 - `ROADMAP_ICON_PICKER.md`
+- `ROADMAP_HOVER_SIDEBAR.md`
 
-L’étude part d’un besoin réel et limité de PaperNest : remplacer le contrôle historique `BaseIconField` de l’éditeur des classeurs par un picker autonome cohérent avec les autres contrôles de l’extension.
+Ces études partent de besoins concrets et limités de PaperNest : remplacer le contrôle historique `BaseIconField` et remplacer la sidebar manuelle par une rail compacte qui se déploie au survol en superposition du contenu.
 
 ## Validation globale des contrôles terminés
 
@@ -44,4 +46,5 @@ L’étude part d’un besoin réel et limité de PaperNest : remplacer le contr
 - Éviter toute complexité qui ne simplifie pas directement l’utilisation de l’application.
 - Créer une roadmap dédiée pour toute nouvelle migration importante.
 - Commencer par l’étude de l’existant et de l’API avant toute implémentation.
+- Ne pas forker un contrôle Flet lorsque le besoin justifie mieux un contrôle autonome.
 - Ne marquer un contrôle comme terminé qu’après validation de son implémentation, de son build et de son usage réel dans PaperNest.
