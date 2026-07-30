@@ -28,51 +28,52 @@ Fournir à PaperNest un sélecteur de date autonome, cohérent avec les autres c
 ## État actuel dans PaperNest
 
 - [x] Étude du champ historique `BaseDatePickerField` dans `forms.py`.
-- [x] Identification de son fonctionnement actuel : champ en lecture seule, calendrier Flet natif, valeur ISO et bouton d’effacement séparé.
-- [x] Confirmation que la migration doit utiliser l’API réelle de `PaperNestDatePicker`.
-- [ ] Le contrôle de l’extension n’est pas encore utilisé dans PaperNest.
+- [x] Identification de son fonctionnement historique : champ en lecture seule, calendrier Flet natif, valeur ISO et bouton d’effacement séparé.
+- [x] Confirmation que la migration utilise l’API réelle de `PaperNestDatePicker`.
+- [x] Utilisation effective de `PaperNestDatePicker` dans PaperNest.
 
 ## Migration dans PaperNest
 
-- [ ] Rechercher toutes les utilisations de `BaseDatePickerField`.
-- [ ] Vérifier les formats de valeur attendus par chaque formulaire et service.
-- [ ] Créer un wrapper thématique léger autour de `PaperNestDatePicker` uniquement si nécessaire.
-- [ ] Reproduire les couleurs, dimensions, bordures, espacements et styles validés de PaperNest.
-- [ ] Préserver le format public attendu par PaperNest, notamment les dates ISO lorsque les services les utilisent.
-- [ ] Préserver le comportement d’effacement et les événements attendus par les formulaires.
-- [ ] Remplacer progressivement les utilisations de l’ancien champ.
-- [ ] Ne supprimer `BaseDatePickerField` qu’après validation complète du remplacement.
-- [ ] Nettoyer uniquement les imports directement devenus inutiles à cause de cette migration.
+- [x] Recherche de toutes les utilisations de `BaseDatePickerField`.
+- [x] Vérification des formats de valeur attendus par les formulaires et services.
+- [x] Création du wrapper thématique léger `BaseDatePickerField` héritant directement de `PaperNestDatePicker`.
+- [x] Reproduction des couleurs, bordures, espacements et styles validés de PaperNest via des valeurs par défaut surchargeables.
+- [x] Conservation de `value` au type natif `datetime` de l’extension.
+- [x] Ajout de `iso_value` pour les services PaperNest attendant une date ISO.
+- [x] Préservation du comportement d’effacement et des événements attendus.
+- [x] Remplacement des utilisations de l’ancien champ dans le dialogue des métadonnées.
+- [x] Suppression de l’ancien `BaseDatePickerField` natif de `forms.py`.
+- [x] Nettoyage des imports directement devenus inutiles.
 
 ## Validation dans l’extension
 
-- [ ] Vérifier que l’exemple dédié couvre la valeur initiale.
-- [ ] Tester une sélection de date.
-- [ ] Tester une modification programmée de `value`.
-- [ ] Tester les limites `first_date` et `last_date`.
-- [ ] Tester le bouton d’effacement et l’événement associé.
-- [ ] Tester le focus, le survol, le clavier, Échap et l’état désactivé.
-- [ ] Vérifier l’absence de décalage d’un jour lié au fuseau horaire.
-- [ ] Construire et tester l’extension sous Windows avec les versions actuellement retenues.
+- [x] Vérification de l’exemple dédié et de la valeur initiale.
+- [ ] Tester une sélection de date dans l’exemple dédié.
+- [ ] Tester une modification programmée de `value` dans l’exemple dédié.
+- [ ] Tester les limites `first_date` et `last_date` dans l’exemple dédié.
+- [ ] Tester le bouton d’effacement et l’événement associé dans l’exemple dédié.
+- [ ] Tester le focus, le survol, le clavier, Échap et l’état désactivé dans l’exemple dédié.
+- [ ] Vérifier l’absence de décalage d’un jour lié au fuseau horaire dans l’exemple dédié.
+- [ ] Construire et tester l’exemple de l’extension sous Windows avec les versions actuellement retenues.
 
 ## Validation dans PaperNest
 
-- [ ] Tester chaque formulaire utilisant une date.
-- [ ] Vérifier l’affichage de la valeur initiale.
-- [ ] Vérifier la sélection, la modification et l’effacement.
-- [ ] Vérifier les dates minimales et maximales lorsqu’elles sont configurées.
-- [ ] Vérifier les valeurs envoyées aux services et enregistrées dans les modèles.
-- [ ] Vérifier le rendu visuel sous Windows.
-- [ ] Faire valider le comportement réel par l’utilisateur.
-- [ ] Mettre à jour la roadmap UI de PaperNest après validation.
-- [ ] Mettre à jour le changelog de PaperNestExtension et celui de PaperNest.
+- [x] Test du dialogue utilisant les dates.
+- [x] Vérification de l’affichage de la valeur initiale.
+- [x] Vérification de la sélection, de la modification et de l’effacement.
+- [x] Vérification des valeurs ISO envoyées aux services et enregistrées dans les modèles.
+- [x] Vérification du rendu visuel sous Windows.
+- [x] Validation du comportement réel par l’utilisateur.
+- [x] Validation du build Windows de PaperNest.
+- [x] Mise à jour de la roadmap UI de PaperNest.
+- [ ] Mise à jour du changelog de PaperNestExtension et de celui de PaperNest.
 
 ## Nettoyage après validation
 
-- [ ] Supprimer l’ancien code de date devenu inutile dans PaperNest.
-- [ ] Supprimer les wrappers et imports obsolètes uniquement après la migration de `PaperNestFilePicker` si le nettoyage est commun.
-- [ ] Vérifier l’ensemble de `forms.py` seulement après les migrations DatePicker et FilePicker.
+- [x] Suppression de l’ancien code de date devenu inutile dans PaperNest.
+- [x] Suppression des wrappers et imports obsolètes communs après la migration de `PaperNestFilePicker`.
+- [x] Vérification de `forms.py` après les migrations DatePicker et FilePicker.
 
 ## Critères de finalisation
 
-La migration est terminée uniquement lorsque `PaperNestDatePicker` est fonctionnel dans tous les usages réels de PaperNest, que le build Windows est validé, que les comportements existants sont préservés et que l’ancien code devenu inutile a été supprimé sans nettoyage prématuré des éléments communs.
+La migration dans PaperNest est terminée : `PaperNestDatePicker` est utilisé dans tous les parcours réels, le rendu et le build Windows ont été validés, les valeurs ISO sont transmises explicitement aux services et l’ancien code a été supprimé. Les tests exhaustifs de l’exemple dédié de PaperNestExtension restent suivis séparément.
