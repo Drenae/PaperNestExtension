@@ -37,12 +37,20 @@ Fournir à PaperNest un contrôle unique pour la sélection, le dépôt, la vali
 
 ## État actuel dans PaperNest
 
-- [ ] Inventorier précisément tous les mécanismes actuels de sélection de fichiers et de dossiers.
-- [ ] Identifier les usages de `ft.FilePicker`, de `flet-dropzone` et des wrappers présents dans `forms.py` ou ailleurs.
-- [ ] Identifier les écrans utilisant une sélection simple, multiple, un dossier ou un glisser-déposer.
-- [ ] Vérifier les formats de fichiers et les contraintes réellement utilisés par PaperNest.
-- [ ] Vérifier comment PaperNest conserve actuellement les chemins, les octets et les métadonnées.
-- [ ] Le contrôle de l’extension n’est pas encore utilisé dans PaperNest.
+- [x] Inventorier précisément tous les mécanismes actuels de sélection de fichiers et de dossiers.
+- [x] Identifier les usages de `ft.FilePicker`, de `flet-dropzone` et des wrappers présents dans `forms.py` ou ailleurs.
+- [x] Identifier les écrans utilisant une sélection simple, multiple, un dossier ou un glisser-déposer.
+- [x] Vérifier les formats de fichiers et les contraintes réellement utilisés par PaperNest.
+- [x] Vérifier comment PaperNest conserve actuellement les chemins, les octets et les métadonnées.
+- [x] Confirmer que le contrôle de l’extension n’est pas encore utilisé dans PaperNest.
+
+### Inventaire confirmé
+
+- `MainWindow` crée un unique `BaseFilePicker` partagé comme service Flet.
+- `UploadPanel` utilise une sélection multiple sans filtre d’extension, maintient une liste parallèle `staged_files` et utilise séparément `FileDropZone` pour le glisser-déposer.
+- `AdminController` utilise une sélection simple limitée aux fichiers `zip` pour restaurer une sauvegarde.
+- Les parcours étudiés utilisent actuellement les chemins locaux des fichiers ; `with_data` n’est pas requis pour ces usages.
+- Le parcours d’import doit conserver les métadonnées applicatives par fichier, notamment le classeur cible et l’état de doublon. Ces données ne font pas partie du contrôle de sélection et restent sous la responsabilité de PaperNest.
 
 ## Préparation de la migration
 
@@ -50,7 +58,7 @@ Fournir à PaperNest un contrôle unique pour la sélection, le dépôt, la vali
 - [ ] Déterminer si un wrapper thématique léger est nécessaire.
 - [ ] Ne conserver que les propriétés utiles aux besoins réels de PaperNest.
 - [ ] Définir clairement la source de vérité de la sélection pour éviter une seconde liste parallèle dans PaperNest.
-- [ ] Prévoir le traitement des chemins Windows et des données binaires selon les usages réels.
+- [x] Prévoir le traitement des chemins Windows et des données binaires selon les usages réels.
 - [ ] Vérifier la compatibilité avec les traitements PDF et les services d’import de PaperNest.
 
 ## Migration dans PaperNest
