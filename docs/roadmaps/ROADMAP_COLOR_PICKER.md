@@ -1,8 +1,12 @@
 # Roadmap — PaperNestColorPicker
 
+## État
+
+La roadmap `PaperNestColorPicker` est terminée.
+
 ## Objectif
 
-Créer un contrôle de sélection de couleur cohérent avec PaperNestExtension et destiné à remplacer le champ couleur actuel de PaperNest.
+Créer un contrôle de sélection de couleur cohérent avec PaperNestExtension et remplacer le champ couleur historique de PaperNest.
 
 ## Implémentation de l’extension
 
@@ -13,38 +17,35 @@ Créer un contrôle de sélection de couleur cohérent avec PaperNestExtension e
 - [x] Indicateur circulaire de la couleur sélectionnée.
 - [x] Valeur normalisée au format `#RRGGBB`.
 - [x] Suppression des valeurs publiques `#AARRGGBB`.
-- [x] Gestion de la valeur initiale.
-- [x] Gestion des changements programmatiques.
-- [x] Gestion du focus.
-- [x] Gestion du clavier avec Entrée et Espace.
-- [x] Gestion de la touche Échap.
-- [x] Gestion du survol.
-- [x] Gestion de l’état désactivé.
-- [x] Gestion de l’état `read_only`.
-- [x] Implémentation de `clear_button`.
-- [x] Implémentation de l’événement `on_clear`.
+- [x] Gestion de la valeur initiale et des changements programmatiques.
+- [x] Gestion du focus, du clavier, d’Échap et du survol.
+- [x] Gestion des états `disabled` et `read_only`.
+- [x] Implémentation de `clear_button` et de l’événement `on_clear`.
 - [x] Compatibilité temporaire avec l’ancien événement `on_cleared`.
 - [x] Implémentation de `on_change`, `on_focus`, `on_blur` et `on_escape`.
 - [x] Exemple de l’extension mis à jour.
 
-## Intégration PaperNest
+## Intégration dans PaperNest
 
-- [x] Étudier précisément l’implémentation actuelle du champ couleur dans PaperNest.
-- [x] Créer ou adapter `BaseColorPicker`.
-- [x] Remplacer l’ancien champ couleur par `PaperNestColorPicker`.
-- [x] Supprimer le code devenu inutile.
-- [x] Vérifier les formulaires utilisant une couleur.
+- [x] Étude de l’ancien champ couleur.
+- [x] Création de `BaseColorPicker` héritant directement de `PaperNestColorPicker`.
+- [x] Application du thème avec des `kwargs.setdefault(...)` surchargeables.
+- [x] Remplacement de l’ancien champ couleur.
+- [x] Suppression du code et des imports devenus inutiles.
+- [x] Vérification des formulaires utilisant une couleur.
 
 ## Validation
 
-- [x] Construire l’extension sous Windows.
-- [x] Tester l’ouverture du sélecteur.
-- [x] Tester la sélection et la normalisation `#RRGGBB`.
-- [x] Tester l’effacement et `on_clear`.
-- [x] Tester le focus, le clavier, le survol, `disabled` et `read_only`.
-- [x] Valider le comportement réel avec l’utilisateur.
-- [x] Mettre à jour la roadmap globale après validation.
+- [x] Build de l’extension sous Windows.
+- [x] Test de l’ouverture du sélecteur.
+- [x] Test de la sélection et de la normalisation `#RRGGBB`.
+- [x] Test de l’effacement et de `on_clear`.
+- [x] Test du focus, du clavier, du survol, de `disabled` et de `read_only`.
+- [x] Validation du rendu et du comportement dans PaperNest.
+- [x] Validation du build Windows de PaperNest.
+- [x] Validation avec l’utilisateur.
+- [x] Mise à jour de la roadmap globale et des changelogs.
 
 ## Critères de finalisation
 
-Le contrôle ne sera marqué comme terminé qu’après validation du build Windows et de son intégration réelle dans PaperNest.
+`PaperNestColorPicker` est implémenté, intégré et validé sous Windows. L’ancien champ couleur a été supprimé et le contrôle est utilisé dans tous les parcours réels de PaperNest.
