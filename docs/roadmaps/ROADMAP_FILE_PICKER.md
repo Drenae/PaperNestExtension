@@ -37,80 +37,88 @@ Fournir à PaperNest un contrôle unique pour la sélection, le dépôt, la vali
 
 ## État actuel dans PaperNest
 
-- [x] Inventorier précisément tous les mécanismes actuels de sélection de fichiers et de dossiers.
-- [x] Identifier les usages de `ft.FilePicker`, de `flet-dropzone` et des wrappers présents dans `forms.py` ou ailleurs.
-- [x] Identifier les écrans utilisant une sélection simple, multiple, un dossier ou un glisser-déposer.
-- [x] Vérifier les formats de fichiers et les contraintes réellement utilisés par PaperNest.
-- [x] Vérifier comment PaperNest conserve actuellement les chemins, les octets et les métadonnées.
-- [x] Confirmer que le contrôle de l’extension n’est pas encore utilisé dans PaperNest.
+- [x] Inventaire complet des mécanismes de sélection de fichiers et de dossiers.
+- [x] Identification des usages historiques de `ft.FilePicker`, `flet-dropzone`, `BaseFilePicker` et `FileDropZone`.
+- [x] Identification des parcours de sélection multiple, glisser-déposer et sélection simple ZIP.
+- [x] Vérification des formats et contraintes réellement utilisés.
+- [x] Vérification de l’utilisation des chemins locaux sans `with_data`.
+- [x] Utilisation effective de `PaperNestFilePicker` dans PaperNest.
 
 ### Inventaire confirmé
 
-- `MainWindow` crée un unique `BaseFilePicker` partagé comme service Flet.
-- `UploadPanel` utilise une sélection multiple sans filtre d’extension, maintient une liste parallèle `staged_files` et utilise séparément `FileDropZone` pour le glisser-déposer.
-- `AdminController` utilise une sélection simple limitée aux fichiers `zip` pour restaurer une sauvegarde.
-- Les parcours étudiés utilisent actuellement les chemins locaux des fichiers ; `with_data` n’est pas requis pour ces usages.
-- Le parcours d’import doit conserver les métadonnées applicatives par fichier, notamment le classeur cible et l’état de doublon. Ces données ne font pas partie du contrôle de sélection et restent sous la responsabilité de PaperNest.
+- `UploadPanel` utilise une sélection multiple, le glisser-déposer et un bouton externe appelant `pick_files()`.
+- `BackupPanel` utilise une sélection simple limitée aux sauvegardes `zip` via son bouton `restore_button`.
+- Les parcours utilisent les chemins locaux des fichiers ; `with_data` n’est pas requis.
+- Les métadonnées applicatives par fichier, notamment le classeur cible, restent gérées par PaperNest et sont reliées aux identifiants du contrôle.
 
 ## Préparation de la migration
 
-- [ ] Comparer l’API réelle de `PaperNestFilePicker` avec chaque usage existant dans PaperNest.
-- [ ] Déterminer si un wrapper thématique léger est nécessaire.
-- [ ] Ne conserver que les propriétés utiles aux besoins réels de PaperNest.
-- [ ] Définir clairement la source de vérité de la sélection pour éviter une seconde liste parallèle dans PaperNest.
-- [x] Prévoir le traitement des chemins Windows et des données binaires selon les usages réels.
-- [ ] Vérifier la compatibilité avec les traitements PDF et les services d’import de PaperNest.
+- [x] Comparaison de l’API réelle de `PaperNestFilePicker` avec chaque usage existant.
+- [x] Lecture et vérification de l’exemple fonctionnel de l’extension.
+- [x] Création du wrapper thématique léger `BaseFilePicker` héritant directement de `PaperNestFilePicker`.
+- [x] Conservation uniquement des propriétés utiles aux besoins réels de PaperNest.
+- [x] Définition de la sélection interne du contrôle comme source de vérité.
+- [x] Prévision du traitement des chemins Windows et des données binaires selon les usages réels.
+- [x] Vérification de la compatibilité avec les traitements PDF et les services d’import de PaperNest.
 
 ## Migration dans PaperNest
 
-- [ ] Remplacer progressivement les sélecteurs historiques par `PaperNestFilePicker`.
-- [ ] Migrer les usages de sélection simple.
-- [ ] Migrer les usages de sélection multiple.
-- [ ] Migrer les usages de glisser-déposer concernés.
-- [ ] Migrer la sélection de dossier uniquement lorsqu’elle est réellement utilisée.
-- [ ] Adapter les événements aux services existants sans dupliquer l’état des fichiers.
-- [ ] Préserver les messages d’erreur et retours utilisateur déjà validés.
-- [ ] Préserver les contraintes d’extensions, de taille et de nombre de fichiers.
-- [ ] Ne supprimer l’ancien code qu’après validation de chaque parcours.
-- [ ] Retirer `flet-dropzone` du projet uniquement s’il n’est plus utilisé après la migration complète.
+- [x] Remplacement des sélecteurs historiques par `PaperNestFilePicker`.
+- [x] Migration de la sélection simple des sauvegardes ZIP.
+- [x] Migration de la sélection multiple de documents.
+- [x] Migration du glisser-déposer dans le tableau de bord.
+- [x] Conservation du bouton « Ajouter des fichiers » appelant explicitement `pick_files()`.
+- [x] Adaptation des événements aux services existants sans dupliquer l’état de sélection.
+- [x] Préservation des messages d’erreur et retours utilisateur validés.
+- [x] Préservation de la contrainte d’extension `zip` dans l’administration.
+- [x] Suppression du `BaseFilePicker` historique fondé sur `ft.FilePicker`.
+- [x] Suppression du `FileDropZone` historique fondé sur `flet-dropzone`.
+- [x] Suppression de la dépendance `flet-dropzone` du projet PaperNest.
+- [x] Nettoyage des imports obsolètes liés aux anciens sélecteurs.
+- [x] La sélection de dossier n’est pas utilisée par les parcours actuels et n’a pas été migrée inutilement.
 
 ## Validation dans l’extension
 
-- [ ] Vérifier l’exemple fonctionnel du contrôle.
-- [ ] Tester la sélection par clic.
-- [ ] Tester le glisser-déposer.
-- [ ] Tester la sélection simple et multiple.
-- [ ] Tester l’ajout, la suppression et l’effacement complet.
-- [ ] Tester la détection des doublons.
-- [ ] Tester les extensions interdites.
-- [ ] Tester la limite de taille.
-- [ ] Tester le nombre maximal de fichiers.
-- [ ] Tester les états visuels et l’état désactivé.
-- [ ] Tester `get_files()`, `remove_file()` et `clear_files()`.
-- [ ] Tester la sélection de dossier sur Windows lorsqu’elle est nécessaire.
-- [ ] Construire et tester l’extension sous Windows avec les versions actuellement retenues.
+- [x] Vérification de l’exemple fonctionnel et de son bouton externe `pick_files()`.
+- [ ] Tester la sélection par clic dans l’exemple dédié.
+- [ ] Tester le glisser-déposer dans l’exemple dédié.
+- [ ] Tester la sélection simple et multiple dans l’exemple dédié.
+- [ ] Tester l’ajout, la suppression et l’effacement complet dans l’exemple dédié.
+- [ ] Tester la détection des doublons dans l’exemple dédié.
+- [ ] Tester les extensions interdites dans l’exemple dédié.
+- [ ] Tester la limite de taille dans l’exemple dédié.
+- [ ] Tester le nombre maximal de fichiers dans l’exemple dédié.
+- [ ] Tester les états visuels et l’état désactivé dans l’exemple dédié.
+- [ ] Tester `get_files()`, `remove_file()` et `clear_files()` dans l’exemple dédié.
+- [ ] Tester la sélection de dossier sur Windows uniquement lorsqu’un besoin réel apparaîtra.
+- [ ] Construire et tester l’exemple de l’extension sous Windows avec les versions actuellement retenues.
 
 ## Validation dans PaperNest
 
-- [ ] Tester chaque écran utilisant des fichiers ou dossiers.
-- [ ] Vérifier les chemins transmis aux services.
-- [ ] Vérifier les données binaires lorsqu’elles sont demandées.
-- [ ] Vérifier l’import et le traitement des PDF.
-- [ ] Vérifier les erreurs de validation et les doublons.
-- [ ] Vérifier le rendu visuel sous Windows.
-- [ ] Vérifier que la sélection interne du contrôle reste la seule source de vérité lorsque cela est prévu.
-- [ ] Faire valider chaque parcours réel par l’utilisateur.
-- [ ] Mettre à jour la roadmap UI de PaperNest après validation.
-- [ ] Mettre à jour le changelog de PaperNestExtension et celui de PaperNest.
+- [x] Test du tableau de bord avec sélection par clic.
+- [x] Test du glisser-déposer.
+- [x] Test de la sélection multiple.
+- [x] Test de l’ajout, de la suppression et de l’effacement complet.
+- [x] Test de la détection des doublons.
+- [x] Test du bouton externe « Ajouter des fichiers ».
+- [x] Test du parcours de restauration depuis `restore_button`.
+- [x] Vérification des chemins transmis aux services.
+- [x] Vérification de l’import et du traitement des PDF.
+- [x] Vérification du rendu visuel sous Windows.
+- [x] Vérification que la sélection interne du contrôle reste la source de vérité.
+- [x] Validation de chaque parcours réel par l’utilisateur.
+- [x] Validation du build Windows de PaperNest.
+- [x] Mise à jour de la roadmap UI de PaperNest.
+- [ ] Mise à jour du changelog de PaperNestExtension et de celui de PaperNest.
 
 ## Nettoyage après validation
 
-- [ ] Supprimer les anciens wrappers et contrôles de sélection devenus inutiles.
-- [ ] Supprimer les imports obsolètes.
-- [ ] Retirer les dépendances devenues inutiles uniquement après vérification globale.
-- [ ] Vérifier l’ensemble de `forms.py` après les migrations DatePicker et FilePicker.
-- [ ] Effectuer le nettoyage global commun seulement à la fin des deux migrations.
+- [x] Suppression des anciens wrappers et contrôles de sélection devenus inutiles.
+- [x] Suppression des imports obsolètes.
+- [x] Retrait de la dépendance `flet-dropzone` devenue inutile.
+- [x] Vérification de l’ensemble de `forms.py` après les migrations DatePicker et FilePicker.
+- [x] Nettoyage global commun effectué après validation des deux migrations.
 
 ## Critères de finalisation
 
-La migration est terminée uniquement lorsque tous les parcours réels de sélection et de dépôt de fichiers de PaperNest utilisent le nouveau contrôle de manière fiable, que le build Windows est validé, que les traitements existants fonctionnent encore et que les anciens wrappers, imports et dépendances devenus inutiles ont été supprimés après validation complète.
+La migration dans PaperNest est terminée : tous les parcours réels utilisent `PaperNestFilePicker`, le bouton externe et le glisser-déposer alimentent la même sélection interne, l’administration utilise le nouveau contrôle pour les sauvegardes ZIP, le build Windows est validé et les anciens wrappers, imports et dépendances ont été supprimés. Les tests exhaustifs de l’exemple dédié de PaperNestExtension restent suivis séparément.
