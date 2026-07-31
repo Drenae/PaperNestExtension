@@ -2,9 +2,11 @@
 
 ## État
 
-Le contrôle `PaperNestGlideRail` est implémenté, construit, testé et validé sous Windows par l’utilisateur.
+`PaperNestGlideRail` est officiellement terminé.
 
-Son périmètre fonctionnel est considéré comme terminé. Une évolution ciblée a ensuite été ajoutée à partir d’un besoin réel rencontré pendant l’intégration PaperNest : `brand_title` et `brand_subtitle` acceptent désormais des contrôles Flet personnalisés en plus des chaînes.
+Le contrôle a été implémenté, construit, testé et validé sous Windows dans l’exemple PaperNestExtension puis dans l’application PaperNest. L’évolution ciblée permettant à `brand_title` et `brand_subtitle` d’accepter des contrôles Flet personnalisés a également été reconstruite, testée et validée.
+
+Aucune évolution supplémentaire n’est prévue tant qu’un besoin réel n’apparaît pas.
 
 ## Objectif validé
 
@@ -66,20 +68,28 @@ Créer une rail de navigation compacte qui reste visible en permanence, se dépl
 - [x] Test des clics et de la sélection.
 - [x] Test du padding.
 - [x] Test de l’animation de survol.
-- [x] Validation du build Windows initial.
-- [x] Validation visuelle et fonctionnelle initiale par l’utilisateur.
-- [ ] Revalider le build Windows après l’ajout des contrôles de texte personnalisés.
+- [x] Validation du build Windows après toutes les évolutions.
+- [x] Validation visuelle et fonctionnelle finale par l’utilisateur.
 
 ## Intégration PaperNest
 
-- [x] Remplacer la sidebar actuelle par `PaperNestGlideRail`.
-- [x] Réserver uniquement la largeur compacte dans `MainWindow`.
-- [x] Reprendre les destinations et callbacks actuels.
-- [x] Utiliser le logo final PaperNest.
+- [x] Remplacer la sidebar historique par `PaperNestGlideRail`.
+- [x] Réserver uniquement la largeur compacte dans la mise en page.
+- [x] Reprendre toutes les destinations et tous les callbacks.
+- [x] Centraliser la navigation dans `src/app/navigation/navigation.py`.
+- [x] Utiliser le symbole final PaperNest.
+- [x] Utiliser des `ft.Text` personnalisés pour le titre et le sous-titre de marque.
 - [x] Valider tous les parcours de navigation.
 - [x] Supprimer l’ancienne sidebar après validation complète.
-- [x] Utiliser des `ft.Text` personnalisés pour le titre et le sous-titre de marque.
 
-## Règle d’évolution
+## Critère de finalisation
 
-Ne pas ajouter d’options visuelles ou fonctionnelles par anticipation. Toute évolution future devra répondre à une limite constatée pendant l’intégration réelle dans PaperNest.
+- [x] Exemple Windows validé.
+- [x] Intégration PaperNest validée.
+- [x] API finale validée.
+- [x] Build Windows validé.
+- [x] Validation explicite par l’utilisateur.
+
+## Règle de maintenance
+
+Le contrôle est clos. Ne pas ajouter d’options par anticipation. Toute évolution future devra répondre à une limite concrète rencontrée dans une application réelle.
