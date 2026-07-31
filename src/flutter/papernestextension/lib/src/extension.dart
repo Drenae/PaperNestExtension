@@ -4,6 +4,7 @@ import 'package:flutter/widgets.dart';
 import 'controls/papernest_color_picker.dart';
 import 'controls/papernest_date_picker.dart';
 import 'controls/papernest_dropdown.dart';
+import 'controls/papernest_hover_sidebar.dart';
 import 'controls/papernest_textfield.dart';
 import 'services/papernest_file_picker.dart';
 
@@ -17,6 +18,8 @@ class Extension extends FletExtension {
         return PaperNestDatePickerControl(key: key, control: control);
       case "PaperNestDropdown":
         return PaperNestDropdownControl(key: key, control: control);
+      case "PaperNestHoverSidebar":
+        return PaperNestHoverSidebarControl(key: key, control: control);
       case "PaperNestTextField":
         return PaperNestTextFieldControl(key: key, control: control);
       case "PaperNestFilePicker":
