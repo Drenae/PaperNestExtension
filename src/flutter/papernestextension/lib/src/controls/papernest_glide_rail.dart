@@ -28,37 +28,19 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
     super.dispose();
   }
 
-  Future<dynamic> _invokeMethod(String name, dynamic args) async {
-    switch (name) {
-      case "expand":
-        _setExpanded(true);
-        return null;
-      case "collapse":
-        _setExpanded(false);
-        return null;
-      default:
-        throw Exception("Unknown PaperNestGlideRail method: $name");
-    }
-  }
-
-  void _setExpanded(bool value) {
-    if (_expanded == value || widget.control.disabled) return;
-    setState(() {
-      _expanded = value;
-      if (!value) _hoveredIndex = null;
-    });
-    widget.control.triggerEvent(value ? "expand" : "collapse");
-  }
-
   int get _selectedIndex => widget.control.getInt("selected_index", 0) ?? 0;
+
   double get _collapsedWidth =>
       widget.control.getDouble("collapsed_width", 76) ?? 76;
+
   double get _expandedWidth =>
       widget.control.getDouble("expanded_width", 280) ?? 280;
+
   Duration get _duration => Duration(
         milliseconds:
             widget.control.getInt("animation_duration", 220) ?? 220,
       );
+
   Duration get _hoverDuration => Duration(
         milliseconds:
             widget.control.getInt("hover_animation_duration", 140) ?? 140,
@@ -68,8 +50,7 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
       widget.control.getPadding("padding") ?? EdgeInsets.zero;
 
   double get _collapsedContentWidth {
-    final value = _collapsedWidth - _padding.horizontal;
-    return value > 0 ? value : 0;
+    return (_collapsedWidth - _padding.horizontal).clamp(0, double.infinity);
   }
 
   Curve get _curve {
@@ -86,8 +67,37 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
     }
   }
 
+  Future<dynamic> _invokeMethod(String name, dynamic args) async {
+    switch (name) {
+      case "expand":
+        _setExpanded(true);
+        return null;
+      case "collapse":
+        _setExpanded(false);
+        return null;
+      default:
+        throw Exception("Unknown PaperNestGlideRail method: $name");
+    }
+  }
+
+  void _setExpanded(bool value) {
+    if (_expanded == value || widget.control.disabled) return;
+
+    setState(() {
+      _expanded = value;
+      if (!value) _hoveredIndex = null;
+    });
+    widget.control.triggerEvent(value ? "expand" : "collapse");
+  }
+
+  void _setHoveredIndex(int? index) {
+    if (_hoveredIndex == index) return;
+    setState(() => _hoveredIndex = index);
+  }
+
   void _select(int index) {
     if (widget.control.disabled || index == _selectedIndex) return;
+
     widget.control.updateProperties({"selected_index": index});
     widget.control.triggerEvent("change", index);
     setState(() {});
@@ -147,15 +157,20 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
   Widget _destination(BuildContext context, Control destination, int index) {
     final selected = index == _selectedIndex;
     final hovered = index == _hoveredIndex;
+    final disabled = destination.disabled || widget.control.disabled;
+    final label = destination.getString("label", "") ?? "";
+    final tooltip = destination.getString("tooltip") ?? label;
     final icon = destination.buildIconOrWidget(
           selected ? "selected_icon" : "icon",
         ) ??
         destination.buildIconOrWidget("icon") ??
         const SizedBox.shrink();
-    final label = destination.getString("label", "") ?? "";
-    final tooltip = destination.getString("tooltip") ?? label;
-    final disabled = destination.disabled || widget.control.disabled;
+
     final itemHeight = widget.control.getDouble("item_height", 48) ?? 48;
+    final itemPadding =
+        widget.control.getPadding("item_padding") ?? EdgeInsets.zero;
+    final iconAreaWidth =
+        (_collapsedContentWidth - itemPadding.horizontal).clamp(0, double.infinity);
     final radius = widget.control.getBorderRadius("item_border_radius") ??
         BorderRadius.circular(12);
     final selectedBg =
@@ -166,69 +181,69 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
     final foreground = selected
         ? widget.control.getColor("selected_color", context)
         : widget.control.getColor("color", context);
-    final itemPadding =
-        widget.control.getPadding("item_padding") ?? EdgeInsets.zero;
     final hoverScale =
         widget.control.getDouble("hover_scale", 1.025) ?? 1.025;
 
-    final tile = AnimatedScale(
-      duration: _hoverDuration,
-      curve: Curves.easeOutCubic,
-      scale: hovered && !disabled ? hoverScale : 1,
-      child: AnimatedContainer(
+    final tile = MouseRegion(
+      onEnter: disabled ? null : (_) => _setHoveredIndex(index),
+      onExit: disabled ? null : (_) => _setHoveredIndex(null),
+      child: AnimatedScale(
         duration: _hoverDuration,
         curve: Curves.easeOutCubic,
-        height: itemHeight,
-        decoration: BoxDecoration(
-          color: selected ? selectedBg : Colors.transparent,
-          borderRadius: radius,
-          border: selected && selectedBorder != null
-              ? Border.all(color: selectedBorder)
-              : null,
-        ),
-        child: Material(
-          color: Colors.transparent,
-          child: InkWell(
+        scale: hovered && !disabled ? hoverScale : 1,
+        child: AnimatedContainer(
+          duration: _hoverDuration,
+          curve: Curves.easeOutCubic,
+          height: itemHeight,
+          decoration: BoxDecoration(
+            color: selected ? selectedBg : Colors.transparent,
             borderRadius: radius,
-            hoverColor: widget.control.getColor("hover_color", context),
-            onTap: disabled ? null : () => _select(index),
-            child: Padding(
-              padding: itemPadding,
-              child: Row(
-                children: [
-                  SizedBox(
-                    width: _collapsedContentWidth - itemPadding.horizontal > 0
-                        ? _collapsedContentWidth - itemPadding.horizontal
-                        : 0,
-                    child: IconTheme(
-                      data: IconThemeData(
-                        color: foreground,
-                        size:
-                            widget.control.getDouble("icon_size", 24) ?? 24,
+            border: selected && selectedBorder != null
+                ? Border.all(color: selectedBorder)
+                : null,
+          ),
+          child: Material(
+            color: Colors.transparent,
+            child: InkWell(
+              borderRadius: radius,
+              hoverColor: widget.control.getColor("hover_color", context),
+              onTap: disabled ? null : () => _select(index),
+              child: Padding(
+                padding: itemPadding,
+                child: Row(
+                  children: [
+                    SizedBox(
+                      width: iconAreaWidth,
+                      child: IconTheme(
+                        data: IconThemeData(
+                          color: foreground,
+                          size:
+                              widget.control.getDouble("icon_size", 24) ?? 24,
+                        ),
+                        child: Center(child: icon),
                       ),
-                      child: Center(child: icon),
                     ),
-                  ),
-                  Expanded(
-                    child: ClipRect(
-                      child: AnimatedOpacity(
-                        duration: _duration,
-                        opacity: _expanded ? 1 : 0,
-                        child: Text(
-                          label,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: TextStyle(
-                            color: foreground,
-                            fontWeight: selected
-                                ? FontWeight.w600
-                                : FontWeight.normal,
+                    Expanded(
+                      child: ClipRect(
+                        child: AnimatedOpacity(
+                          duration: _duration,
+                          opacity: _expanded ? 1 : 0,
+                          child: Text(
+                            label,
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              color: foreground,
+                              fontWeight: selected
+                                  ? FontWeight.w600
+                                  : FontWeight.normal,
+                            ),
                           ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ),
@@ -236,22 +251,8 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
       ),
     );
 
-    return Tooltip(
-      message: _expanded ? "" : tooltip,
-      child: MouseRegion(
-        onEnter: disabled
-            ? null
-            : (_) => setState(() => _hoveredIndex = index),
-        onExit: disabled
-            ? null
-            : (_) {
-                if (_hoveredIndex == index) {
-                  setState(() => _hoveredIndex = null);
-                }
-              },
-        child: tile,
-      ),
-    );
+    if (_expanded || tooltip.isEmpty) return tile;
+    return Tooltip(message: tooltip, child: tile);
   }
 
   List<Widget> _destinationGroup(
@@ -261,10 +262,12 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
   ) {
     final spacing = widget.control.getDouble("item_spacing", 4) ?? 4;
     final widgets = <Widget>[];
+
     for (var i = 0; i < destinations.length; i++) {
       if (i > 0) widgets.add(SizedBox(height: spacing));
       widgets.add(_destination(context, destinations[i], startIndex + i));
     }
+
     return widgets;
   }
 
