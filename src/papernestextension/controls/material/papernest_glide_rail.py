@@ -17,7 +17,13 @@ __all__ = [
 
 @control("PaperNestGlideRailDestination")
 class PaperNestGlideRailDestination(Control):
-    """Destination affichée dans :class:`PaperNestGlideRail`."""
+    """Destination affichée dans :class:`PaperNestGlideRail`.
+
+    ``icon`` et ``selected_icon`` acceptent aussi bien une icône Flet qu'un
+    contrôle personnalisé, par exemple ``ft.Image(src="assets/logo.svg")``.
+    Dans le cas d'une image, sa largeur et sa hauteur doivent être définies sur
+    le contrôle lui-même : ``icon_size`` ne concerne que les icônes Flet.
+    """
 
     label: str = ""
     icon: Optional[IconDataOrControl] = None
@@ -32,6 +38,9 @@ class PaperNestGlideRail(LayoutControl):
     Le contrôle doit être placé dans une pile au-dessus du contenu. Sa largeur
     passe de ``collapsed_width`` à ``expanded_width`` lorsque le pointeur entre
     dans sa zone, puis revient à sa largeur compacte lorsque le pointeur sort.
+
+    ``brand_icon`` accepte une icône Flet ou tout contrôle visuel, notamment un
+    ``ft.Image`` utilisant un PNG ou un SVG personnalisé.
     """
 
     destinations: Optional[list[PaperNestGlideRailDestination]] = None
@@ -54,6 +63,9 @@ class PaperNestGlideRail(LayoutControl):
     icon_size: Number = 24
     item_border_radius: Optional[BorderRadiusValue] = None
     item_padding: Optional[PaddingValue] = None
+
+    hover_scale: Number = 1.025
+    hover_animation_duration: int = 140
 
     color: Optional[ColorValue] = None
     selected_color: Optional[ColorValue] = None
