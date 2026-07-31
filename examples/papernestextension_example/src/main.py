@@ -46,8 +46,17 @@ def build_glide_rail_example(page: ft.Page) -> ft.Control:
         border_radius=ft.BorderRadius.only(top_right=16, bottom_right=16),
         item_border_radius=12,
         brand_icon=ft.Icons.FOLDER_COPY_ROUNDED,
-        brand_title="PaperNest",
-        brand_subtitle="Documents personnels",
+        brand_title=ft.Text(
+            "PaperNest",
+            color="#FFFFFF",
+            size=16,
+            weight=ft.FontWeight.BOLD,
+        ),
+        brand_subtitle=ft.Text(
+            "Documents personnels",
+            color="#8E94A3",
+            size=11,
+        ),
         destinations=[
             PaperNestGlideRailDestination(
                 label="Accueil",
