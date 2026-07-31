@@ -4,9 +4,7 @@
 
 `PaperNestIconPicker` est implémenté, construit, testé et validé sous Windows dans PaperNestExtension.
 
-Un dernier ajustement d’ergonomie a été ajouté après validation : le curseur de la souris devient un pointeur sur le champ fermé et sur les options interactives de la galerie. Les états `disabled` et `read_only` conservent un curseur normal.
-
-Le contrôle est prêt pour son intégration dans PaperNest. Il ne sera considéré comme entièrement terminé qu’après remplacement de `BaseIconField`, nettoyage de l’ancien code et validation du build Windows de PaperNest.
+Le curseur interactif a également été reconstruit, testé et validé. L’intégration dans PaperNest est maintenant en place : un wrapper thématique dédié a été créé et l’éditeur des classeurs utilise le nouveau contrôle. La suppression de l’ancien `BaseIconField` reste volontairement différée jusqu’à validation finale dans PaperNest.
 
 ## Objectif
 
@@ -20,7 +18,7 @@ Créer un sélecteur d’icône autonome dans PaperNestExtension, cohérent avec
 - [x] Confirmer que la valeur métier enregistrée est le nom Material de l’icône sous forme de chaîne.
 - [x] Confirmer que les options actuelles sont un dictionnaire `libellé -> nom Material`.
 - [x] Confirmer que l’unique fallback actuel est `FOLDER_ROUNDED`.
-- [ ] Vérifier les valeurs réellement présentes dans les données existantes pendant l’intégration PaperNest.
+- [ ] Vérifier les valeurs réellement présentes dans les données existantes pendant la validation PaperNest.
 
 ## Décisions de conception
 
@@ -78,21 +76,24 @@ Créer un sélecteur d’icône autonome dans PaperNestExtension, cohérent avec
 - [x] Tester le clavier et le focus.
 - [x] Construire et tester l’exemple sous Windows avec Flet 0.85.3.
 - [x] Faire valider visuellement et fonctionnellement le contrôle par l’utilisateur.
-- [ ] Revalider le curseur interactif après reconstruction de l’extension.
+- [x] Revalider le curseur interactif après reconstruction de l’extension.
 
 ## Intégration dans PaperNest
 
-- [ ] Créer un wrapper thématique léger héritant directement de `PaperNestIconPicker`.
-- [ ] Convertir `AVAILABLE_ICONS` vers des `PaperNestIconPickerOption`.
-- [ ] Remplacer `BaseIconField` dans l’éditeur des classeurs.
-- [ ] Préserver les noms d’icônes enregistrés et la prévisualisation existante.
+- [x] Créer `src/app/theme/icon_picker.py`.
+- [x] Créer un wrapper thématique léger héritant directement de `PaperNestIconPicker`.
+- [x] Convertir `AVAILABLE_ICONS` vers des `PaperNestIconPickerOption`.
+- [x] Remplacer `BaseIconField` dans l’éditeur des classeurs.
+- [x] Préserver les noms d’icônes enregistrés et la prévisualisation existante.
+- [x] Préserver le fallback `FOLDER_ROUNDED` pour une valeur inconnue.
 - [ ] Vérifier les catégories utilisant une ancienne valeur inconnue.
+- [ ] Valider la création et la modification d’un classeur sous Windows.
+- [ ] Valider le build Windows de PaperNest.
 - [ ] Supprimer l’ancien `BaseIconField` après validation.
 - [ ] Nettoyer les imports et le code devenus inutiles dans `forms.py`.
-- [ ] Valider le rendu et le comportement sous Windows avec l’utilisateur.
-- [ ] Valider le build Windows de PaperNest.
-- [ ] Mettre à jour les roadmaps et changelogs des deux projets.
+- [ ] Mettre à jour les changelogs des deux projets.
+- [ ] Marquer le contrôle comme entièrement terminé.
 
 ## Critère de finalisation
 
-Le contrôle ne sera considéré comme terminé qu’après validation de l’exemple Windows, intégration réelle dans l’éditeur des classeurs, conservation des valeurs existantes, gestion sûre des valeurs inconnues, suppression de `BaseIconField` et validation explicite par l’utilisateur.
+Le contrôle sera considéré comme entièrement terminé après validation dans PaperNest, conservation des valeurs existantes, gestion sûre des valeurs inconnues, suppression de `BaseIconField`, nettoyage de `forms.py`, validation du build Windows et validation explicite par l’utilisateur.
