@@ -102,11 +102,41 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
     setState(() {});
   }
 
+  Widget? _brandTextControl(
+    BuildContext context,
+    String property,
+    TextStyle? fallbackStyle,
+  ) {
+    final customControl = widget.control.buildIconOrWidget(property);
+    if (customControl != null) return customControl;
+
+    final value = widget.control.getString(property);
+    if (value == null || value.isEmpty) return null;
+
+    return Text(
+      value,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: fallbackStyle,
+    );
+  }
+
   Widget _brand(BuildContext context) {
     final icon = widget.control.buildIconOrWidget("brand_icon") ??
         const Icon(Icons.folder_copy_rounded);
-    final title = widget.control.getString("brand_title");
-    final subtitle = widget.control.getString("brand_subtitle");
+    final title = _brandTextControl(
+      context,
+      "brand_title",
+      Theme.of(context)
+          .textTheme
+          .titleMedium
+          ?.copyWith(fontWeight: FontWeight.bold),
+    );
+    final subtitle = _brandTextControl(
+      context,
+      "brand_subtitle",
+      Theme.of(context).textTheme.bodySmall,
+    );
     final height = widget.control.getDouble("brand_height", 64) ?? 64;
 
     return SizedBox(
@@ -126,23 +156,8 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    if (title != null && title.isNotEmpty)
-                      Text(
-                        title,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context)
-                            .textTheme
-                            .titleMedium
-                            ?.copyWith(fontWeight: FontWeight.bold),
-                      ),
-                    if (subtitle != null && subtitle.isNotEmpty)
-                      Text(
-                        subtitle,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
+                    if (title != null) title,
+                    if (subtitle != null) subtitle,
                   ],
                 ),
               ),
