@@ -2,12 +2,12 @@
 
 ## État
 
-Les contrôles nécessaires à PaperNest sont terminés et validés, à l’exception de l’étude encore ouverte pour transformer `BaseIconField` en contrôle autonome `PaperNestIconPicker`.
+Les contrôles historiques nécessaires à PaperNest sont terminés et validés. `PaperNestIconPicker` est maintenant en cours d’implémentation : son API Python, son contrôle Flutter et son exemple existent, mais les tests Windows restent à effectuer.
 
 ## Contrôles terminés
 
 - [x] `PaperNestTextField`
-- [x] `PaperNestDropdown` + `PaperNestDropdownOption` — même composant, deux classes complémentaires
+- [x] `PaperNestDropdown` + `PaperNestDropdownOption`
 - [x] `PaperNestColorPicker`
 - [x] `PaperNestDatePicker`
 - [x] `PaperNestFilePicker`
@@ -20,15 +20,24 @@ Roadmaps détaillées terminées :
 - `ROADMAP_FILE_PICKER.md`
 - `ROADMAP_GLIDE_RAIL.md`
 
-## Contrôle à l’étude
+## Contrôle en cours
 
-- [ ] `PaperNestIconPicker`
+- [ ] `PaperNestIconPicker` + `PaperNestIconPickerOption`
+
+État actuel :
+
+- [x] étude de `BaseIconField` ;
+- [x] API Python ;
+- [x] implémentation Flutter ;
+- [x] exports publics ;
+- [x] enregistrement dans l’extension ;
+- [x] exemple intégré au `main.py` principal ;
+- [ ] compilation et tests Windows ;
+- [ ] intégration dans PaperNest.
 
 Roadmap détaillée :
 
 - `ROADMAP_ICON_PICKER.md`
-
-Cette étude part d’un besoin concret et limité de PaperNest : remplacer le contrôle historique `BaseIconField` par un picker autonome cohérent avec les autres contrôles de l’extension.
 
 ## Validation globale des contrôles terminés
 
