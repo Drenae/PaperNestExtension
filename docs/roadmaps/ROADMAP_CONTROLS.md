@@ -2,7 +2,7 @@
 
 ## État
 
-Les contrôles historiques nécessaires à PaperNest sont terminés et validés. Deux nouveaux besoins réels sont désormais à l’étude : transformer `BaseIconField` en picker autonome et créer une sidebar déployable au survol adaptée à PaperNest.
+Les contrôles nécessaires à PaperNest sont terminés et validés, à l’exception de l’étude encore ouverte pour transformer `BaseIconField` en contrôle autonome `PaperNestIconPicker`.
 
 ## Contrôles terminés
 
@@ -11,34 +11,34 @@ Les contrôles historiques nécessaires à PaperNest sont terminés et validés.
 - [x] `PaperNestColorPicker`
 - [x] `PaperNestDatePicker`
 - [x] `PaperNestFilePicker`
+- [x] `PaperNestGlideRail` + `PaperNestGlideRailDestination`
 
 Roadmaps détaillées terminées :
 
 - `ROADMAP_COLOR_PICKER.md`
 - `ROADMAP_DATE_PICKER.md`
 - `ROADMAP_FILE_PICKER.md`
+- `ROADMAP_GLIDE_RAIL.md`
 
-## Contrôles à l’étude
+## Contrôle à l’étude
 
 - [ ] `PaperNestIconPicker`
-- [ ] Sidebar déployable au survol — nom public final à définir
 
-Roadmaps détaillées :
+Roadmap détaillée :
 
 - `ROADMAP_ICON_PICKER.md`
-- `ROADMAP_HOVER_SIDEBAR.md`
 
-Ces études partent de besoins concrets et limités de PaperNest : remplacer le contrôle historique `BaseIconField` et remplacer la sidebar manuelle par une rail compacte qui se déploie au survol en superposition du contenu.
+Cette étude part d’un besoin concret et limité de PaperNest : remplacer le contrôle historique `BaseIconField` par un picker autonome cohérent avec les autres contrôles de l’extension.
 
 ## Validation globale des contrôles terminés
 
-- [x] Implémentation Python et Flutter des contrôles existants.
+- [x] Implémentation Python et Flutter.
 - [x] Exemples fonctionnels vérifiés sous Windows.
-- [x] Intégration réelle dans PaperNest.
 - [x] Validation visuelle et fonctionnelle par l’utilisateur.
 - [x] Validation des builds Windows.
-- [x] Suppression des anciens wrappers et dépendances devenus inutiles dans PaperNest.
-- [x] Mise à jour des roadmaps et changelogs des deux projets.
+- [x] Nettoyage des exemples et de la documentation.
+
+L’intégration d’un contrôle dans PaperNest reste suivie séparément lorsqu’elle n’a pas encore été effectuée.
 
 ## Règles de suivi
 
@@ -47,4 +47,5 @@ Ces études partent de besoins concrets et limités de PaperNest : remplacer le 
 - Créer une roadmap dédiée pour toute nouvelle migration importante.
 - Commencer par l’étude de l’existant et de l’API avant toute implémentation.
 - Ne pas forker un contrôle Flet lorsque le besoin justifie mieux un contrôle autonome.
-- Ne marquer un contrôle comme terminé qu’après validation de son implémentation, de son build et de son usage réel dans PaperNest.
+- Ne pas ajouter d’options par anticipation après validation d’un contrôle.
+- Ne marquer un contrôle comme terminé qu’après validation de son implémentation et de son build.
