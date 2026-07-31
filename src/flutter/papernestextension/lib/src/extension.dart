@@ -5,6 +5,7 @@ import 'controls/papernest_color_picker.dart';
 import 'controls/papernest_date_picker.dart';
 import 'controls/papernest_dropdown.dart';
 import 'controls/papernest_glide_rail.dart';
+import 'controls/papernest_icon_picker.dart';
 import 'controls/papernest_textfield.dart';
 import 'services/papernest_file_picker.dart';
 
@@ -20,6 +21,8 @@ class Extension extends FletExtension {
         return PaperNestDropdownControl(key: key, control: control);
       case "PaperNestGlideRail":
         return PaperNestGlideRailControl(key: key, control: control);
+      case "PaperNestIconPicker":
+        return PaperNestIconPickerControl(key: key, control: control);
       case "PaperNestTextField":
         return PaperNestTextFieldControl(key: key, control: control);
       case "PaperNestFilePicker":
