@@ -1,10 +1,10 @@
-# Roadmap — Sidebar déployable au survol
+# Roadmap — PaperNestHoverSidebar
 
 ## État
 
-Étude ouverte. Le contrôle sera développé dans PaperNestExtension à partir du besoin réel de PaperNest.
+Première implémentation Python et Flutter créée. Le contrôle est exporté publiquement et un exemple isolé en `Stack` permet désormais de préparer les tests Windows. Aucun résultat de build ou test visuel n’est encore considéré comme validé.
 
-Le `NavigationDrawer` natif Flet n’est pas retenu comme base directe : son fonctionnement modal par ouverture et fermeture ne correspond pas à une rail d’icônes permanente qui s’agrandit au survol.
+Le `NavigationDrawer` natif Flet n’est pas retenu comme base directe : son fonctionnement modal ne correspond pas à une rail d’icônes permanente qui s’agrandit au survol.
 
 ## Objectif
 
@@ -14,57 +14,59 @@ Créer un contrôle de navigation latérale qui reste toujours visible sous form
 
 ### État replié
 
-- [ ] Afficher uniquement le logo compact PaperNest.
-- [ ] Afficher un séparateur.
-- [ ] Afficher uniquement les icônes des destinations principales.
-- [ ] Conserver un espace extensible entre les destinations principales et l’administration.
-- [ ] Afficher un séparateur avant l’administration.
-- [ ] Afficher uniquement l’icône Administration.
-- [ ] Conserver une largeur compacte fixe.
-- [ ] Réserver uniquement cette largeur compacte dans la mise en page PaperNest.
+- [x] Afficher uniquement le logo ou l’icône de marque compacte.
+- [x] Afficher un séparateur.
+- [x] Afficher uniquement les icônes des destinations principales.
+- [x] Conserver un espace extensible entre les destinations principales et l’administration.
+- [x] Afficher un séparateur avant l’administration.
+- [x] Afficher uniquement l’icône Administration.
+- [x] Conserver une largeur compacte fixe.
+- [x] Documenter dans l’exemple la réservation de cette largeur compacte dans la mise en page.
 
 ### État déployé
 
-- [ ] Agrandir la sidebar horizontalement avec une animation fluide.
-- [ ] Afficher le logo PaperNest complet.
-- [ ] Afficher les icônes et les libellés des destinations.
-- [ ] Conserver les séparateurs et l’administration en bas.
-- [ ] Superposer la partie déployée au contenu.
-- [ ] Ne jamais redimensionner ni déplacer le contenu pendant l’animation.
-- [ ] Ajouter une ombre ou une séparation visuelle sur le bord droit.
+- [x] Agrandir la sidebar horizontalement avec un `AnimatedContainer`.
+- [x] Afficher le titre et le sous-titre de marque.
+- [x] Afficher les icônes et les libellés des destinations.
+- [x] Conserver les séparateurs et l’administration en bas.
+- [x] Prévoir la superposition de la partie déployée au contenu via un `Stack` parent.
+- [x] Ne pas redimensionner le contenu dans l’exemple d’intégration.
+- [x] Ajouter une ombre sur le bord droit.
 
 ### Interaction souris
 
-- [ ] Déployer le contrôle lorsque la souris entre n’importe où dans la sidebar compacte.
-- [ ] Maintenir le contrôle ouvert tant que la souris reste dans toute la zone déployée.
-- [ ] Replier le contrôle lorsque la souris quitte entièrement la zone déployée.
-- [ ] Éviter les ouvertures et fermetures répétées lors du passage entre les destinations.
-- [ ] Garantir que les clics sur les destinations restent fiables pendant et après l’animation.
+- [x] Déployer le contrôle avec un `MouseRegion` englobant toute la sidebar.
+- [x] Maintenir le contrôle ouvert tant que la souris reste dans la zone déployée.
+- [x] Replier le contrôle lorsque la souris quitte la zone déployée.
+- [x] Éviter les changements d’état lors du passage entre les destinations.
+- [ ] Tester la fiabilité des clics pendant et après l’animation sous Windows.
 
-## API Python à définir
+## API Python
 
-- [ ] Définir le nom public final du contrôle.
-- [ ] Définir une classe de destination typée.
-- [ ] Définir `selected_index`.
-- [ ] Définir `collapsed_width` et `expanded_width`.
-- [ ] Définir `animation_duration` et la courbe d’animation.
-- [ ] Définir les contrôles ou assets de logo compact et complet.
-- [ ] Définir les couleurs, espacements, arrondis, ombre et indicateur sélectionné.
-- [ ] Définir les événements `on_change`, `on_expand` et `on_collapse`.
-- [ ] Prévoir `disabled` pour les destinations.
-- [ ] Permettre des contrôles libres tels que séparateurs, en-têtes et espaces extensibles si nécessaire.
+- [x] Nom public : `PaperNestHoverSidebar`.
+- [x] Classe typée : `PaperNestHoverSidebarDestination`.
+- [x] Définir `destinations` et `secondary_destinations`.
+- [x] Définir `selected_index`.
+- [x] Définir `collapsed_width` et `expanded_width`.
+- [x] Définir `animation_duration` et la courbe d’animation.
+- [x] Définir le bloc de marque avec `brand_icon`, `brand_title` et `brand_subtitle`.
+- [x] Définir les couleurs, espacements, arrondis, ombre et état sélectionné.
+- [x] Définir `on_change`, `on_expand` et `on_collapse`.
+- [x] Utiliser l’état `disabled` natif sur chaque destination.
+- [x] Ajouter les méthodes publiques `expand_sidebar()` et `collapse_sidebar()`.
+- [x] Exporter le contrôle depuis `papernestextension.controls` et `papernestextension`.
 
 ## Architecture Flutter
 
-- [ ] Construire le contrôle avec un `MouseRegion` englobant toute la surface animée.
-- [ ] Utiliser un conteneur animé pour passer de la largeur compacte à la largeur déployée.
-- [ ] Conserver une zone compacte permanente dans le layout parent.
-- [ ] Afficher l’extension de largeur dans une couche superposée.
-- [ ] Utiliser un `Stack` ou une structure équivalente pour empêcher le redimensionnement du contenu.
-- [ ] Animer l’apparition des libellés sans provoquer de débordement.
-- [ ] Conserver les destinations principales en haut et l’administration en bas.
-- [ ] Synchroniser l’état sélectionné depuis Python et depuis les clics Flutter.
-- [ ] Gérer correctement le survol pendant l’animation.
+- [x] Construire le contrôle avec un `MouseRegion` englobant toute la surface animée.
+- [x] Utiliser un `AnimatedContainer` pour les largeurs compacte et déployée.
+- [x] Prévoir une zone compacte permanente dans le layout parent.
+- [x] Documenter l’intégration superposée avec un `Stack`.
+- [x] Animer l’apparition des libellés avec `AnimatedOpacity` et `ClipRect`.
+- [x] Conserver les destinations principales en haut et les destinations secondaires en bas.
+- [x] Synchroniser l’index sélectionné depuis Python et depuis les clics Flutter.
+- [x] Enregistrer le contrôle dans `Extension.createWidget()`.
+- [ ] Vérifier le comportement réel de tous les paramètres avec Flet 0.85.3.
 
 ## Étude de `NavigationDrawer`
 
@@ -72,18 +74,19 @@ Créer un contrôle de navigation latérale qui reste toujours visible sous form
 - [x] Vérifier l’implémentation Dart du contrôle natif.
 - [x] Confirmer qu’il repose sur une ouverture modale et non sur une rail permanente au survol.
 - [x] Confirmer l’absence d’API native pour l’expansion automatique au survol.
-- [x] Décider de ne pas forker immédiatement `NavigationDrawer`.
-- [ ] Réutiliser seulement ses idées utiles de destinations, d’index sélectionné et de personnalisation visuelle.
+- [x] Décider de construire un contrôle dédié plutôt que de forker immédiatement `NavigationDrawer`.
 
 ## Exemple PaperNestExtension
 
-- [ ] Créer un exemple dédié avec les cinq destinations de PaperNest.
+- [x] Créer `hover_sidebar_example.py` avec les cinq destinations de PaperNest.
+- [x] Placer le contrôle au-dessus du contenu dans un `Stack`.
+- [x] Réserver uniquement la largeur compacte dans le contenu.
 - [ ] Tester le déploiement au survol.
 - [ ] Tester le repli à la sortie de la souris.
 - [ ] Tester les clics pendant et après l’animation.
 - [ ] Tester la sélection programmée.
 - [ ] Tester différentes largeurs.
-- [ ] Tester le logo compact et le logo complet.
+- [ ] Tester le futur logo compact et complet.
 - [ ] Tester le comportement sous Windows.
 - [ ] Valider le build Windows de l’exemple.
 
