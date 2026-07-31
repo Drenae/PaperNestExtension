@@ -49,9 +49,8 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
   EdgeInsets get _padding =>
       widget.control.getPadding("padding") ?? EdgeInsets.zero;
 
-  double get _collapsedContentWidth {
-    return (_collapsedWidth - _padding.horizontal).clamp(0, double.infinity);
-  }
+  double get _collapsedContentWidth =>
+      (_collapsedWidth - _padding.horizontal).clamp(0, double.infinity).toDouble();
 
   Curve get _curve {
     switch (widget.control.getString("animation_curve", "easeOutCubic")) {
@@ -169,8 +168,9 @@ class _PaperNestGlideRailControlState extends State<PaperNestGlideRailControl> {
     final itemHeight = widget.control.getDouble("item_height", 48) ?? 48;
     final itemPadding =
         widget.control.getPadding("item_padding") ?? EdgeInsets.zero;
-    final iconAreaWidth =
-        (_collapsedContentWidth - itemPadding.horizontal).clamp(0, double.infinity);
+    final iconAreaWidth = (_collapsedContentWidth - itemPadding.horizontal)
+        .clamp(0, double.infinity)
+        .toDouble();
     final radius = widget.control.getBorderRadius("item_border_radius") ??
         BorderRadius.circular(12);
     final selectedBg =
