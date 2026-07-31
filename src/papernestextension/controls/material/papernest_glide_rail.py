@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Union
 
 from flet.controls.base_control import control
 from flet.controls.border_radius import BorderRadiusValue
@@ -41,6 +41,10 @@ class PaperNestGlideRail(LayoutControl):
 
     ``brand_icon`` accepte une icône Flet ou tout contrôle visuel, notamment un
     ``ft.Image`` utilisant un PNG ou un SVG personnalisé.
+
+    ``brand_title`` et ``brand_subtitle`` acceptent soit une chaîne pour le
+    rendu natif par défaut, soit un contrôle Flet tel que ``ft.Text`` pour
+    personnaliser librement couleur, police, graisse et autres propriétés.
     """
 
     destinations: Optional[list[PaperNestGlideRailDestination]] = None
@@ -78,8 +82,8 @@ class PaperNestGlideRail(LayoutControl):
     selected_text_style: Optional[TextStyle] = None
 
     brand_icon: Optional[IconDataOrControl] = None
-    brand_title: Optional[str] = None
-    brand_subtitle: Optional[str] = None
+    brand_title: Optional[Union[str, Control]] = None
+    brand_subtitle: Optional[Union[str, Control]] = None
     brand_height: Number = 64
 
     on_change: Optional[ControlEventHandler["PaperNestGlideRail"]] = None
