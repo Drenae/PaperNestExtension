@@ -2,9 +2,11 @@
 
 ## État
 
-La première implémentation de `PaperNestIconPicker` est maintenant créée dans PaperNestExtension.
+`PaperNestIconPicker` est implémenté, construit, testé et validé sous Windows dans PaperNestExtension.
 
-L’API Python, le contrôle Flutter, les exports publics, l’enregistrement dans l’extension et l’exemple principal sont en place. Le contrôle n’est pas encore considéré comme validé : la compilation et les tests Windows doivent être effectués avant toute migration dans PaperNest.
+Un dernier ajustement d’ergonomie a été ajouté après validation : le curseur de la souris devient un pointeur sur le champ fermé et sur les options interactives de la galerie. Les états `disabled` et `read_only` conservent un curseur normal.
+
+Le contrôle est prêt pour son intégration dans PaperNest. Il ne sera considéré comme entièrement terminé qu’après remplacement de `BaseIconField`, nettoyage de l’ancien code et validation du build Windows de PaperNest.
 
 ## Objectif
 
@@ -55,6 +57,8 @@ Créer un sélecteur d’icône autonome dans PaperNestExtension, cohérent avec
 - [x] Gérer une valeur inconnue avec le fallback défini.
 - [x] Gérer une modification programmée de `value`.
 - [x] Gérer le clavier, le focus, le survol, `disabled` et `read_only`.
+- [x] Utiliser `SystemMouseCursors.click` sur le champ et les options interactives.
+- [x] Conserver `SystemMouseCursors.basic` pour les états non interactifs.
 - [x] Synchroniser la valeur entre Flutter et Python.
 - [x] Enregistrer le contrôle dans `Extension.createWidget()`.
 - [x] Exporter le contrôle depuis `papernestextension.controls` et `papernestextension`.
@@ -64,16 +68,17 @@ Créer un sélecteur d’icône autonome dans PaperNestExtension, cohérent avec
 - [x] Ajouter l’exemple directement dans l’application d’exemple principale.
 - [x] Utiliser un ensemble représentatif des icônes de PaperNest.
 - [x] Afficher la valeur métier sélectionnée dans l’exemple.
-- [ ] Vérifier la compilation Flutter.
-- [ ] Tester la valeur initiale.
-- [ ] Tester la sélection et la validation.
-- [ ] Tester l’annulation.
-- [ ] Tester une modification programmée de `value`.
-- [ ] Tester une valeur inconnue et le fallback.
-- [ ] Tester `disabled` et `read_only`.
-- [ ] Tester le clavier et le focus.
-- [ ] Construire et tester l’exemple sous Windows avec Flet 0.85.3.
-- [ ] Faire valider visuellement et fonctionnellement le contrôle par l’utilisateur.
+- [x] Vérifier la compilation Flutter.
+- [x] Tester la valeur initiale.
+- [x] Tester la sélection et la validation.
+- [x] Tester l’annulation.
+- [x] Tester une modification programmée de `value`.
+- [x] Tester une valeur inconnue et le fallback.
+- [x] Tester `disabled` et `read_only`.
+- [x] Tester le clavier et le focus.
+- [x] Construire et tester l’exemple sous Windows avec Flet 0.85.3.
+- [x] Faire valider visuellement et fonctionnellement le contrôle par l’utilisateur.
+- [ ] Revalider le curseur interactif après reconstruction de l’extension.
 
 ## Intégration dans PaperNest
 
