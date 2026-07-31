@@ -1,0 +1,89 @@
+from typing import Optional
+
+from flet.controls.base_control import control
+from flet.controls.border_radius import BorderRadiusValue
+from flet.controls.control import Control
+from flet.controls.control_event import ControlEventHandler
+from flet.controls.layout_control import LayoutControl
+from flet.controls.padding import PaddingValue
+from flet.controls.text_style import TextStyle
+from flet.controls.types import ColorValue, IconDataOrControl, Number
+
+__all__ = [
+    "PaperNestHoverSidebar",
+    "PaperNestHoverSidebarDestination",
+]
+
+
+@control("PaperNestHoverSidebarDestination")
+class PaperNestHoverSidebarDestination(Control):
+    """Destination affichée dans :class:`PaperNestHoverSidebar`."""
+
+    label: str = ""
+    icon: Optional[IconDataOrControl] = None
+    selected_icon: Optional[IconDataOrControl] = None
+    tooltip: Optional[str] = None
+
+
+@control("PaperNestHoverSidebar")
+class PaperNestHoverSidebar(LayoutControl):
+    """Sidebar compacte qui se déploie au survol sans déplacer le contenu.
+
+    Le contrôle doit être placé dans une pile au-dessus du contenu. Sa largeur
+    passe de ``collapsed_width`` à ``expanded_width`` lorsque le pointeur entre
+    dans sa zone, puis revient à sa largeur compacte lorsque le pointeur sort.
+    """
+
+    destinations: Optional[list[PaperNestHoverSidebarDestination]] = None
+    secondary_destinations: Optional[list[PaperNestHoverSidebarDestination]] = None
+    selected_index: int = 0
+
+    collapsed_width: Number = 76
+    expanded_width: Number = 280
+    animation_duration: int = 220
+    animation_curve: str = "easeOutCubic"
+
+    bgcolor: Optional[ColorValue] = None
+    shadow_color: Optional[ColorValue] = None
+    elevation: Number = 8
+    border_radius: Optional[BorderRadiusValue] = None
+    padding: Optional[PaddingValue] = None
+
+    item_height: Number = 48
+    item_spacing: Number = 4
+    icon_size: Number = 24
+    item_border_radius: Optional[BorderRadiusValue] = None
+    item_padding: Optional[PaddingValue] = None
+
+    color: Optional[ColorValue] = None
+    selected_color: Optional[ColorValue] = None
+    hover_color: Optional[ColorValue] = None
+    selected_bgcolor: Optional[ColorValue] = None
+    selected_border_color: Optional[ColorValue] = None
+    divider_color: Optional[ColorValue] = None
+
+    text_style: Optional[TextStyle] = None
+    selected_text_style: Optional[TextStyle] = None
+
+    brand_icon: Optional[IconDataOrControl] = None
+    brand_title: Optional[str] = None
+    brand_subtitle: Optional[str] = None
+    brand_height: Number = 64
+
+    on_change: Optional[ControlEventHandler["PaperNestHoverSidebar"]] = None
+    on_expand: Optional[ControlEventHandler["PaperNestHoverSidebar"]] = None
+    on_collapse: Optional[ControlEventHandler["PaperNestHoverSidebar"]] = None
+
+    async def _trigger_event(self, event_name, event_data):
+        if event_name == "change":
+            try:
+                self.selected_index = int(event_data)
+            except (TypeError, ValueError):
+                pass
+        await super()._trigger_event(event_name, event_data)
+
+    async def expand_sidebar(self) -> None:
+        await self._invoke_method("expand")
+
+    async def collapse_sidebar(self) -> None:
+        await self._invoke_method("collapse")
