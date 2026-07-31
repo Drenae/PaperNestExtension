@@ -184,6 +184,9 @@ class _PaperNestIconPickerControlState
                             ),
                             clipBehavior: Clip.antiAlias,
                             child: InkWell(
+                              mouseCursor: value == null
+                                  ? SystemMouseCursors.basic
+                                  : SystemMouseCursors.click,
                               hoverColor: widget.control.getColor(
                                 "hover_color",
                                 context,
@@ -336,6 +339,9 @@ class _PaperNestIconPickerControlState
       child: Material(
         color: Colors.transparent,
         child: InkWell(
+          mouseCursor: _interactive
+              ? SystemMouseCursors.click
+              : SystemMouseCursors.basic,
           onTap: _interactive ? _openPicker : null,
           borderRadius: widget.control.getBorderRadius("border_radius") ??
               BorderRadius.circular(4),
