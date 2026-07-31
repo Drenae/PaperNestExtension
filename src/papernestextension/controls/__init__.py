@@ -11,6 +11,10 @@ from .material.papernest_dropdown import (
     PaperNestDropdownOption,
     PaperNestDropdownState,
 )
+from .material.papernest_hover_sidebar import (
+    PaperNestHoverSidebar,
+    PaperNestHoverSidebarDestination,
+)
 from .material.papernest_textfield import (
     PaperNestTextField,
     PaperNestTextFieldState,
@@ -38,6 +42,8 @@ __all__ = [
     "PaperNestDropdown",
     "PaperNestDropdownOption",
     "PaperNestDropdownState",
+    "PaperNestHoverSidebar",
+    "PaperNestHoverSidebarDestination",
     "PaperNestFilePicker",
     "PaperNestFilePickerDropEvent",
     "PaperNestFilePickerFile",
