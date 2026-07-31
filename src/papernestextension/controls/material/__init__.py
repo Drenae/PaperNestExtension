@@ -3,3 +3,7 @@ from .papernest_glide_rail import (
     PaperNestGlideRail,
     PaperNestGlideRailDestination,
 )
+from .papernest_icon_picker import (
+    PaperNestIconPicker,
+    PaperNestIconPickerOption,
+)
