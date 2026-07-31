@@ -15,6 +15,10 @@ from .material.papernest_glide_rail import (
     PaperNestGlideRail,
     PaperNestGlideRailDestination,
 )
+from .material.papernest_icon_picker import (
+    PaperNestIconPicker,
+    PaperNestIconPickerOption,
+)
 from .material.papernest_textfield import (
     PaperNestTextField,
     PaperNestTextFieldState,
@@ -44,6 +48,8 @@ __all__ = [
     "PaperNestDropdownState",
     "PaperNestGlideRail",
     "PaperNestGlideRailDestination",
+    "PaperNestIconPicker",
+    "PaperNestIconPickerOption",
     "PaperNestFilePicker",
     "PaperNestFilePickerDropEvent",
     "PaperNestFilePickerFile",
