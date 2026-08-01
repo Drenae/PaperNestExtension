@@ -2,7 +2,9 @@
 
 ## État
 
-Les contrôles historiques nécessaires à PaperNest sont terminés et validés. `PaperNestIconPicker` est maintenant en cours d’implémentation : son API Python, son contrôle Flutter et son exemple existent, mais les tests Windows restent à effectuer.
+Tous les contrôles actuellement nécessaires à PaperNest sont terminés, intégrés et validés sous Windows.
+
+Une nouvelle étude est ouverte pour `PaperNestAlertDialog`, afin d’unifier le rendu des dialogues Python et des dialogues internes aux pickers.
 
 ## Contrôles terminés
 
@@ -11,6 +13,7 @@ Les contrôles historiques nécessaires à PaperNest sont terminés et validés.
 - [x] `PaperNestColorPicker`
 - [x] `PaperNestDatePicker`
 - [x] `PaperNestFilePicker`
+- [x] `PaperNestIconPicker` + `PaperNestIconPickerOption`
 - [x] `PaperNestGlideRail` + `PaperNestGlideRailDestination`
 
 Roadmaps détaillées terminées :
@@ -18,43 +21,37 @@ Roadmaps détaillées terminées :
 - `ROADMAP_COLOR_PICKER.md`
 - `ROADMAP_DATE_PICKER.md`
 - `ROADMAP_FILE_PICKER.md`
+- `ROADMAP_ICON_PICKER.md`
 - `ROADMAP_GLIDE_RAIL.md`
 
-## Contrôle en cours
+## Chantier d’architecture ouvert
 
-- [ ] `PaperNestIconPicker` + `PaperNestIconPickerOption`
+- [ ] `PaperNestAlertDialog`
 
-État actuel :
-
-- [x] étude de `BaseIconField` ;
-- [x] API Python ;
-- [x] implémentation Flutter ;
-- [x] exports publics ;
-- [x] enregistrement dans l’extension ;
-- [x] exemple intégré au `main.py` principal ;
-- [ ] compilation et tests Windows ;
-- [ ] intégration dans PaperNest.
+Ce chantier doit fournir un contrôle public Python et un composant Flutter interne partagé par les pickers.
 
 Roadmap détaillée :
 
-- `ROADMAP_ICON_PICKER.md`
+- `ROADMAP_ALERT_DIALOG.md`
 
-## Validation globale des contrôles terminés
+## Application d’exemple
 
-- [x] Implémentation Python et Flutter.
+La refonte de l’exemple en petite application navigable est suivie séparément :
+
+- `ROADMAP_EXAMPLE_APP.md`
+
+## Validation globale
+
+- [x] Implémentations Python et Flutter.
 - [x] Exemples fonctionnels vérifiés sous Windows.
+- [x] Intégrations PaperNest validées.
+- [x] Builds Windows validés.
 - [x] Validation visuelle et fonctionnelle par l’utilisateur.
-- [x] Validation des builds Windows.
-- [x] Nettoyage des exemples et de la documentation.
-
-L’intégration d’un contrôle dans PaperNest reste suivie séparément lorsqu’elle n’a pas encore été effectuée.
 
 ## Règles de suivi
 
-- Ajouter un contrôle uniquement lorsqu’un besoin réel et validé existe dans PaperNest.
-- Éviter toute complexité qui ne simplifie pas directement l’utilisation de l’application.
-- Créer une roadmap dédiée pour toute nouvelle migration importante.
-- Commencer par l’étude de l’existant et de l’API avant toute implémentation.
-- Ne pas forker un contrôle Flet lorsque le besoin justifie mieux un contrôle autonome.
-- Ne pas ajouter d’options par anticipation après validation d’un contrôle.
-- Ne marquer un contrôle comme terminé qu’après validation de son implémentation et de son build.
+- Ajouter un contrôle uniquement lorsqu’un besoin réel existe dans PaperNest.
+- Commencer par l’étude de l’existant, de l’API Python et du code Flutter.
+- Éviter les options sans usage concret.
+- Centraliser les composants visuels Flutter partagés plutôt que dupliquer leur rendu.
+- Ne marquer un contrôle comme terminé qu’après validation de l’exemple, de l’intégration et du build Windows.
