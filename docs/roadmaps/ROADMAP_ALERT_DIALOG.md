@@ -4,9 +4,11 @@
 
 Phase 3 officiellement ouverte.
 
-Les sources Python et Flutter de `AlertDialog` pour la version Flet retenue ont été fournies et étudiées. Le contrôle public, sa surface Flutter partagée, les exports et l’enregistrement dans l’extension sont maintenant créés.
+Les sources Python et Flutter de `AlertDialog` pour la version Flet retenue ont été fournies et étudiées. Le contrôle public, sa surface Flutter partagée, les exports et l’enregistrement dans l’extension sont créés.
 
-La première compilation Flutter, `flet run` et le build Windows ont été validés. Une page `Dialogues` est maintenant intégrée à l’application d’exemple pour la validation visuelle et fonctionnelle avant toute migration des pickers.
+La compilation Flutter, `flet run`, le build Windows et la page d’exemple ont été testés et validés. L’API publique est jugée complète et les actions fournies depuis Python restent entièrement personnalisables.
+
+La prochaine étape est la migration progressive des dialogues internes des pickers vers `PaperNestDialogSurface`.
 
 ## Objectif
 
@@ -27,6 +29,10 @@ L’architecture retenue sépare donc :
 3. l’utilisation de cette surface par le contrôle public et les dialogues internes des pickers.
 
 Le contrôle public conserve le cycle de vie natif de `AlertDialog` : propriété `open`, route propre au contrôle, barrière, modalité, fermeture extérieure et événement `dismiss` après la fin de l’animation.
+
+Les contrôles placés dans `actions` depuis Python sont rendus tels quels. Les wrappers applicatifs comme `PrimaryButton`, `SecondaryButton` et `GhostButton` restent donc utilisables et personnalisables sans nécessiter un fork de bouton.
+
+Les actions créées directement dans le code Flutter des pickers utiliseront ultérieurement un composant Flutter interne partagé. La création éventuelle d’un contrôle public `PaperNestButton` sera étudiée séparément et n’est pas nécessaire à ce chantier.
 
 ## Étude de Flet
 
@@ -60,7 +66,7 @@ Le contrôle public conserve le cycle de vie natif de `AlertDialog` : propriét�
 - [x] Gérer un contenu scrollable sans faire défiler la barre d’actions.
 - [x] Gérer les petits écrans via `SafeArea` et des contraintes adaptées.
 - [x] Permettre aux pickers de fournir leur propre contenu et leurs propres actions.
-- [ ] Vérifier l’accessibilité et le libellé sémantique pendant les tests.
+- [ ] Vérifier l’accessibilité et le libellé sémantique pendant les tests finaux.
 
 ## Implémentation du contrôle public
 
@@ -100,14 +106,25 @@ Le contrôle public conserve le cycle de vie natif de `AlertDialog` : propriét�
 - [x] Ajouter un contenu long avec `scrollable` et `max_height`.
 - [x] Ajouter un dialogue modal non dismissible.
 - [x] Ajouter un dialogue fermable par clic extérieur.
-- [ ] Tester visuellement toutes les variantes.
-- [ ] Tester les contenus courts, longs et scrollables.
-- [ ] Tester les actions multiples et leur débordement.
-- [ ] Tester la fermeture extérieure, le mode modal et Échap.
+- [x] Tester visuellement toutes les variantes.
+- [x] Tester les contenus courts, longs et scrollables.
+- [x] Tester les actions personnalisées fournies depuis Python.
+- [x] Tester `title_action`.
+- [x] Tester la fermeture extérieure et le mode modal.
+- [x] Faire valider visuellement et fonctionnellement le contrôle public par l’utilisateur.
+- [ ] Tester les actions multiples et leur débordement sur petite largeur.
+- [ ] Tester explicitement Échap.
 - [ ] Tester plusieurs dialogues successifs et imbriqués.
 - [ ] Tester les pickers après migration.
-- [ ] Faire valider visuellement et fonctionnellement le contrôle public par l’utilisateur.
 - [ ] Valider les builds Windows après les migrations des pickers et de PaperNest.
+
+## Refactorisation future associée
+
+La centralisation des bordures, décorations de champs, interactions et actions Flutter internes sera traitée dans une mise à jour distincte :
+
+- `ROADMAP_FLUTTER_SHARED_COMPONENTS.md`
+
+Ce chantier ne doit pas être mélangé à la migration actuelle des dialogues.
 
 ## Critère de finalisation
 
