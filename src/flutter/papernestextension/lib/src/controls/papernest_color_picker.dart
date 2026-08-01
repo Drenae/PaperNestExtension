@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
+import '../widgets/papernest_dialog_surface.dart';
+
 class PaperNestColorPickerControl extends StatefulWidget {
   final Control control;
 
@@ -87,24 +89,27 @@ class _PaperNestColorPickerControlState
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
-            return AlertDialog(
+            return PaperNestDialogSurface(
+              control: widget.control,
+              variant: "primary",
+              width: widget.control.getDouble("dialog_width", 560),
+              maxHeight: widget.control.getDouble("dialog_max_height", 720),
               title: Text(
                 widget.control.getString(
                   "picker_title",
                   "Sélectionner une couleur",
                 )!,
               ),
-              content: SingleChildScrollView(
-                child: MaterialPicker(
-                  pickerColor: temporaryColor,
-                  onColorChanged: (color) {
-                    setDialogState(() => temporaryColor = color);
-                  },
-                  enableLabel:
-                      widget.control.getBool("enable_label", false)!,
-                  portraitOnly:
-                      widget.control.getBool("portrait_only", false)!,
-                ),
+              icon: const Icon(Icons.palette_outlined),
+              content: MaterialPicker(
+                pickerColor: temporaryColor,
+                onColorChanged: (color) {
+                  setDialogState(() => temporaryColor = color);
+                },
+                enableLabel:
+                    widget.control.getBool("enable_label", false)!,
+                portraitOnly:
+                    widget.control.getBool("portrait_only", false)!,
               ),
               actions: [
                 TextButton(
@@ -113,10 +118,11 @@ class _PaperNestColorPickerControlState
                     widget.control.getString("cancel_text", "Annuler")!,
                   ),
                 ),
-                FilledButton(
+                FilledButton.icon(
                   onPressed: () =>
                       Navigator.of(dialogContext).pop(temporaryColor),
-                  child: Text(
+                  icon: const Icon(Icons.check_rounded),
+                  label: Text(
                     widget.control.getString("confirm_text", "Valider")!,
                   ),
                 ),
