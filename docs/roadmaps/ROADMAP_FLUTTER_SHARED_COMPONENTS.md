@@ -1,4 +1,4 @@
-# Roadmap — Composants Flutter partagés
+# Roadmap — Architecture Flutter partagée
 
 ## État
 
@@ -8,16 +8,18 @@ Ce chantier ne doit pas interrompre la migration actuelle des dialogues. Il sera
 
 ## Constat
 
-Plusieurs contrôles Flutter de PaperNestExtension reconstruisent localement des comportements déjà proches ou identiques :
+Plusieurs contrôles Flutter de PaperNestExtension reconstruisent localement des fonctions proches ou identiques :
 
 - création des `InputBorder` selon le focus ;
-- résolution des couleurs de bordure ;
-- décoration des champs ;
+- résolution des couleurs et largeurs de bordure ;
+- construction des décorations de champs ;
 - gestion du remplissage, des paddings et des styles ;
+- variantes visuelles ;
 - boutons d’action internes aux dialogues des pickers ;
-- surfaces, en-têtes et actions de dialogues.
+- surfaces, en-têtes et actions de dialogues ;
+- conversions et normalisations de valeurs répétées.
 
-`form_field.dart` centralise déjà une partie de ces responsabilités, mais `PaperNestColorPicker`, `PaperNestDatePicker` et `PaperNestIconPicker` possèdent encore leur propre méthode `_border(...)` et plusieurs portions de décoration redondantes.
+`form_field.dart` centralise déjà une partie des responsabilités liées aux champs, mais le chantier ne consiste pas à découper ce fichier pour lui-même. Le vrai principe est global : lorsqu’une même fonction existe dans plusieurs contrôles, elle doit être extraite dans un module commun regroupé par thème.
 
 `PaperNestDialogSurface` constitue le premier composant partagé créé dans cette direction.
 
@@ -27,55 +29,81 @@ Réduire la duplication, séparer les responsabilités et garantir une apparence
 
 ## Principes
 
-- Ne pas refactorer plusieurs contrôles en même temps sans tests intermédiaires.
 - Extraire uniquement du code réellement dupliqué.
+- Regrouper les helpers par famille cohérente de responsabilités.
+- Ne jamais créer un fichier par petite fonction.
+- Éviter à la fois les fichiers monolithiques et la multiplication de dizaines de helpers.
 - Conserver les API Python publiques inchangées.
-- Préférer de petits composants ou helpers spécialisés à un fichier monolithique.
-- Valider chaque extraction sous Windows avant de supprimer les implémentations locales.
+- Migrer et valider un contrôle à la fois.
 - Ne pas mélanger ce chantier avec une migration fonctionnelle en cours.
 
-## Étude de `form_field.dart`
+## Organisation thématique envisagée
 
-- [ ] Relire entièrement le fork actuel de `form_field.dart`.
-- [ ] Inventorier les responsabilités déjà couvertes.
-- [ ] Identifier les API internes réutilisables par les pickers.
-- [ ] Vérifier si le fichier doit rester un widget complet ou être séparé en plusieurs helpers.
+La structure exacte sera décidée après audit, mais les responsabilités pourront être regroupées autour de quelques familles :
+
+- `fields` ou `inputs` : bordures, décorations et comportements communs des champs ;
+- `dialogs` : surface, route, barrière, cycle de fermeture et actions internes ;
+- `variants` ou `styles` : variantes visuelles partagées lorsque plusieurs contrôles les utilisent ;
+- `values` : conversion et normalisation de valeurs communes ;
+- `interaction` : focus, survol, clavier et curseur lorsque la logique est réellement identique.
+
+Il ne s’agit pas d’imposer ces noms ni de créer systématiquement tous ces fichiers. Chaque module devra couvrir une responsabilité thématique suffisamment large et réellement réutilisée.
+
+## Audit global
+
+- [ ] Relire entièrement les widgets et helpers Flutter existants.
+- [ ] Inventorier les fonctions identiques ou presque identiques dans plusieurs contrôles.
+- [ ] Identifier les responsabilités déjà couvertes par `form_field.dart`.
 - [ ] Comparer les méthodes `_border(...)` des ColorPicker, DatePicker et IconPicker.
-- [ ] Identifier les différences réelles qui doivent rester propres à chaque contrôle.
+- [ ] Comparer les constructions d’`InputDecoration`.
+- [ ] Comparer les gestions du focus, du survol, du clavier et du curseur.
+- [ ] Comparer les conversions et normalisations de valeurs.
+- [ ] Inventorier les variantes actuellement définies localement.
+- [ ] Déterminer les regroupements thématiques utiles avant de créer de nouveaux fichiers.
 
-## Composants envisagés
+## Champs et bordures
 
-### Champ et bordures
-
-- [ ] Créer un helper partagé de résolution des bordures.
+- [ ] Créer ou étendre un module partagé de champs lorsque l’audit confirme le gain.
 - [ ] Centraliser `border`, `enabledBorder`, `focusedBorder` et `disabledBorder`.
 - [ ] Centraliser largeur, couleur, rayon et type de bordure.
-- [ ] Centraliser les propriétés communes d’`InputDecoration` lorsque cela apporte un vrai gain.
+- [ ] Réutiliser les responsabilités déjà présentes dans `form_field.dart` au lieu de les recopier.
+- [ ] Centraliser les propriétés communes d’`InputDecoration` lorsque cela simplifie réellement les contrôles.
 - [ ] Laisser chaque contrôle fournir son contenu, ses icônes et ses comportements spécifiques.
 
-### Focus, survol et interaction
+## Focus, survol et interaction
 
-- [ ] Étudier un composant partagé pour `FocusNode`, survol et raccourcis clavier.
-- [ ] Centraliser le choix du curseur interactif.
-- [ ] Éviter d’imposer un composant trop abstrait aux contrôles ayant des comportements différents.
+- [ ] Étudier un module partagé pour les interactions réellement identiques.
+- [ ] Centraliser le choix du curseur interactif lorsque les règles sont communes.
+- [ ] Centraliser certains raccourcis clavier si plusieurs contrôles ont exactement le même comportement.
+- [ ] Ne pas forcer une abstraction commune aux contrôles ayant des interactions différentes.
 
-### Dialogues
+## Dialogues
 
 - [x] Créer `PaperNestDialogSurface`.
-- [ ] Extraire si nécessaire un builder partagé pour la route, la barrière et le cycle de fermeture.
+- [ ] Extraire si nécessaire un composant partagé pour la route, la barrière et le cycle de fermeture.
 - [ ] Éviter de dupliquer le cycle de vie entre `PaperNestAlertDialog` et les pickers.
+- [ ] Regrouper les composants internes liés aux dialogues dans une même famille thématique.
 
-### Actions internes Flutter
+## Actions internes Flutter
 
-- [ ] Créer un composant Flutter interne pour les actions de dialogue des pickers.
+- [ ] Créer un widget Flutter interne pour les actions de dialogue construites directement en Dart.
 - [ ] Prévoir au minimum les styles `primary`, `secondary`, `ghost` et `danger`.
 - [ ] Permettre la personnalisation du texte, de l’icône, des couleurs et de l’état désactivé.
 - [ ] Conserver les contrôles Python fournis dans `actions` sans les remplacer ni les restyler.
 - [ ] Évaluer séparément la création d’un contrôle public `PaperNestButton`.
 
+## Variantes partagées
+
+- [ ] Inventorier les variantes de dialogues, actions, validation et états existantes.
+- [ ] Regrouper dans un module commun uniquement les variantes utilisées par plusieurs contrôles.
+- [ ] Ne pas créer un catalogue global contenant des variantes propres à un seul contrôle.
+- [ ] Garder les styles concrets dans leur famille thématique lorsque cela améliore la lisibilité.
+
 ## Décision concernant `PaperNestButton`
 
 Un fork ou contrôle public de bouton n’est pas requis pour `PaperNestAlertDialog` : les actions fournies depuis Python sont déjà des contrôles Flet complets et restent entièrement personnalisables.
+
+Pour les boutons créés directement dans le code Flutter des pickers, un widget interne partagé sera utilisé, sur le même principe que `PaperNestDialogSurface`.
 
 `PaperNestButton` ne devra être créé que si un besoin applicatif plus large est confirmé :
 
@@ -91,13 +119,11 @@ Un fork ou contrôle public de bouton n’est pas requis pour `PaperNestAlertDia
 
 ## Migration progressive envisagée
 
-- [ ] Refactorer `PaperNestColorPicker` en premier.
-- [ ] Valider compilation, exemple et build Windows.
-- [ ] Refactorer `PaperNestIconPicker`.
-- [ ] Valider compilation, exemple et build Windows.
-- [ ] Refactorer `PaperNestDatePicker` uniquement après stabilisation de son dialogue.
-- [ ] Vérifier que `PaperNestTextField` et `PaperNestDropdown` peuvent réutiliser certains helpers sans régression.
-- [ ] Supprimer les méthodes locales devenues inutiles.
+- [ ] Commencer par un contrôle représentatif après stabilisation des dialogues.
+- [ ] Valider compilation, exemple et build Windows après chaque extraction.
+- [ ] Migrer ensuite les autres contrôles utilisant exactement la même fonction.
+- [ ] Supprimer les implémentations locales seulement après validation.
+- [ ] Vérifier ensuite si `PaperNestTextField` et `PaperNestDropdown` peuvent réutiliser certains modules sans régression.
 
 ## Validation
 
@@ -108,7 +134,8 @@ Un fork ou contrôle public de bouton n’est pas requis pour `PaperNestAlertDia
 - [ ] Valider `flet run`.
 - [ ] Valider le build Windows.
 - [ ] Vérifier qu’aucune API Python publique n’a changé.
+- [ ] Vérifier que le nombre de fichiers partagés reste raisonnable et compréhensible.
 
 ## Critère de finalisation
 
-Le chantier sera terminé lorsque les responsabilités communes seront centralisées sans abstraction excessive, que les duplications de bordures et de décoration auront disparu des pickers concernés, que les actions Flutter internes partageront un rendu cohérent et que tous les contrôles conserveront leur comportement et leur API validés.
+Le chantier sera terminé lorsque les fonctions communes seront centralisées dans quelques modules thématiques cohérents, sans abstraction excessive ni prolifération de fichiers, et que tous les contrôles conserveront leur comportement, leur rendu et leur API validés.
