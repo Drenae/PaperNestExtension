@@ -28,7 +28,6 @@ class PaperNestDialogSurface extends StatelessWidget {
   });
 
   Color _variantColor(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
     switch (variant) {
       case "primary":
         return const Color(0xFFF9A825);
@@ -48,7 +47,7 @@ class PaperNestDialogSurface extends StatelessWidget {
 
     final variantColor = _variantColor(context);
     final headerBackground =
-        control?.getColor("header_bgcolor", context) ?? const Color(0xFF17191F);
+        control?.getColor("header_bgcolor", context) ?? Colors.grey.shade900;
     final headerColor =
         control?.getColor("header_color", context) ?? Colors.white;
     final iconBackground =
