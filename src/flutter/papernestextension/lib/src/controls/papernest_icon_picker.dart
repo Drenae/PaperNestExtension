@@ -2,6 +2,8 @@ import 'package:flet/flet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
+import '../widgets/papernest_dialog_surface.dart';
+
 class PaperNestIconPickerControl extends StatefulWidget {
   final Control control;
 
@@ -96,6 +98,79 @@ class _PaperNestIconPickerControlState
     return option.getString("label", "") ?? "";
   }
 
+  Widget _buildOptionTile(
+    BuildContext context,
+    Control option,
+    String? temporaryValue,
+    ValueChanged<String> onSelected,
+  ) {
+    final value = _optionValue(option);
+    final isSelected = value == temporaryValue;
+    final radius = widget.control.getBorderRadius("option_border_radius") ??
+        BorderRadius.circular(10);
+    final selectedColor =
+        widget.control.getColor("selected_color", context) ??
+            Theme.of(context).colorScheme.primary;
+
+    return Material(
+      color: isSelected
+          ? widget.control.getColor("selected_bgcolor", context) ??
+              Theme.of(context).colorScheme.primaryContainer
+          : Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: radius,
+        side: BorderSide(
+          width: isSelected ? 2 : 1,
+          color: isSelected
+              ? widget.control.getColor("selected_border_color", context) ??
+                  selectedColor
+              : widget.control.getColor("border_color", context) ??
+                  Theme.of(context).colorScheme.outline,
+        ),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        mouseCursor:
+            value == null ? SystemMouseCursors.basic : SystemMouseCursors.click,
+        hoverColor: widget.control.getColor("hover_color", context),
+        onTap: value == null ? null : () => onSelected(value),
+        child: Padding(
+          padding: widget.control.getPadding("option_padding") ??
+              const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+          child: Row(
+            children: [
+              _optionIcon(
+                option,
+                size: widget.control.getDouble("option_icon_size", 24) ?? 24,
+              ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Text(
+                  _optionLabel(option),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: isSelected
+                        ? selectedColor
+                        : widget.control.getColor("color", context),
+                    fontWeight:
+                        isSelected ? FontWeight.w600 : FontWeight.normal,
+                  ),
+                ),
+              ),
+              if (isSelected)
+                Icon(
+                  Icons.check_circle_rounded,
+                  size: 18,
+                  color: selectedColor,
+                ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   Future<void> _openPicker() async {
     if (!_interactive || _options.isEmpty) return;
     if (!_focusNode.hasFocus) _focusNode.requestFocus();
@@ -104,151 +179,61 @@ class _PaperNestIconPickerControlState
 
     final selected = await showDialog<String>(
       context: context,
+      barrierColor: widget.control.getColor("barrier_color", context),
       builder: (dialogContext) {
         return StatefulBuilder(
           builder: (context, setDialogState) {
             final width = widget.control.getDouble("dialog_width", 820) ?? 820;
-            return AlertDialog(
+            final description =
+                widget.control.getString("picker_description") ?? "";
+
+            return PaperNestDialogSurface(
+              control: widget.control,
               title: Text(
                 widget.control.getString("picker_title", "Choisir une icône")!,
               ),
-              content: SizedBox(
-                width: width,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if ((widget.control.getString("picker_description") ?? "")
-                        .isNotEmpty) ...[
-                      Text(widget.control.getString("picker_description")!),
-                      const SizedBox(height: 16),
-                    ],
-                    Flexible(
-                      child: GridView.builder(
-                        shrinkWrap: true,
-                        gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-                          maxCrossAxisExtent:
-                              widget.control.getDouble("grid_max_extent", 190) ??
-                                  190,
-                          childAspectRatio: widget.control.getDouble(
-                                "grid_child_aspect_ratio",
-                                2.5,
-                              ) ??
+              icon: const Icon(Icons.emoji_symbols_rounded),
+              variant: "primary",
+              width: width,
+              maxHeight: 650,
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  if (description.isNotEmpty) ...[
+                    Text(description),
+                    const SizedBox(height: 16),
+                  ],
+                  Flexible(
+                    child: GridView.builder(
+                      shrinkWrap: true,
+                      gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+                        maxCrossAxisExtent:
+                            widget.control.getDouble("grid_max_extent", 190) ??
+                                190,
+                        childAspectRatio: widget.control.getDouble(
+                              "grid_child_aspect_ratio",
                               2.5,
-                          crossAxisSpacing:
-                              widget.control.getDouble("grid_spacing", 8) ?? 8,
-                          mainAxisSpacing:
-                              widget.control.getDouble("grid_run_spacing", 8) ??
-                                  8,
+                            ) ??
+                            2.5,
+                        crossAxisSpacing:
+                            widget.control.getDouble("grid_spacing", 8) ?? 8,
+                        mainAxisSpacing:
+                            widget.control.getDouble("grid_run_spacing", 8) ??
+                                8,
+                      ),
+                      itemCount: _options.length,
+                      itemBuilder: (context, index) => _buildOptionTile(
+                        context,
+                        _options[index],
+                        temporaryValue,
+                        (value) => setDialogState(
+                          () => temporaryValue = value,
                         ),
-                        itemCount: _options.length,
-                        itemBuilder: (context, index) {
-                          final option = _options[index];
-                          final value = _optionValue(option);
-                          final isSelected = value == temporaryValue;
-                          final radius = widget.control.getBorderRadius(
-                                "option_border_radius",
-                              ) ??
-                              BorderRadius.circular(10);
-                          final selectedColor = widget.control.getColor(
-                                "selected_color",
-                                context,
-                              ) ??
-                              Theme.of(context).colorScheme.primary;
-                          return Material(
-                            color: isSelected
-                                ? widget.control.getColor(
-                                      "selected_bgcolor",
-                                      context,
-                                    ) ??
-                                    Theme.of(context)
-                                        .colorScheme
-                                        .primaryContainer
-                                : Colors.transparent,
-                            shape: RoundedRectangleBorder(
-                              borderRadius: radius,
-                              side: BorderSide(
-                                width: isSelected ? 2 : 1,
-                                color: isSelected
-                                    ? widget.control.getColor(
-                                          "selected_border_color",
-                                          context,
-                                        ) ??
-                                        selectedColor
-                                    : widget.control.getColor(
-                                          "border_color",
-                                          context,
-                                        ) ??
-                                        Theme.of(context).colorScheme.outline,
-                              ),
-                            ),
-                            clipBehavior: Clip.antiAlias,
-                            child: InkWell(
-                              mouseCursor: value == null
-                                  ? SystemMouseCursors.basic
-                                  : SystemMouseCursors.click,
-                              hoverColor: widget.control.getColor(
-                                "hover_color",
-                                context,
-                              ),
-                              onTap: value == null
-                                  ? null
-                                  : () => setDialogState(
-                                        () => temporaryValue = value,
-                                      ),
-                              child: Padding(
-                                padding: widget.control.getPadding(
-                                      "option_padding",
-                                    ) ??
-                                    const EdgeInsets.symmetric(
-                                      horizontal: 12,
-                                      vertical: 8,
-                                    ),
-                                child: Row(
-                                  children: [
-                                    _optionIcon(
-                                      option,
-                                      size: widget.control.getDouble(
-                                            "option_icon_size",
-                                            24,
-                                          ) ??
-                                          24,
-                                    ),
-                                    const SizedBox(width: 10),
-                                    Expanded(
-                                      child: Text(
-                                        _optionLabel(option),
-                                        maxLines: 1,
-                                        overflow: TextOverflow.ellipsis,
-                                        style: TextStyle(
-                                          color: isSelected
-                                              ? selectedColor
-                                              : widget.control.getColor(
-                                                  "color",
-                                                  context,
-                                                ),
-                                          fontWeight: isSelected
-                                              ? FontWeight.w600
-                                              : FontWeight.normal,
-                                        ),
-                                      ),
-                                    ),
-                                    if (isSelected)
-                                      Icon(
-                                        Icons.check_circle_rounded,
-                                        size: 18,
-                                        color: selectedColor,
-                                      ),
-                                  ],
-                                ),
-                              ),
-                            ),
-                          );
-                        },
                       ),
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
               actions: [
                 TextButton(
@@ -324,7 +309,8 @@ class _PaperNestIconPickerControlState
       focusNode: _focusNode,
       autofocus: widget.control.getBool("autofocus", false)!,
       onKeyEvent: (_, event) {
-        if (event is KeyDownEvent && event.logicalKey == LogicalKeyboardKey.escape) {
+        if (event is KeyDownEvent &&
+            event.logicalKey == LogicalKeyboardKey.escape) {
           widget.control.triggerEvent("escape");
           return KeyEventResult.handled;
         }
