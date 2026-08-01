@@ -4,7 +4,9 @@
 
 Phase 3 officiellement ouverte.
 
-Les sources Python et Flutter de `AlertDialog` pour la version Flet retenue ont été fournies et étudiées. L’architecture est maintenant figée : un contrôle public `PaperNestAlertDialog` partagera un composant Flutter interne avec les dialogues des pickers.
+Les sources Python et Flutter de `AlertDialog` pour la version Flet retenue ont été fournies et étudiées. Le contrôle public, sa surface Flutter partagée, les exports et l’enregistrement dans l’extension sont maintenant créés.
+
+La première compilation Flutter, `flet run` et le build Windows ont été validés. Une page `Dialogues` est maintenant intégrée à l’application d’exemple pour la validation visuelle et fonctionnelle avant toute migration des pickers.
 
 ## Objectif
 
@@ -39,34 +41,38 @@ Le contrôle public conserve le cycle de vie natif de `AlertDialog` : propriét�
 
 ## API Python retenue
 
-- [ ] Créer `PaperNestAlertDialog` à partir de `DialogControl`.
-- [ ] Accepter `title`, `content`, `actions` et `icon` comme chaînes ou contrôles Flet selon leur nature.
-- [ ] Ajouter `variant` avec `standard`, `primary`, `success`, `warning` et `danger`.
-- [ ] Ajouter `title_action`.
-- [ ] Ajouter `width` et `max_height`.
-- [ ] Conserver `modal`, `open`, `scrollable`, `barrier_color` et `on_dismiss`.
-- [ ] Ajouter `dismissible` comme API explicite, convertie vers le comportement modal de la route.
-- [ ] Conserver les propriétés utiles de couleurs, espacements, forme, ombre et alignement.
-- [ ] Ne pas recopier les propriétés natives sans usage réel dans PaperNest.
+- [x] Créer `PaperNestAlertDialog` à partir de `DialogControl`.
+- [x] Accepter `title`, `content`, `actions` et `icon` comme chaînes ou contrôles Flet selon leur nature.
+- [x] Ajouter `variant` avec `standard`, `primary`, `success`, `warning` et `danger`.
+- [x] Ajouter `title_action`.
+- [x] Ajouter `width` et `max_height`.
+- [x] Conserver `modal`, `open`, `scrollable`, `barrier_color` et `on_dismiss`.
+- [x] Ajouter `dismissible` comme API explicite.
+- [x] Conserver les propriétés utiles de couleurs, espacements, forme, ombre et alignement.
+- [x] Ne pas recopier les propriétés natives sans usage réel dans PaperNest.
 
 ## Composant Flutter partagé
 
-- [ ] Créer `PaperNestDialogSurface`.
-- [ ] Construire l’en-tête sombre, l’icône, le titre et `title_action`.
-- [ ] Centraliser les paddings, rayons, ombres, couleurs et variantes.
-- [ ] Gérer une largeur contrainte et une hauteur maximale.
-- [ ] Gérer un contenu scrollable sans faire défiler la barre d’actions.
-- [ ] Gérer les petits écrans via `SafeArea` et des contraintes adaptées.
-- [ ] Permettre aux pickers de fournir leur propre contenu et leurs propres actions.
-- [ ] Préserver l’accessibilité et le libellé sémantique.
+- [x] Créer `PaperNestDialogSurface`.
+- [x] Construire l’en-tête sombre, l’icône, le titre et `title_action`.
+- [x] Centraliser les paddings, rayons, ombres, couleurs et variantes.
+- [x] Gérer une largeur contrainte et une hauteur maximale.
+- [x] Gérer un contenu scrollable sans faire défiler la barre d’actions.
+- [x] Gérer les petits écrans via `SafeArea` et des contraintes adaptées.
+- [x] Permettre aux pickers de fournir leur propre contenu et leurs propres actions.
+- [ ] Vérifier l’accessibilité et le libellé sémantique pendant les tests.
 
 ## Implémentation du contrôle public
 
-- [ ] Créer le fichier Python du contrôle.
-- [ ] Créer le widget Flutter du contrôle.
-- [ ] Reprendre le cycle de vie robuste de `AlertDialogControl`.
-- [ ] Enregistrer le contrôle dans `Extension.createWidget()`.
-- [ ] Exporter le contrôle depuis les API publiques de l’extension.
+- [x] Créer le fichier Python du contrôle.
+- [x] Créer le widget Flutter du contrôle.
+- [x] Reprendre le cycle de vie robuste de `AlertDialogControl`.
+- [x] Importer `ControlInheritedNotifier` depuis le package Flet sans dupliquer le framework.
+- [x] Enregistrer le contrôle dans `Extension.createWidget()`.
+- [x] Exporter le contrôle depuis les API publiques de l’extension.
+- [x] Vérifier la compilation Flutter.
+- [x] Vérifier `flet run`.
+- [x] Vérifier le build Windows de l’application d’exemple.
 
 ## Migration des pickers
 
@@ -88,14 +94,20 @@ Le contrôle public conserve le cycle de vie natif de `AlertDialog` : propriét�
 
 ## Exemple et validation
 
-- [ ] Créer une page `Dialogues` dans l’application d’exemple.
-- [ ] Tester toutes les variantes.
+- [x] Créer une page `Dialogues` dans l’application d’exemple.
+- [x] Ajouter les cinq variantes à la page.
+- [x] Ajouter un exemple avec `title_action`.
+- [x] Ajouter un contenu long avec `scrollable` et `max_height`.
+- [x] Ajouter un dialogue modal non dismissible.
+- [x] Ajouter un dialogue fermable par clic extérieur.
+- [ ] Tester visuellement toutes les variantes.
 - [ ] Tester les contenus courts, longs et scrollables.
 - [ ] Tester les actions multiples et leur débordement.
 - [ ] Tester la fermeture extérieure, le mode modal et Échap.
 - [ ] Tester plusieurs dialogues successifs et imbriqués.
 - [ ] Tester les pickers après migration.
-- [ ] Valider les builds Windows de PaperNestExtension et PaperNest.
+- [ ] Faire valider visuellement et fonctionnellement le contrôle public par l’utilisateur.
+- [ ] Valider les builds Windows après les migrations des pickers et de PaperNest.
 
 ## Critère de finalisation
 
