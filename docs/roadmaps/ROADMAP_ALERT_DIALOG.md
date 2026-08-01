@@ -8,7 +8,7 @@ Les sources Python et Flutter de `AlertDialog` pour la version Flet retenue ont 
 
 La compilation Flutter, `flet run`, le build Windows et la page d’exemple ont été testés et validés. L’API publique est jugée complète et les actions fournies depuis Python restent entièrement personnalisables.
 
-La prochaine étape est la migration progressive des dialogues internes des pickers vers `PaperNestDialogSurface`.
+`PaperNestColorPicker` utilise maintenant `PaperNestDialogSurface`. Cette première migration doit être reconstruite et validée avant de passer à `PaperNestIconPicker`.
 
 ## Objectif
 
@@ -32,7 +32,7 @@ Le contrôle public conserve le cycle de vie natif de `AlertDialog` : propriét�
 
 Les contrôles placés dans `actions` depuis Python sont rendus tels quels. Les wrappers applicatifs comme `PrimaryButton`, `SecondaryButton` et `GhostButton` restent donc utilisables et personnalisables sans nécessiter un fork de bouton.
 
-Les actions créées directement dans le code Flutter des pickers utiliseront ultérieurement un composant Flutter interne partagé. La création éventuelle d’un contrôle public `PaperNestButton` sera étudiée séparément et n’est pas nécessaire à ce chantier.
+Les actions créées directement dans le code Flutter des pickers utiliseront ultérieurement un widget Flutter interne partagé. La création éventuelle d’un contrôle public `PaperNestButton` sera étudiée séparément et n’est pas nécessaire à ce chantier.
 
 ## Étude de Flet
 
@@ -82,8 +82,22 @@ Les actions créées directement dans le code Flutter des pickers utiliseront ul
 
 ## Migration des pickers
 
-- [ ] Migrer `PaperNestColorPicker` vers `PaperNestDialogSurface`.
-- [ ] Migrer `PaperNestIconPicker` vers `PaperNestDialogSurface`.
+### PaperNestColorPicker
+
+- [x] Remplacer l’`AlertDialog` Flutter local par `PaperNestDialogSurface`.
+- [x] Conserver `MaterialPicker` et sa sélection temporaire.
+- [x] Conserver l’annulation sans modification.
+- [x] Conserver la confirmation et l’événement `change`.
+- [x] Conserver les textes personnalisables `picker_title`, `cancel_text` et `confirm_text`.
+- [x] Ne pas modifier le champ, les bordures, le focus ni l’API Python.
+- [ ] Recompiler l’extension.
+- [ ] Tester le ColorPicker dans l’application d’exemple.
+- [ ] Tester le ColorPicker dans PaperNest.
+- [ ] Valider le build Windows.
+
+### Autres pickers
+
+- [ ] Migrer `PaperNestIconPicker` vers `PaperNestDialogSurface` après validation du ColorPicker.
 - [ ] Étudier `PaperNestDatePicker` avec le paramètre `builder` de `showDatePicker()`.
 - [ ] Utiliser la nouvelle identité sur le DatePicker uniquement si toutes les fonctions natives sont conservées.
 - [ ] Conserver le DatePicker Material natif si l’enveloppe partagée entraîne une régression.
@@ -120,11 +134,11 @@ Les actions créées directement dans le code Flutter des pickers utiliseront ul
 
 ## Refactorisation future associée
 
-La centralisation des bordures, décorations de champs, interactions et actions Flutter internes sera traitée dans une mise à jour distincte :
+La centralisation globale des fonctions Flutter partagées sera traitée dans une mise à jour distincte :
 
 - `ROADMAP_FLUTTER_SHARED_COMPONENTS.md`
 
-Ce chantier ne doit pas être mélangé à la migration actuelle des dialogues.
+Cette roadmap couvre l’architecture partagée de l’extension entière, avec des modules regroupés par thèmes et sans multiplication excessive de fichiers helpers.
 
 ## Critère de finalisation
 
