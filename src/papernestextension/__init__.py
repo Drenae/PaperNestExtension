@@ -1,9 +1,11 @@
 from .controls import (
+    PaperNestAlertDialog,
     PaperNestColorPicker,
     PaperNestDatePicker,
     PaperNestDatePickerEntryMode,
     PaperNestDatePickerEntryModeChangeEvent,
     PaperNestDatePickerMode,
+    PaperNestDialogVariant,
     PaperNestDropdown,
     PaperNestDropdownOption,
     PaperNestDropdownState,
@@ -28,11 +30,13 @@ from .controls import (
 )
 
 __all__ = [
+    "PaperNestAlertDialog",
     "PaperNestColorPicker",
     "PaperNestDatePicker",
     "PaperNestDatePickerEntryMode",
     "PaperNestDatePickerEntryModeChangeEvent",
     "PaperNestDatePickerMode",
+    "PaperNestDialogVariant",
     "PaperNestDropdown",
     "PaperNestDropdownOption",
     "PaperNestDropdownState",
