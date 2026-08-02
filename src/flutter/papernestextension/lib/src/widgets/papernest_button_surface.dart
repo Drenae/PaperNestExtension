@@ -54,25 +54,27 @@ class _PaperNestButtonSurfaceState extends State<PaperNestButtonSurface> {
   }
 
   Gradient? _gradientForState(BuildContext context) {
+    final theme = Theme.of(context);
+
     if (control.disabled || control.getBool("loading", false)!) {
-      return control.getGradient("disabled_gradient", context) ??
-          control.getGradient("gradient", context);
+      return control.getGradient("disabled_gradient", theme) ??
+          control.getGradient("gradient", theme);
     }
     if (_pressed) {
-      return control.getGradient("pressed_gradient", context) ??
-          control.getGradient("hover_gradient", context) ??
-          control.getGradient("gradient", context);
+      return control.getGradient("pressed_gradient", theme) ??
+          control.getGradient("hover_gradient", theme) ??
+          control.getGradient("gradient", theme);
     }
     if (_focused) {
-      return control.getGradient("focused_gradient", context) ??
-          control.getGradient("hover_gradient", context) ??
-          control.getGradient("gradient", context);
+      return control.getGradient("focused_gradient", theme) ??
+          control.getGradient("hover_gradient", theme) ??
+          control.getGradient("gradient", theme);
     }
     if (_hovered) {
-      return control.getGradient("hover_gradient", context) ??
-          control.getGradient("gradient", context);
+      return control.getGradient("hover_gradient", theme) ??
+          control.getGradient("gradient", theme);
     }
-    return control.getGradient("gradient", context);
+    return control.getGradient("gradient", theme);
   }
 
   Curve _curve() {
