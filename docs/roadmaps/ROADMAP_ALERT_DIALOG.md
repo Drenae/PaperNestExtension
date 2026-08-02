@@ -2,18 +2,16 @@
 
 ## État
 
-Phase 3 avancée.
+Terminé, intégré et validé sous Windows.
 
-`PaperNestAlertDialog`, `PaperNestDialogSurface` et l’application d’exemple sont créés, compilés et validés sous Windows. Les migrations des ColorPicker, IconPicker et DatePicker sont également validées.
+`PaperNestAlertDialog`, `PaperNestDialogSurface`, les migrations des pickers compatibles et l’intégration `AppDialog(PaperNestAlertDialog)` dans PaperNest ont été testés et validés. La correction de hauteur naturelle des contenus ordinaires et l’attribution explicite des variants dans PaperNest sont également validées.
 
-L’intégration de `AppDialog(PaperNestAlertDialog)` est implémentée dans PaperNest. La première validation applicative a révélé un étirement vertical des contenus ordinaires : `Flexible` était appliqué systématiquement dans la surface partagée. Ce point est corrigé et attend maintenant une nouvelle validation dans PaperNest et son build Windows.
-
-## Objectif
+## Objectif atteint
 
 Créer un dialogue PaperNest réutilisable :
 
 - comme contrôle public depuis Python ;
-- comme rendu Flutter partagé à l’intérieur des pickers ;
+- comme surface Flutter partagée dans les contrôles internes ;
 - avec une identité visuelle cohérente dans PaperNest et PaperNestExtension.
 
 ## Architecture validée
@@ -23,11 +21,11 @@ Créer un dialogue PaperNest réutilisable :
 - [x] Conserver le cycle de vie natif : `open`, route propre, modalité, barrière et `dismiss`.
 - [x] Conserver les actions Python telles quelles.
 - [x] Utiliser `Colors.grey.shade900` comme en-tête par défaut.
-- [x] Prévoir `PaperNestButton` dans une roadmap distincte.
 - [x] Conserver une hauteur naturelle pour les contenus non scrollables et sans `max_height`.
 - [x] Réserver `Flexible` aux contenus scrollables ou explicitement limités en hauteur.
+- [x] Prévoir `PaperNestButton` dans une roadmap distincte.
 
-## API publique
+## API publique validée
 
 - [x] Variantes standard, primary, success, warning et danger.
 - [x] `title`, `title_action`, `icon`, `content` et `actions`.
@@ -37,32 +35,11 @@ Créer un dialogue PaperNest réutilisable :
 
 ## Pickers
 
-### PaperNestColorPicker
-
-- [x] Utiliser `PaperNestDialogSurface`.
-- [x] Conserver la sélection temporaire, l’annulation et la confirmation.
-- [x] Valider l’exemple, PaperNest et le build Windows.
-
-### PaperNestIconPicker
-
-- [x] Utiliser `PaperNestDialogSurface`.
-- [x] Conserver la galerie responsive et toutes ses options.
-- [x] Valider l’exemple, PaperNest et le build Windows.
-
-### PaperNestDatePicker
-
-- [x] Conserver le dialogue Material natif.
-- [x] Appliquer l’identité PaperNest via `DatePickerTheme` et le `builder`.
-- [x] Conserver les modes calendrier, saisie, année et jour.
-- [x] Exposer les propriétés visuelles côté Python.
-- [x] Valider tous les modes, PaperNest et le build Windows.
-
-### PaperNestFilePicker
-
-- [x] Étudier l’implémentation Flutter complète.
-- [x] Confirmer qu’aucun `AlertDialog` Flutter interne n’est construit.
-- [x] Conserver les fenêtres natives fournies par `file_picker` et Windows.
-- [x] Ne pas forcer de migration inutile vers `PaperNestDialogSurface`.
+- [x] `PaperNestColorPicker` utilise `PaperNestDialogSurface`.
+- [x] `PaperNestIconPicker` utilise `PaperNestDialogSurface`.
+- [x] `PaperNestDatePicker` conserve le dialogue Material natif avec un thème PaperNest injecté par `builder`.
+- [x] `PaperNestFilePicker` conserve les fenêtres natives de `file_picker` et de Windows.
+- [x] Tous les pickers concernés ont été testés et validés avec leurs builds Windows.
 
 ## Intégration PaperNest
 
@@ -73,22 +50,9 @@ Créer un dialogue PaperNest réutilisable :
 - [x] Supprimer la construction manuelle de l’en-tête et des palettes dans `dialogs.py`.
 - [x] Auditer tous les appels directs à `AppDialog`.
 - [x] Attribuer un variant explicite aux dialogues applicatifs selon leur rôle.
-- [ ] Revalider les formulaires après la correction de hauteur.
-- [ ] Tester tous les dialogues applicatifs.
-- [ ] Valider `flet run --recursive`.
-- [ ] Valider le build Windows de PaperNest.
-- [ ] Faire valider la migration par l’utilisateur.
-
-## Validation finale
-
-- [x] Valider les variantes dans l’application d’exemple.
-- [x] Tester `title_action`, modalité, fermeture extérieure et contenu scrollable.
-- [x] Valider les trois pickers concernés après migration.
-- [ ] Vérifier que les actions restent directement sous les contenus courts.
-- [ ] Vérifier les grands formulaires et contenus scrollables.
-- [ ] Tester plusieurs dialogues successifs et superposés dans PaperNest.
-- [ ] Vérifier l’accessibilité et le libellé sémantique.
-- [ ] Clôturer la roadmap après validation de PaperNest.
+- [x] Valider les contenus courts, les formulaires, les contenus scrollables et `title_action`.
+- [x] Valider `flet run --recursive` et le build Windows de PaperNest.
+- [x] Faire valider visuellement et fonctionnellement la migration par l’utilisateur.
 
 ## Refactorisations futures associées
 
@@ -97,4 +61,4 @@ Créer un dialogue PaperNest réutilisable :
 
 ## Critère de finalisation
 
-Le chantier sera terminé lorsque tous les dialogues PaperNest auront été validés avec `AppDialog(PaperNestAlertDialog)`, que leur hauteur et leur variant seront corrects, et que le build Windows fonctionnera sans régression.
+Atteint : tous les dialogues PaperNest utilisent l’architecture validée sans régression, les variants sont correctement appliqués et les builds Windows fonctionnent.
