@@ -110,16 +110,29 @@ class PaperNestDialogSurface extends StatelessWidget {
   Widget build(BuildContext context) {
     final header = _buildHeader(context);
     final effectiveWidth = width ?? control?.getDouble("width", 560) ?? 560;
-    final effectiveMaxHeight =
-        maxHeight ?? control?.getDouble("max_height");
+    final effectiveMaxHeight = maxHeight ?? control?.getDouble("max_height");
+    final contentPadding = control?.getPadding("content_padding") ??
+        const EdgeInsets.fromLTRB(24, 20, 24, 16);
 
     Widget? body = content;
     if (body != null && scrollable) {
       body = SingleChildScrollView(child: body);
     }
 
+    Widget? bodySection;
+    if (body != null) {
+      final paddedBody = Padding(
+        padding: contentPadding,
+        child: body,
+      );
+      bodySection = (scrollable || effectiveMaxHeight != null)
+          ? Flexible(child: paddedBody)
+          : paddedBody;
+    }
+
     final constrainedContent = ConstrainedBox(
       constraints: BoxConstraints(
+        minWidth: effectiveWidth,
         maxWidth: effectiveWidth,
         maxHeight: effectiveMaxHeight ?? double.infinity,
       ),
@@ -127,14 +140,7 @@ class PaperNestDialogSurface extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (header != null) header,
-          if (body != null)
-            Flexible(
-              child: Padding(
-                padding: control?.getPadding("content_padding") ??
-                    const EdgeInsets.fromLTRB(24, 20, 24, 16),
-                child: body,
-              ),
-            ),
+          if (bodySection != null) bodySection,
           if (actions.isNotEmpty)
             Padding(
               padding: control?.getPadding("actions_padding") ??
