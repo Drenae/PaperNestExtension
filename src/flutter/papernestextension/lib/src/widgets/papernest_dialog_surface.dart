@@ -60,7 +60,7 @@ class PaperNestDialogSurface extends StatelessWidget {
           const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
       decoration: BoxDecoration(
         color: headerBackground,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(12)),
       ),
       child: Row(
         children: [
@@ -177,7 +177,7 @@ class PaperNestDialogSurface extends StatelessWidget {
       shadowColor: control?.getColor("shadow_color", context),
       clipBehavior: Clip.antiAlias,
       shape: control?.getShape("shape", Theme.of(context)) ??
-          RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: constrainedContent,
     );
   }
