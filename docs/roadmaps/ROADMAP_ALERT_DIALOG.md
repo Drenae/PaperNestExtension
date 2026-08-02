@@ -8,7 +8,7 @@ Les sources Python et Flutter de `AlertDialog` pour la version Flet retenue ont 
 
 La compilation Flutter, `flet run`, le build Windows et la page d’exemple ont été testés et validés. L’API publique est jugée complète et les actions fournies depuis Python restent entièrement personnalisables.
 
-`PaperNestColorPicker` utilise maintenant `PaperNestDialogSurface` et cette migration a été testée et validée. `PaperNestIconPicker` utilise également la surface partagée et attend sa validation avant l’étude du DatePicker.
+`PaperNestColorPicker` et `PaperNestIconPicker` utilisent maintenant `PaperNestDialogSurface` et leurs migrations ont été testées et validées. `PaperNestDatePicker` conserve le dialogue Material natif, mais reçoit désormais l’identité PaperNest via le `builder` de `showDatePicker()` afin de préserver toutes ses fonctions.
 
 ## Objectif
 
@@ -32,7 +32,7 @@ Le contrôle public conserve le cycle de vie natif de `AlertDialog` : propriét�
 
 Les contrôles placés dans `actions` depuis Python sont rendus tels quels. Les wrappers applicatifs comme `PrimaryButton`, `SecondaryButton` et `GhostButton` restent donc utilisables et personnalisables.
 
-Un chantier `PaperNestButton` est désormais planifié. Il fournira plus tard un contrôle public Python + Flutter et un widget Flutter interne réutilisable par les actions des dialogues et pickers.
+Un chantier `PaperNestButton` est planifié. Il fournira plus tard un contrôle public Python + Flutter et un widget Flutter interne réutilisable par les actions des dialogues et pickers.
 
 ## Étude de Flet
 
@@ -106,17 +106,26 @@ Un chantier `PaperNestButton` est désormais planifié. Il fournira plus tard un
 - [x] Conserver la confirmation et l’événement `change`.
 - [x] Conserver `picker_title`, `picker_description`, `cancel_text` et `confirm_text`.
 - [x] Ne pas modifier le champ, ses bordures, son focus ni son API Python.
-- [ ] Recompiler l’extension.
-- [ ] Tester l’IconPicker dans l’application d’exemple.
-- [ ] Tester l’IconPicker dans PaperNest.
-- [ ] Valider le build Windows.
-- [ ] Faire valider la migration par l’utilisateur.
+- [x] Recompiler l’extension.
+- [x] Tester l’IconPicker dans l’application d’exemple.
+- [x] Tester l’IconPicker dans PaperNest.
+- [x] Valider le build Windows.
+- [x] Faire valider la migration par l’utilisateur.
 
 ### PaperNestDatePicker
 
-- [ ] Étudier le paramètre `builder` de `showDatePicker()`.
-- [ ] Utiliser la nouvelle identité uniquement si toutes les fonctions natives sont conservées.
-- [ ] Conserver le DatePicker Material natif si l’enveloppe partagée entraîne une régression.
+- [x] Étudier le paramètre `builder` de `showDatePicker()`.
+- [x] Confirmer que `PaperNestDialogSurface` ne peut pas remplacer proprement le dialogue sans reconstruire le calendrier natif.
+- [x] Conserver le DatePicker Material natif.
+- [x] Injecter l’identité PaperNest via `DatePickerTheme` dans le `builder`.
+- [x] Conserver les modes calendrier, saisie, année et jour.
+- [x] Conserver la validation, la localisation française et `onDatePickerModeChange`.
+- [x] Exposer `picker_primary_color`, `picker_bgcolor`, `picker_header_bgcolor`, `picker_header_color` et `picker_border_radius` côté Python.
+- [ ] Recompiler l’extension.
+- [ ] Tester tous les modes du DatePicker dans l’application d’exemple.
+- [ ] Tester le DatePicker dans PaperNest.
+- [ ] Valider le build Windows.
+- [ ] Faire valider la migration par l’utilisateur.
 
 ### PaperNestFilePicker
 
