@@ -1,7 +1,7 @@
 import flet as ft
 from papernestextension import PaperNestGlideRail, PaperNestGlideRailDestination
 
-from app.pages import DialogsPage, FormsPage, HomePage, PickersPage
+from app.pages import ActionsPage, DialogsPage, FormsPage, HomePage, PickersPage
 
 
 COLLAPSED_WIDTH = 76
@@ -21,6 +21,7 @@ class ExampleMainWindow:
             lambda: HomePage(page),
             lambda: FormsPage(page),
             lambda: PickersPage(page),
+            lambda: ActionsPage(page),
             lambda: DialogsPage(page),
         ]
         self.rail = self._build_rail()
@@ -91,6 +92,11 @@ class ExampleMainWindow:
                     label="Pickers",
                     icon=ft.Icons.TOUCH_APP_OUTLINED,
                     selected_icon=ft.Icons.TOUCH_APP_ROUNDED,
+                ),
+                PaperNestGlideRailDestination(
+                    label="Actions",
+                    icon=ft.Icons.SMART_BUTTON_OUTLINED,
+                    selected_icon=ft.Icons.SMART_BUTTON_ROUNDED,
                 ),
                 PaperNestGlideRailDestination(
                     label="Dialogues",
