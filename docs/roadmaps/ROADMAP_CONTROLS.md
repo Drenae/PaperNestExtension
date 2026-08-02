@@ -2,14 +2,11 @@
 
 ## État
 
-Tous les contrôles actuellement nécessaires à PaperNest sont terminés, intégrés et validés sous Windows.
+Tous les contrôles actuellement intégrés à PaperNest sont terminés et validés sous Windows.
 
-`PaperNestAlertDialog` est maintenant implémenté, compilé et validé dans l’application d’exemple. Son chantier reste ouvert pour la migration des pickers et l’intégration dans PaperNest.
+`PaperNestAlertDialog` est désormais officiellement terminé. Le chantier actif devient `PaperNestButton`.
 
-Deux chantiers futurs distincts sont également identifiés :
-
-- centraliser les composants Flutter partagés et réduire les duplications entre contrôles ;
-- créer `PaperNestButton`, contrôle public Python + Flutter avec variantes, gradients et animations partagées.
+Un chantier distinct reste planifié pour centraliser les composants Flutter partagés et réduire les duplications entre contrôles.
 
 ## Contrôles terminés
 
@@ -20,6 +17,7 @@ Deux chantiers futurs distincts sont également identifiés :
 - [x] `PaperNestFilePicker`
 - [x] `PaperNestIconPicker` + `PaperNestIconPickerOption`
 - [x] `PaperNestGlideRail` + `PaperNestGlideRailDestination`
+- [x] `PaperNestAlertDialog` + `PaperNestDialogSurface`
 
 Roadmaps détaillées terminées :
 
@@ -28,44 +26,41 @@ Roadmaps détaillées terminées :
 - `ROADMAP_FILE_PICKER.md`
 - `ROADMAP_ICON_PICKER.md`
 - `ROADMAP_GLIDE_RAIL.md`
-
-## Chantier d’architecture actif
-
-- [ ] `PaperNestAlertDialog`
-
-Le contrôle public Python et `PaperNestDialogSurface` sont créés et validés. `PaperNestColorPicker` utilise désormais la surface partagée et a été validé. Il reste à migrer les autres pickers concernés puis `AppDialog` dans PaperNest.
-
-Roadmap détaillée :
-
 - `ROADMAP_ALERT_DIALOG.md`
 
-## Chantiers futurs
-
-### Composants Flutter partagés
-
-- [ ] Centralisation des composants Flutter partagés.
-
-Ce chantier devra réduire les duplications de bordures, décorations de champs, focus, survol, variantes et actions internes sans modifier les API publiques validées.
-
-Roadmap détaillée :
-
-- `ROADMAP_FLUTTER_SHARED_COMPONENTS.md`
+## Chantier actif
 
 ### PaperNestButton
 
 - [ ] `PaperNestButton`
 
-Le contrôle sera développé comme un fork ou contrôle autonome Python + Flutter, avec les besoins réels de PaperNest, ses variantes, `gradient`, `focused_gradient`, animation de survol et animation de clic. Son rendu Flutter interne devra aussi pouvoir être utilisé par les actions des dialogues et des pickers.
+Le contrôle sera développé comme un contrôle public Python + Flutter avec les besoins réels de PaperNest, ses variants, gradients et animations. Son rendu Flutter interne devra aussi pouvoir être utilisé par les actions des dialogues et des pickers.
+
+Les sources Flet de `Button` côté Python et Flutter ont été fournies. L’étude complète attend également les sources de `ButtonStyle` côté Python et Dart.
 
 Roadmap détaillée :
 
 - `ROADMAP_BUTTON.md`
 
+## Chantier futur
+
+### Composants Flutter partagés
+
+- [ ] Centralisation des composants Flutter partagés.
+
+Ce chantier devra réduire les duplications de bordures, décorations de champs, focus, survol, variants et actions internes sans modifier les API publiques validées.
+
+Roadmap détaillée :
+
+- `ROADMAP_FLUTTER_SHARED_COMPONENTS.md`
+
 ## Application d’exemple
 
-La refonte de l’exemple en petite application navigable est suivie séparément :
+La petite application navigable est suivie dans :
 
 - `ROADMAP_EXAMPLE_APP.md`
+
+`PaperNestButton` devra recevoir sa propre page ou section dédiée sans reconstruire l’application d’exemple.
 
 ## Validation globale
 
