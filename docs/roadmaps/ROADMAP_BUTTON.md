@@ -4,9 +4,9 @@
 
 Chantier actif.
 
-`PaperNestAlertDialog` est terminé. Les sources Flet de `Button` côté Python et Flutter ont été fournies et constituent la base officielle de l’étude.
+`PaperNestAlertDialog` est terminé. Les sources Flet de `Button` et `ButtonStyle`, côté Python et Flutter, ont été fournies et étudiées. Les wrappers actuels de PaperNest ont également été relus.
 
-Les sources de `ButtonStyle` côté Python et Dart sont encore nécessaires avant de figer l’architecture et l’API : elles permettront de distinguer ce qui doit rester géré par le style Material de ce qui justifie une implémentation propre à PaperNest.
+L’architecture est maintenant définie : conserver `ButtonStyle` pour les propriétés Material natives et ajouter une surface Flutter PaperNest partagée pour les gradients, les animations et les variants.
 
 ## Objectif
 
@@ -14,10 +14,10 @@ Créer un bouton PaperNest cohérent, personnalisable et réutilisable :
 
 - côté Python dans PaperNest ;
 - côté Flutter dans PaperNestExtension ;
-- dans les actions de `PaperNestAlertDialog` et des pickers ;
-- sans dupliquer les variants, styles et animations entre Python et Flutter.
+- dans les actions internes des dialogues et pickers ;
+- sans dupliquer variants, styles et animations.
 
-## Sources Flet
+## Sources Flet étudiées
 
 ### Button Python
 
@@ -32,66 +32,82 @@ Créer un bouton PaperNest cohérent, personnalisable et réutilisable :
 - [x] Consulter `ButtonControl` et son `FocusNode`.
 - [x] Vérifier les événements click, long press, hover, focus et blur.
 - [x] Vérifier l’utilisation de `parseButtonStyle()`.
-- [x] Vérifier les rendus FilledButton, FilledTonalButton, TextButton, OutlinedButton et ElevatedButton.
+- [x] Vérifier les rendus Filled, FilledTonal, Text, Outlined et Elevated.
 - [x] Vérifier la construction avec ou sans icône.
 - [x] Vérifier la restitution via `LayoutControl`.
 
 ### ButtonStyle
 
-- [ ] Consulter la définition Python de `ButtonStyle`.
-- [ ] Consulter le parseur et les modèles Dart associés.
-- [ ] Inventorier les propriétés Material déjà gérées par état.
-- [ ] Vérifier la sérialisation des valeurs normales, hovered, focused, pressed et disabled.
-- [ ] Déterminer quelles animations peuvent utiliser le style natif et lesquelles exigent un widget PaperNest.
+- [x] Consulter la définition Python de `ButtonStyle`.
+- [x] Consulter `parseButtonStyle()` côté Flutter.
+- [x] Confirmer la gestion par état de `color`, `bgcolor`, `overlay_color`, `shadow_color`, `elevation`, `padding`, `side`, `shape`, `text_style`, `icon_size`, `icon_color`, `mouse_cursor` et tailles.
+- [x] Confirmer les états normal, hovered, focused, pressed et disabled via `ControlStateValue` / `WidgetStateProperty`.
+- [x] Confirmer que `animation_duration` couvre les transitions Material de forme et d’élévation.
+- [x] Confirmer que `ButtonStyle` ne peut pas transporter de gradient ni animer échelle ou translation.
 
 ## Audit PaperNest
 
-- [ ] Relire entièrement `app/theme/buttons.py`.
-- [ ] Inventorier `PrimaryButton`, `SecondaryButton`, `GhostButton`, `DangerButton`, `SuccessButton` et leurs usages.
-- [ ] Recenser les propriétés réellement utilisées dans les dialogues, panneaux et barres d’actions.
-- [ ] Étudier les états loading et disabled actuels.
-- [ ] Identifier les comportements absents des boutons Flet natifs.
+- [x] Relire entièrement `app/theme/buttons.py`.
+- [x] Inventorier `AppButton`, `PrimaryButton`, `SecondaryButton`, `GhostButton`, `OutlineButton`, `DangerButton` et `SuccessButton`.
+- [x] Identifier le support actuel de `loading`, `compact`, `tooltip`, largeur et expansion.
+- [x] Confirmer que le chargement remplace l’icône par un `ProgressRing` et désactive le bouton.
+- [x] Identifier `IconAction` et `MenuAction` comme contrôles séparés, hors première migration de `PaperNestButton`.
+- [ ] Recenser tous les usages applicatifs avant l’intégration finale.
 
-## API publique envisagée
+## Décision d’architecture
+
+- [x] Créer un contrôle public Python `PaperNestButton` autonome.
+- [x] Conserver une propriété `style: ButtonStyle` pour tous les comportements Material natifs.
+- [x] Créer un widget Flutter interne partagé, utilisé par le contrôle public et par les contrôles internes de l’extension.
+- [x] Envelopper le rendu interactif dans une surface animée pour les gradients et transformations.
+- [x] Ne pas recopier le parseur complet de `ButtonStyle`.
+- [x] Utiliser `parseButtonStyle()` pour le style Material lorsque cela est pertinent.
+- [x] Regrouper variants, styles et animations par thèmes cohérents, sans multiplier les helpers.
+
+## API publique retenue pour la première version
 
 - [ ] Créer `PaperNestButton`.
 - [ ] Créer `PaperNestButtonVariant`.
-- [ ] Prévoir au minimum `primary`, `secondary`, `ghost`, `danger` et `success`.
-- [ ] Accepter un texte ou un contrôle Flet comme contenu.
-- [ ] Accepter une icône ou un contrôle avant ou après le contenu.
-- [ ] Gérer `disabled`, `autofocus`, URL, tooltip et événements usuels.
-- [ ] Préserver la personnalisation des couleurs, bordures, rayons, paddings, typographie, élévation et ombre.
+- [ ] Variants : `primary`, `secondary`, `ghost`, `outline`, `danger`, `success`.
+- [ ] Accepter `content` sous forme de chaîne ou contrôle Flet.
+- [ ] Accepter une icône ou un contrôle et choisir sa position `leading` ou `trailing`.
+- [ ] Gérer `loading` et `loading_text` nativement.
+- [ ] Gérer `compact`, largeur, hauteur et expansion.
+- [ ] Gérer `disabled`, `autofocus`, URL, tooltip et événements click, long press, hover, focus et blur.
+- [ ] Conserver `style: ButtonStyle` pour couleurs, bordures, formes, paddings, typographie, élévation, ombre, curseur et tailles.
 - [ ] Prévoir les états normal, hovered, focused, pressed et disabled.
-- [ ] Étudier un état loading natif au contrôle.
+- [ ] Exposer `focus()`.
 
-## Effets visuels
+## Gradients et animations
 
 - [ ] Ajouter `gradient`.
 - [ ] Ajouter `focused_gradient`.
-- [ ] Étudier `hover_gradient`, `pressed_gradient` et `disabled_gradient`.
+- [ ] Ajouter `hover_gradient`, `pressed_gradient` et `disabled_gradient` si renseignés.
+- [ ] Définir un ordre de résolution explicite : disabled, pressed, focused, hovered, normal.
 - [ ] Ajouter une animation de survol configurable.
 - [ ] Ajouter une animation de clic configurable.
-- [ ] Prévoir durée, courbe, échelle et éventuellement une translation légère.
-- [ ] Empêcher tout décalage de layout pendant les animations.
-- [ ] Respecter clavier, focus, disabled et accessibilité.
+- [ ] Prévoir durée, courbe, échelle et translation légère.
+- [ ] Utiliser `AnimatedContainer`, `AnimatedScale` ou équivalent sans modifier les contraintes du layout.
+- [ ] Conserver clavier, focus, curseur et accessibilité.
 - [ ] Éviter les animations excessives dans PaperNest.
 
 ## Architecture Flutter
 
-- [ ] Déterminer si le contrôle peut s’appuyer sur les boutons Material natifs enveloppés dans une surface animée.
-- [ ] Créer un widget Flutter interne partagé pour le rendu et les variants.
-- [ ] Utiliser ce widget dans le contrôle public `PaperNestButton`.
-- [ ] Permettre son utilisation directe dans les contrôles Flutter internes de l’extension.
-- [ ] Utiliser progressivement ce rendu pour les actions internes des dialogues et pickers.
-- [ ] Regrouper variants, styles et animations par thèmes cohérents sans multiplier les helpers.
+- [ ] Créer le widget interne partagé du bouton.
+- [ ] Centraliser la résolution des variants et états dans ce widget.
+- [ ] Construire le contenu, l’icône, le loader et leur ordre.
+- [ ] Utiliser une surface Material transparente lorsque le gradient fournit le fond.
+- [ ] Conserver l’overlay/ripple et le focus Material.
+- [ ] Permettre une utilisation directe par `PaperNestAlertDialog`, `PaperNestColorPicker` et `PaperNestIconPicker`.
 - [ ] Coordonner ce travail avec `ROADMAP_FLUTTER_SHARED_COMPONENTS.md`.
 
 ## Intégration PaperNest
 
 - [ ] Créer un wrapper thématique minimal seulement s’il apporte une valeur réelle.
-- [ ] Remplacer progressivement les wrappers de `app/theme/buttons.py`.
-- [ ] Préserver leurs API utiles ou fournir une migration claire.
+- [ ] Remplacer progressivement `AppButton` et ses variants.
+- [ ] Préserver les API utiles : `text`, `loading`, `compact`, `set_loading` si nécessaire et styles personnalisés.
 - [ ] Vérifier tous les dialogues, panneaux et barres d’actions.
+- [ ] Conserver `IconAction` et `MenuAction` jusqu’à une étude séparée.
 - [ ] Supprimer les anciens wrappers uniquement après validation complète.
 
 ## Application d’exemple
@@ -100,8 +116,8 @@ Créer un bouton PaperNest cohérent, personnalisable et réutilisable :
 - [ ] Ajouter une page ou section `Actions` dans l’application d’exemple.
 - [ ] Présenter tous les variants.
 - [ ] Présenter gradients et états interactifs.
-- [ ] Présenter disabled et loading si retenu.
-- [ ] Vérifier clavier, focus et curseur.
+- [ ] Présenter loading, disabled, compact, icône leading/trailing et contrôle personnalisé.
+- [ ] Vérifier clavier, focus, curseur et URL.
 
 ## Validation
 
