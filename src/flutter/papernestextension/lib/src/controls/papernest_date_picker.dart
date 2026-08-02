@@ -68,8 +68,12 @@ class _PaperNestDatePickerControlState
     }
 
     if (raw is num) {
-      final milliseconds = raw.abs() > 10000000000 ? raw.toInt() : raw.toInt() * 1000;
-      final local = DateTime.fromMillisecondsSinceEpoch(milliseconds, isUtc: true).toLocal();
+      final milliseconds =
+          raw.abs() > 10000000000 ? raw.toInt() : raw.toInt() * 1000;
+      final local = DateTime.fromMillisecondsSinceEpoch(
+        milliseconds,
+        isUtc: true,
+      ).toLocal();
       return DateTime(local.year, local.month, local.day);
     }
 
@@ -86,7 +90,9 @@ class _PaperNestDatePickerControlState
     }
 
     final parsed = DateTime.tryParse(text)?.toLocal();
-    return parsed == null ? null : DateTime(parsed.year, parsed.month, parsed.day);
+    return parsed == null
+        ? null
+        : DateTime(parsed.year, parsed.month, parsed.day);
   }
 
   String _civilIso(DateTime value) =>
@@ -112,6 +118,40 @@ class _PaperNestDatePickerControlState
       widget.control.getString("date_picker_mode") == "year"
           ? DatePickerMode.year
           : DatePickerMode.day;
+
+  Widget _buildPickerTheme(BuildContext context, Widget? child) {
+    final theme = Theme.of(context);
+    final primaryColor =
+        widget.control.getColor("picker_primary_color", context) ??
+            const Color(0xFFF9A825);
+    final backgroundColor =
+        widget.control.getColor("picker_bgcolor", context) ?? Colors.white;
+    final headerBackgroundColor =
+        widget.control.getColor("picker_header_bgcolor", context) ??
+            Colors.grey.shade900;
+    final headerColor =
+        widget.control.getColor("picker_header_color", context) ?? Colors.white;
+
+    return Theme(
+      data: theme.copyWith(
+        colorScheme: theme.colorScheme.copyWith(
+          primary: primaryColor,
+          surface: backgroundColor,
+        ),
+        datePickerTheme: theme.datePickerTheme.copyWith(
+          backgroundColor: backgroundColor,
+          headerBackgroundColor: headerBackgroundColor,
+          headerForegroundColor: headerColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(
+              widget.control.getDouble("picker_border_radius", 20) ?? 20,
+            ),
+          ),
+        ),
+      ),
+      child: child ?? const SizedBox.shrink(),
+    );
+  }
 
   Future<void> _openPicker() async {
     if (widget.control.disabled) return;
@@ -144,6 +184,7 @@ class _PaperNestDatePickerControlState
       fieldLabelText: widget.control.getString("field_label_text"),
       barrierColor: widget.control.getColor("barrier_color", context),
       locale: const Locale('fr', 'FR'),
+      builder: _buildPickerTheme,
       onDatePickerModeChange: (mode) {
         widget.control.triggerEvent(
           "entry_mode_change",
@@ -311,7 +352,9 @@ class _PaperNestDatePickerControlState
       child: Material(
         type: MaterialType.transparency,
         child: InkWell(
-          mouseCursor: widget.control.disabled ? SystemMouseCursors.basic : SystemMouseCursors.click,
+          mouseCursor: widget.control.disabled
+              ? SystemMouseCursors.basic
+              : SystemMouseCursors.click,
           canRequestFocus: false,
           onTap: widget.control.disabled ? null : _openPicker,
           hoverColor: widget.control.getColor("hover_color", context),
