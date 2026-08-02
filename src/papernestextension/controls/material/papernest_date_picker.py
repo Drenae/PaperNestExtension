@@ -51,8 +51,9 @@ class PaperNestDatePickerEntryModeChangeEvent(Event["PaperNestDatePicker"]):
 class PaperNestDatePicker(LayoutControl):
     """Sélecteur de date autonome à l'apparence d'un champ Material.
 
-    Le contrôle n'est pas éditable : toute sa surface agit comme un bouton et
-    ouvre le calendrier.
+    Le champ ouvre le DatePicker Material natif. Son dialogue conserve toutes
+    les fonctions natives et reçoit une identité visuelle PaperNest via le
+    ``builder`` Flutter de ``showDatePicker()``.
     """
 
     value: Optional[DateTimeValue] = None
@@ -83,6 +84,13 @@ class PaperNestDatePicker(LayoutControl):
     inset_padding: PaddingValue = field(
         default_factory=lambda: Padding.symmetric(horizontal=16.0, vertical=24.0)
     )
+
+    # Thème du dialogue DatePicker Material natif.
+    picker_primary_color: Optional[ColorValue] = None
+    picker_bgcolor: Optional[ColorValue] = None
+    picker_header_bgcolor: Optional[ColorValue] = None
+    picker_header_color: Optional[ColorValue] = None
+    picker_border_radius: Number = 20
 
     autofocus: bool = False
     text_align: TextAlign = TextAlign.START
