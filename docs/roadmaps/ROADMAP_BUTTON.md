@@ -2,111 +2,97 @@
 
 ## État
 
-Première implémentation créée dans PaperNestExtension, en attente de compilation et de validation sous Windows.
+Architecture corrigée après la première validation visuelle.
 
-Les sources Flet de `Button` et `ButtonStyle`, côté Python et Flutter, ont été étudiées. L’architecture conserve `ButtonStyle` pour les propriétés Material natives et utilise une surface Flutter PaperNest partagée pour les gradients, le chargement et les transformations animées.
+Le contrôle Flutter ne gère plus aucune variante métier. Les styles `primary`, `secondary`, `ghost`, `outline`, `danger` et `success` sont construits exclusivement côté Python avec `bgcolor`, `color` et `ButtonStyle`.
 
-## Objectif
+Flutter reste limité aux fonctions impossibles à réaliser proprement en Python : gradient, gradient de survol, animation de survol, animation de clic et rendu du chargement.
 
-Créer un bouton PaperNest cohérent, personnalisable et réutilisable :
+## Principes
 
-- côté Python dans PaperNest ;
-- côté Flutter dans PaperNestExtension ;
-- dans les actions internes des dialogues et pickers ;
-- sans dupliquer variants, styles et animations.
-
-## Sources Flet étudiées
-
-- [x] Étudier `Button` côté Python.
-- [x] Étudier `ButtonControl` côté Flutter.
-- [x] Étudier `ButtonStyle` côté Python.
-- [x] Étudier `parseButtonStyle()` côté Flutter.
-- [x] Confirmer la gestion Material par état.
-- [x] Confirmer que les gradients, l’échelle et la translation exigent un rendu complémentaire.
-
-## Audit PaperNest
-
-- [x] Relire `app/theme/buttons.py`.
-- [x] Inventorier `AppButton`, `PrimaryButton`, `SecondaryButton`, `GhostButton`, `OutlineButton`, `DangerButton` et `SuccessButton`.
-- [x] Identifier `loading`, `compact`, tooltip, largeur et expansion.
-- [x] Laisser `IconAction` et `MenuAction` hors de la première migration.
-- [ ] Recenser tous les usages applicatifs avant l’intégration finale.
+- [x] Garder `ButtonStyle` comme source de vérité des styles Material.
+- [x] Gérer toutes les variantes côté Python.
+- [x] Supprimer `PaperNestButtonVariant` de l’API publique.
+- [x] Supprimer toute palette codée en dur dans Flutter.
+- [x] Ne pas utiliser PaperNestButton pour imposer le style des autres contrôles.
+- [x] Limiter Flutter au rendu technique complémentaire.
 
 ## API Python
 
 - [x] Créer `PaperNestButton`.
-- [x] Créer `PaperNestButtonVariant`.
-- [x] Ajouter `primary`, `secondary`, `ghost`, `outline`, `danger` et `success`.
-- [x] Accepter un contenu chaîne ou contrôle Flet.
+- [x] Accepter un contenu texte ou contrôle Flet.
 - [x] Accepter une icône leading et une icône trailing.
-- [x] Conserver `style: ButtonStyle`.
-- [x] Ajouter `color`, `bgcolor` et `elevation`.
-- [x] Ajouter `loading`, `loading_text` et les propriétés du loader.
-- [x] Ajouter les gradients normal, hover, focus, pressed et disabled.
-- [x] Ajouter les paramètres d’échelle, translation, durée et courbe.
-- [x] Conserver URL, autofocus, clip et les événements usuels.
+- [x] Conserver `color`, `bgcolor`, `elevation` et `style`.
+- [x] Conserver `gradient` et `hover_gradient` uniquement.
+- [x] Supprimer `focused_gradient`, `pressed_gradient` et `disabled_gradient`.
+- [x] Conserver `hover_scale` et `click_scale`.
+- [x] Conserver `hover_offset_y` et `click_offset_y`.
+- [x] Conserver durée et courbe d’animation.
+- [x] Conserver `loading`, `loading_text` et le loader personnalisable.
+- [x] Conserver URL, autofocus, clip, focus et événements usuels.
 - [x] Exposer `focus()` et `set_loading()`.
-- [x] Exporter le contrôle depuis les API publiques.
-- [ ] Vérifier la compatibilité exacte des types pendant la compilation.
 
 ## Architecture Flutter
 
-- [x] Créer `PaperNestButtonSurface` comme widget partagé.
 - [x] Créer `PaperNestButtonControl`.
-- [x] Réutiliser `parseButtonStyle()` au lieu de recopier son parseur.
-- [x] Résoudre les variants dans la surface partagée.
-- [x] Résoudre les gradients dans l’ordre disabled, pressed, focused, hovered, normal.
-- [x] Conserver le ripple et le focus Material.
-- [x] Ajouter `AnimatedContainer`, `AnimatedScale` et `AnimatedSlide`.
-- [x] Gérer le loader sans modification des contraintes du layout.
-- [x] Gérer les événements click, long press, hover, focus et blur.
-- [x] Enregistrer le contrôle dans `Extension.createWidget()`.
-- [ ] Compiler l’extension et corriger les incompatibilités éventuelles.
-- [ ] Extraire les palettes/variants dans un module thématique seulement si leur réutilisation le justifie.
+- [x] Créer `PaperNestButtonSurface`.
+- [x] Réutiliser `parseButtonStyle()`.
+- [x] Supprimer la résolution des variantes côté Flutter.
+- [x] Supprimer les gradients focus, pressed et disabled.
+- [x] Résoudre uniquement `hover_gradient` puis `gradient`.
+- [x] Conserver le ripple, le focus et les états Material natifs.
+- [x] Ajouter l’animation de survol.
+- [x] Ajouter l’animation de clic.
+- [x] Gérer le loader sans dépendre d’un autre contrôle PaperNest.
+
+## Chargement
+
+`loading=True` sert à :
+
+- désactiver temporairement le clic pendant une opération asynchrone ;
+- remplacer l’icône par un indicateur de progression ;
+- afficher éventuellement `loading_text` ;
+- éviter les doubles soumissions dans les formulaires et dialogues.
 
 ## Application d’exemple
 
-- [x] Créer une page `Actions` indépendante.
-- [x] Ajouter la destination dans `PaperNestGlideRail`.
-- [x] Présenter toutes les variantes.
-- [x] Présenter gradients normal, hover et pressed.
-- [x] Présenter une icône trailing.
-- [x] Présenter loading et disabled.
-- [ ] Ajouter un exemple compact après validation de l’API.
-- [ ] Ajouter un contrôle personnalisé comme contenu.
-- [ ] Tester clavier, focus, curseur et URL.
-
-## Intégration Flutter interne
-
-- [ ] Utiliser la surface partagée dans les actions internes du ColorPicker.
-- [ ] Utiliser la surface partagée dans les actions internes de l’IconPicker.
-- [ ] Étudier son usage dans les autres contrôles Flutter.
-- [ ] Ne migrer ces actions qu’après validation du contrôle public.
+- [x] Créer la page `Actions`.
+- [x] Construire toutes les variantes côté Python.
+- [x] Présenter des couleurs réellement différentes.
+- [x] Présenter gradient et gradient de survol.
+- [x] Présenter animation de survol et animation de clic.
+- [x] Présenter loading, disabled et icône trailing.
+- [ ] Valider le rendu sous Windows.
+- [ ] Valider le focus clavier et le curseur.
+- [ ] Valider le build Windows.
 
 ## Intégration PaperNest
 
-- [ ] Créer un wrapper thématique minimal si nécessaire.
+- [ ] Créer les wrappers Python thématiques dans `app/theme/buttons.py`.
 - [ ] Remplacer progressivement `AppButton` et ses variantes.
-- [ ] Préserver `text`, `loading`, `compact`, `set_loading` et les styles personnalisés.
-- [ ] Vérifier tous les dialogues, panneaux et barres d’actions.
-- [ ] Conserver `IconAction` et `MenuAction` jusqu’à une étude séparée.
-- [ ] Supprimer les anciens wrappers uniquement après validation complète.
+- [ ] Préserver `text`, `loading`, `compact`, largeur, hauteur et expansion.
+- [ ] Conserver `IconAction` et `MenuAction` hors de cette migration.
+- [ ] Supprimer les anciens wrappers seulement après validation complète.
+
+## Hors périmètre
+
+- Les variantes ne doivent jamais être résolues dans Flutter.
+- Les actions des pickers ne doivent pas imposer PaperNestButton.
+- PaperNestAlertDialog ne doit pas dépendre de PaperNestButton.
+- Les autres contrôles restent composés côté Python.
 
 ## Validation
 
 - [ ] Valider les imports Python.
-- [ ] Valider la compilation Flutter.
 - [ ] Valider `flet run`.
-- [ ] Tester toutes les variantes.
-- [ ] Tester les gradients par état.
-- [ ] Tester hover, pressed, focus, clavier et curseur.
+- [ ] Tester les styles Python.
+- [ ] Tester gradient et hover_gradient.
+- [ ] Tester hover et clic.
 - [ ] Tester loading et disabled.
 - [ ] Vérifier l’absence de décalage de layout.
 - [ ] Valider le build Windows de l’exemple.
-- [ ] Valider l’intégration PaperNest.
-- [ ] Valider le build Windows de PaperNest.
-- [ ] Faire valider visuellement et fonctionnellement le contrôle par l’utilisateur.
+- [ ] Valider l’intégration et le build Windows de PaperNest.
 
 ## Critère de finalisation
 
-Le chantier sera terminé lorsque `PaperNestButton` remplacera proprement les wrappers nécessaires de PaperNest, que ses variants et animations seront partagés avec les actions Flutter internes, et que les deux projets auront été validés sous Windows sans régression.
+Le chantier sera terminé lorsque PaperNestButton offrira uniquement les capacités techniques complémentaires attendues, que toutes les variantes seront contrôlées depuis Python et que l’intégration PaperNest sera validée sous Windows.
