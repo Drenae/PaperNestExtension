@@ -1,5 +1,3 @@
-from dataclasses import field
-from enum import Enum
 from typing import Optional, Union
 
 from flet.controls.base_control import control
@@ -20,25 +18,16 @@ from flet.controls.types import (
 )
 from flet.utils.validation import V, ValidationRules
 
-__all__ = ["PaperNestButton", "PaperNestButtonVariant"]
-
-
-class PaperNestButtonVariant(Enum):
-    PRIMARY = "primary"
-    SECONDARY = "secondary"
-    GHOST = "ghost"
-    OUTLINE = "outline"
-    DANGER = "danger"
-    SUCCESS = "success"
+__all__ = ["PaperNestButton"]
 
 
 @control("PaperNestButton")
 class PaperNestButton(LayoutControl):
-    """Bouton Material PaperNest avec variantes, gradients et animations.
+    """Bouton Material avec gradients et animations PaperNest.
 
-    ``ButtonStyle`` reste la source de vérité pour les propriétés Material
-    natives. Les propriétés supplémentaires gèrent uniquement les gradients,
-    le chargement et les transformations animées.
+    Le contrôle Flutter ne définit aucune variante visuelle. Les couleurs,
+    bordures, formes et styles sont entièrement construits côté Python avec
+    ``color``, ``bgcolor`` et ``ButtonStyle``.
     """
 
     content: Optional[StrOrControl] = None
@@ -46,7 +35,6 @@ class PaperNestButton(LayoutControl):
     trailing_icon: Optional[IconDataOrControl] = None
     icon_color: Optional[ColorValue] = None
 
-    variant: PaperNestButtonVariant = PaperNestButtonVariant.PRIMARY
     color: Optional[ColorValue] = None
     bgcolor: Optional[ColorValue] = None
     elevation: Number = 0
@@ -54,9 +42,6 @@ class PaperNestButton(LayoutControl):
 
     gradient: Optional[Gradient] = None
     hover_gradient: Optional[Gradient] = None
-    focused_gradient: Optional[Gradient] = None
-    pressed_gradient: Optional[Gradient] = None
-    disabled_gradient: Optional[Gradient] = None
 
     loading: bool = False
     loading_text: Optional[str] = None
@@ -65,10 +50,9 @@ class PaperNestButton(LayoutControl):
     loading_indicator_stroke_width: Number = 2
 
     hover_scale: Number = 1.02
-    pressed_scale: Number = 0.98
-    focused_scale: Number = 1.0
+    click_scale: Number = 0.98
     hover_offset_y: Number = -1
-    pressed_offset_y: Number = 0
+    click_offset_y: Number = 0
     animation_duration: DurationValue = 160
     animation_curve: str = "easeOutCubic"
 
@@ -104,6 +88,7 @@ class PaperNestButton(LayoutControl):
         loading_text: Optional[str] = None,
         update: bool = True,
     ) -> None:
+        """Active ou désactive l'état de chargement du bouton."""
         self.loading = loading
         if loading_text is not None:
             self.loading_text = loading_text
