@@ -1,16 +1,21 @@
+import asyncio
+
 import flet as ft
 
-from papernestextension import PaperNestButton, PaperNestButtonVariant
+from papernestextension import PaperNestButton
+
+
+BUTTON_SHAPE = ft.RoundedRectangleBorder(radius=12)
 
 
 class ActionsPage(ft.Column):
     def __init__(self, page: ft.Page):
         self.app_page = page
-        self.loading_button = PaperNestButton(
-            content="Lancer le chargement",
+        self.loading_button = self._primary(
+            "Lancer le chargement",
             icon=ft.Icons.PLAY_ARROW_ROUNDED,
             loading_text="Chargement…",
-            on_click=self.toggle_loading,
+            on_click=self.start_loading,
         )
 
         super().__init__(
@@ -20,35 +25,18 @@ class ActionsPage(ft.Column):
             controls=[
                 ft.Text("Actions", size=28, weight=ft.FontWeight.BOLD),
                 ft.Text(
-                    "Variantes, gradients, chargement et animations de PaperNestButton.",
+                    "Styles Python, gradients, chargement et animations de PaperNestButton.",
                     color=ft.Colors.GREY_700,
                 ),
                 self._section(
-                    "Variantes",
+                    "Styles construits côté Python",
                     [
-                        PaperNestButton(content="Principal", icon=ft.Icons.STAR_ROUNDED),
-                        PaperNestButton(
-                            content="Secondaire",
-                            variant=PaperNestButtonVariant.SECONDARY,
-                        ),
-                        PaperNestButton(
-                            content="Fantôme",
-                            variant=PaperNestButtonVariant.GHOST,
-                        ),
-                        PaperNestButton(
-                            content="Contour",
-                            variant=PaperNestButtonVariant.OUTLINE,
-                        ),
-                        PaperNestButton(
-                            content="Succès",
-                            icon=ft.Icons.CHECK_ROUNDED,
-                            variant=PaperNestButtonVariant.SUCCESS,
-                        ),
-                        PaperNestButton(
-                            content="Danger",
-                            icon=ft.Icons.DELETE_ROUNDED,
-                            variant=PaperNestButtonVariant.DANGER,
-                        ),
+                        self._primary("Principal", icon=ft.Icons.STAR_ROUNDED),
+                        self._secondary("Secondaire"),
+                        self._ghost("Fantôme"),
+                        self._outline("Contour"),
+                        self._success("Succès", icon=ft.Icons.CHECK_ROUNDED),
+                        self._danger("Danger", icon=ft.Icons.DELETE_ROUNDED),
                     ],
                 ),
                 self._section(
@@ -57,20 +45,19 @@ class ActionsPage(ft.Column):
                         PaperNestButton(
                             content="Gradient PaperNest",
                             icon=ft.Icons.AUTO_AWESOME_ROUNDED,
+                            color=ft.Colors.GREY_900,
+                            bgcolor=ft.Colors.TRANSPARENT,
                             gradient=ft.LinearGradient(
                                 colors=["#F9A825", "#FFCA28"],
                             ),
                             hover_gradient=ft.LinearGradient(
                                 colors=["#FFB300", "#FFD54F"],
                             ),
-                            pressed_gradient=ft.LinearGradient(
-                                colors=["#C17900", "#F9A825"],
-                            ),
+                            style=self._style(),
                         ),
-                        PaperNestButton(
-                            content="Icône à droite",
+                        self._outline(
+                            "Icône à droite",
                             trailing_icon=ft.Icons.ARROW_FORWARD_ROUNDED,
-                            variant=PaperNestButtonVariant.OUTLINE,
                         ),
                     ],
                 ),
@@ -78,8 +65,8 @@ class ActionsPage(ft.Column):
                     "États",
                     [
                         self.loading_button,
-                        PaperNestButton(
-                            content="Désactivé",
+                        self._secondary(
+                            "Désactivé",
                             icon=ft.Icons.BLOCK_ROUNDED,
                             disabled=True,
                         ),
@@ -87,6 +74,60 @@ class ActionsPage(ft.Column):
                 ),
             ],
         )
+
+    @staticmethod
+    def _style(*, side: ft.BorderSide | None = None) -> ft.ButtonStyle:
+        return ft.ButtonStyle(
+            shape=BUTTON_SHAPE,
+            padding=ft.Padding.symmetric(horizontal=18, vertical=0),
+            side=side,
+            mouse_cursor={
+                ft.ControlState.DISABLED: ft.MouseCursor.BASIC,
+                ft.ControlState.DEFAULT: ft.MouseCursor.CLICK,
+            },
+        )
+
+    @classmethod
+    def _primary(cls, text: str, **kwargs) -> PaperNestButton:
+        kwargs.setdefault("bgcolor", "#F9A825")
+        kwargs.setdefault("color", "#212121")
+        kwargs.setdefault("style", cls._style())
+        return PaperNestButton(content=text, **kwargs)
+
+    @classmethod
+    def _secondary(cls, text: str, **kwargs) -> PaperNestButton:
+        kwargs.setdefault("bgcolor", "#E0E0E0")
+        kwargs.setdefault("color", "#212121")
+        kwargs.setdefault("style", cls._style())
+        return PaperNestButton(content=text, **kwargs)
+
+    @classmethod
+    def _ghost(cls, text: str, **kwargs) -> PaperNestButton:
+        kwargs.setdefault("bgcolor", ft.Colors.TRANSPARENT)
+        kwargs.setdefault("color", "#37474F")
+        kwargs.setdefault("style", cls._style())
+        return PaperNestButton(content=text, **kwargs)
+
+    @classmethod
+    def _outline(cls, text: str, **kwargs) -> PaperNestButton:
+        kwargs.setdefault("bgcolor", ft.Colors.WHITE)
+        kwargs.setdefault("color", "#37474F")
+        kwargs.setdefault("style", cls._style(side=ft.BorderSide(1, "#B0BEC5")))
+        return PaperNestButton(content=text, **kwargs)
+
+    @classmethod
+    def _success(cls, text: str, **kwargs) -> PaperNestButton:
+        kwargs.setdefault("bgcolor", "#43A047")
+        kwargs.setdefault("color", ft.Colors.WHITE)
+        kwargs.setdefault("style", cls._style())
+        return PaperNestButton(content=text, **kwargs)
+
+    @classmethod
+    def _danger(cls, text: str, **kwargs) -> PaperNestButton:
+        kwargs.setdefault("bgcolor", "#E53935")
+        kwargs.setdefault("color", ft.Colors.WHITE)
+        kwargs.setdefault("style", cls._style())
+        return PaperNestButton(content=text, **kwargs)
 
     @staticmethod
     def _section(title: str, buttons: list[ft.Control]) -> ft.Container:
@@ -109,6 +150,12 @@ class ActionsPage(ft.Column):
             ),
         )
 
-    def toggle_loading(self, _event=None) -> None:
+    def start_loading(self, _event=None) -> None:
         self.loading_button.set_loading(True, update=False)
+        self.app_page.update()
+        self.app_page.run_task(self._stop_loading)
+
+    async def _stop_loading(self) -> None:
+        await asyncio.sleep(1.5)
+        self.loading_button.set_loading(False, update=False)
         self.app_page.update()
