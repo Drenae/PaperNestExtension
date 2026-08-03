@@ -2,7 +2,7 @@ from .papernest_alert_dialog import (
     PaperNestAlertDialog,
     PaperNestDialogVariant,
 )
-from .papernest_button import PaperNestButton, PaperNestButtonVariant
+from .papernest_button import PaperNestButton
 from .papernest_color_picker import PaperNestColorPicker
 from .papernest_glide_rail import (
     PaperNestGlideRail,
@@ -17,7 +17,6 @@ __all__ = [
     "PaperNestAlertDialog",
     "PaperNestDialogVariant",
     "PaperNestButton",
-    "PaperNestButtonVariant",
     "PaperNestColorPicker",
     "PaperNestGlideRail",
     "PaperNestGlideRailDestination",
