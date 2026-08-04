@@ -2,18 +2,26 @@ import asyncio
 
 import flet as ft
 
-from papernestextension import PaperNestButton
+from papernestextension import PaperNestButton, PaperNestButtonStyle
 
 
 BUTTON_SHAPE = ft.RoundedRectangleBorder(radius=12)
+BUTTON_PADDING = ft.Padding.symmetric(horizontal=18, vertical=0)
+BUTTON_CURSOR = {
+    ft.ControlState.DISABLED: ft.MouseCursor.BASIC,
+    ft.ControlState.DEFAULT: ft.MouseCursor.CLICK,
+}
 
 
 class ActionsPage(ft.Column):
     def __init__(self, page: ft.Page):
         self.app_page = page
-        self.loading_button = self._primary(
-            "Lancer le chargement",
+        self.loading_button = PaperNestButton(
+            content="Lancer le chargement",
             icon=ft.Icons.PLAY_ARROW_ROUNDED,
+            color=ft.Colors.GREY_900,
+            bgcolor=ft.Colors.AMBER_800,
+            style=self._style(),
             loading_text="Chargement…",
             on_click=self.start_loading,
         )
@@ -25,50 +33,161 @@ class ActionsPage(ft.Column):
             controls=[
                 ft.Text("Actions", size=28, weight=ft.FontWeight.BOLD),
                 ft.Text(
-                    "Styles Python, gradients, chargement et animations de PaperNestButton.",
+                    "PaperNestButton conserve le bouton Material natif et ajoute "
+                    "les gradients par état, le chargement et les animations.",
                     color=ft.Colors.GREY_700,
                 ),
                 self._section(
-                    "Styles construits côté Python",
+                    "Base native et bgcolor",
                     [
-                        self._primary("Principal", icon=ft.Icons.STAR_ROUNDED),
-                        self._secondary("Secondaire"),
-                        self._ghost("Fantôme"),
-                        self._outline("Contour"),
-                        self._success("Succès", icon=ft.Icons.CHECK_ROUNDED),
-                        self._danger("Danger", icon=ft.Icons.DELETE_ROUNDED),
-                    ],
-                ),
-                self._section(
-                    "Gradients et animations",
-                    [
+                        PaperNestButton(content="Bouton natif"),
                         PaperNestButton(
-                            content="Gradient PaperNest",
-                            icon=ft.Icons.AUTO_AWESOME_ROUNDED,
-                            color=ft.Colors.GREY_900,
-                            bgcolor=ft.Colors.TRANSPARENT,
-                            gradient=ft.LinearGradient(
-                                colors=["#F9A825", "#FFCA28"],
-                            ),
-                            hover_gradient=ft.LinearGradient(
-                                colors=["#FFB300", "#FFD54F"],
-                            ),
+                            content="Fond uni",
+                            icon=ft.Icons.COLOR_LENS_ROUNDED,
+                            color=ft.Colors.WHITE,
+                            bgcolor=ft.Colors.BLUE_700,
                             style=self._style(),
                         ),
-                        self._outline(
-                            "Icône à droite",
-                            trailing_icon=ft.Icons.ARROW_FORWARD_ROUNDED,
+                        PaperNestButton(
+                            content="Sans icône",
+                            color=ft.Colors.GREY_900,
+                            bgcolor=ft.Colors.GREY_300,
+                            style=self._style(),
                         ),
                     ],
                 ),
                 self._section(
-                    "États",
+                    "Gradient normal",
+                    [
+                        PaperNestButton(
+                            content="Gradient fixe",
+                            icon=ft.Icons.AUTO_AWESOME_ROUNDED,
+                            color=ft.Colors.GREY_900,
+                            bgcolor=ft.Colors.AMBER_800,
+                            style=self._style(
+                                gradient=ft.LinearGradient(
+                                    begin=ft.Alignment.CENTER_LEFT,
+                                    end=ft.Alignment.CENTER_RIGHT,
+                                    colors=["#F9A825", "#FFD54F"],
+                                ),
+                            ),
+                        ),
+                        PaperNestButton(
+                            content="Gradient radial",
+                            icon=ft.Icons.FLARE_ROUNDED,
+                            color=ft.Colors.WHITE,
+                            bgcolor=ft.Colors.PURPLE_700,
+                            style=self._style(
+                                gradient=ft.RadialGradient(
+                                    colors=["#7E57C2", "#4527A0"],
+                                ),
+                            ),
+                        ),
+                    ],
+                ),
+                self._section(
+                    "Gradients par état",
+                    [
+                        PaperNestButton(
+                            content="Survole et clique",
+                            icon=ft.Icons.TOUCH_APP_ROUNDED,
+                            color=ft.Colors.WHITE,
+                            bgcolor=ft.Colors.BLUE_700,
+                            style=self._style(
+                                gradient={
+                                    ft.ControlState.DEFAULT: ft.LinearGradient(
+                                        colors=["#1565C0", "#42A5F5"],
+                                    ),
+                                    ft.ControlState.HOVERED: ft.LinearGradient(
+                                        colors=["#00838F", "#26C6DA"],
+                                    ),
+                                    ft.ControlState.FOCUSED: ft.LinearGradient(
+                                        colors=["#5E35B1", "#AB47BC"],
+                                    ),
+                                    ft.ControlState.PRESSED: ft.LinearGradient(
+                                        colors=["#283593", "#5C6BC0"],
+                                    ),
+                                },
+                            ),
+                        ),
+                        PaperNestButton(
+                            content="Gradient désactivé",
+                            icon=ft.Icons.BLOCK_ROUNDED,
+                            color=ft.Colors.WHITE,
+                            bgcolor=ft.Colors.GREY_600,
+                            disabled=True,
+                            style=self._style(
+                                gradient={
+                                    ft.ControlState.DEFAULT: ft.LinearGradient(
+                                        colors=["#43A047", "#66BB6A"],
+                                    ),
+                                    ft.ControlState.DISABLED: ft.LinearGradient(
+                                        colors=["#757575", "#BDBDBD"],
+                                    ),
+                                },
+                            ),
+                        ),
+                    ],
+                ),
+                self._section(
+                    "Animations",
+                    [
+                        PaperNestButton(
+                            content="Animation hover",
+                            icon=ft.Icons.OPEN_WITH_ROUNDED,
+                            color=ft.Colors.GREY_900,
+                            bgcolor=ft.Colors.AMBER_800,
+                            style=self._style(),
+                            hover_scale=1.04,
+                            hover_offset_y=-2,
+                            animation_duration=180,
+                        ),
+                        PaperNestButton(
+                            content="Animation clic",
+                            icon=ft.Icons.ADS_CLICK_ROUNDED,
+                            color=ft.Colors.WHITE,
+                            bgcolor=ft.Colors.RED_600,
+                            style=self._style(),
+                            click_scale=0.94,
+                            click_offset_y=1,
+                            animation_duration=120,
+                        ),
+                        PaperNestButton(
+                            content="Hover + clic",
+                            icon=ft.Icons.BOLT_ROUNDED,
+                            color=ft.Colors.WHITE,
+                            bgcolor=ft.Colors.GREEN_700,
+                            style=self._style(
+                                gradient={
+                                    ft.ControlState.DEFAULT: ft.LinearGradient(
+                                        colors=["#2E7D32", "#66BB6A"],
+                                    ),
+                                    ft.ControlState.HOVERED: ft.LinearGradient(
+                                        colors=["#00695C", "#26A69A"],
+                                    ),
+                                    ft.ControlState.PRESSED: ft.LinearGradient(
+                                        colors=["#1B5E20", "#43A047"],
+                                    ),
+                                },
+                            ),
+                            hover_scale=1.04,
+                            hover_offset_y=-2,
+                            click_scale=0.96,
+                            animation_duration=160,
+                        ),
+                    ],
+                ),
+                self._section(
+                    "Chargement",
                     [
                         self.loading_button,
-                        self._secondary(
-                            "Désactivé",
-                            icon=ft.Icons.BLOCK_ROUNDED,
-                            disabled=True,
+                        PaperNestButton(
+                            content="Chargement sans texte",
+                            icon=ft.Icons.CLOUD_UPLOAD_ROUNDED,
+                            color=ft.Colors.WHITE,
+                            bgcolor=ft.Colors.INDIGO_600,
+                            style=self._style(),
+                            loading=True,
                         ),
                     ],
                 ),
@@ -76,58 +195,18 @@ class ActionsPage(ft.Column):
         )
 
     @staticmethod
-    def _style(*, side: ft.BorderSide | None = None) -> ft.ButtonStyle:
-        return ft.ButtonStyle(
+    def _style(
+        *,
+        gradient=None,
+        side: ft.BorderSide | None = None,
+    ) -> PaperNestButtonStyle:
+        return PaperNestButtonStyle(
+            gradient=gradient,
             shape=BUTTON_SHAPE,
-            padding=ft.Padding.symmetric(horizontal=18, vertical=0),
+            padding=BUTTON_PADDING,
             side=side,
-            mouse_cursor={
-                ft.ControlState.DISABLED: ft.MouseCursor.BASIC,
-                ft.ControlState.DEFAULT: ft.MouseCursor.CLICK,
-            },
+            mouse_cursor=BUTTON_CURSOR,
         )
-
-    @classmethod
-    def _primary(cls, text: str, **kwargs) -> PaperNestButton:
-        kwargs.setdefault("bgcolor", "#F9A825")
-        kwargs.setdefault("color", "#212121")
-        kwargs.setdefault("style", cls._style())
-        return PaperNestButton(content=text, **kwargs)
-
-    @classmethod
-    def _secondary(cls, text: str, **kwargs) -> PaperNestButton:
-        kwargs.setdefault("bgcolor", "#E0E0E0")
-        kwargs.setdefault("color", "#212121")
-        kwargs.setdefault("style", cls._style())
-        return PaperNestButton(content=text, **kwargs)
-
-    @classmethod
-    def _ghost(cls, text: str, **kwargs) -> PaperNestButton:
-        kwargs.setdefault("bgcolor", ft.Colors.TRANSPARENT)
-        kwargs.setdefault("color", "#37474F")
-        kwargs.setdefault("style", cls._style())
-        return PaperNestButton(content=text, **kwargs)
-
-    @classmethod
-    def _outline(cls, text: str, **kwargs) -> PaperNestButton:
-        kwargs.setdefault("bgcolor", ft.Colors.WHITE)
-        kwargs.setdefault("color", "#37474F")
-        kwargs.setdefault("style", cls._style(side=ft.BorderSide(1, "#B0BEC5")))
-        return PaperNestButton(content=text, **kwargs)
-
-    @classmethod
-    def _success(cls, text: str, **kwargs) -> PaperNestButton:
-        kwargs.setdefault("bgcolor", "#43A047")
-        kwargs.setdefault("color", ft.Colors.WHITE)
-        kwargs.setdefault("style", cls._style())
-        return PaperNestButton(content=text, **kwargs)
-
-    @classmethod
-    def _danger(cls, text: str, **kwargs) -> PaperNestButton:
-        kwargs.setdefault("bgcolor", "#E53935")
-        kwargs.setdefault("color", ft.Colors.WHITE)
-        kwargs.setdefault("style", cls._style())
-        return PaperNestButton(content=text, **kwargs)
 
     @staticmethod
     def _section(title: str, buttons: list[ft.Control]) -> ft.Container:
