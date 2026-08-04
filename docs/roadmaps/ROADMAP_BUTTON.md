@@ -2,11 +2,13 @@
 
 ## État
 
-Phases 1 à 4 implémentées dans PaperNestExtension.
+Phases 1 à 6 implémentées dans PaperNestExtension.
 
-Le contrôle repart des sources Flet `Button` et `ButtonStyle`, copiées et renommées. L’option A validée est maintenant implémentée : le gradient appartient à `PaperNestButtonStyle` et peut dépendre des états Material.
+Le contrôle repart des sources Flet `Button` et `ButtonStyle`, copiées et renommées. Le gradient appartient à `PaperNestButtonStyle` et peut dépendre des états Material.
 
-La compilation Flutter, l’application d’exemple et le build Windows ne sont pas encore validés. Les phases 5 à 8 ne doivent pas commencer avant cette première vérification technique.
+La compilation Flutter des phases 2 à 4 a été effectuée avec succès. Les exports publics sont à jour et la page `Actions` a été reconstruite pour tester exclusivement la nouvelle API.
+
+La phase 7 reste à valider par l’utilisateur avant toute intégration dans PaperNest.
 
 ## Références obligatoires
 
@@ -51,9 +53,7 @@ La compilation Flutter, l’application d’exemple et le build Windows ne sont 
 
 ## Phase 2 — Gradient par état
 
-### Décision
-
-Option A validée et implémentée :
+### API retenue
 
 ```python
 PaperNestButton(
@@ -87,9 +87,9 @@ PaperNestButton(
 - [x] Garder `bgcolor` comme fallback lorsqu’aucun gradient n’est résolu.
 - [x] Faire suivre au gradient la `shape` résolue par le style.
 - [x] Garder ripple, overlay, bordure, élévation, focus et accessibilité sur le bouton Material natif.
-- [ ] Confirmer la sérialisation réelle par compilation.
+- [x] Confirmer la sérialisation par compilation Flutter réussie.
 - [ ] Vérifier visuellement les transitions entre gradients compatibles et différents.
-- [ ] Vérifier le fallback gradient → `bgcolor`.
+- [ ] Vérifier visuellement le fallback gradient → `bgcolor`.
 
 ## Phase 3 — API supplémentaire
 
@@ -106,21 +106,14 @@ PaperNestButton(
 - [x] Remplacer le contenu par `loading_text` uniquement lorsqu’il est renseigné.
 - [ ] Vérifier la stabilité des dimensions dans l’exemple.
 
-### Animation de survol
+### Animations
 
-- [x] Ajouter `hover_scale`.
-- [x] Ajouter `hover_offset_y`.
+- [x] Ajouter `hover_scale` et `hover_offset_y`.
+- [x] Ajouter `click_scale` et `click_offset_y`.
 - [x] Ajouter `animation_duration` et `animation_curve`.
-- [x] Piloter l’animation avec le véritable état `WidgetState.hovered`.
-- [x] Neutraliser l’animation lorsque le bouton est désactivé ou en chargement.
-
-### Animation de clic
-
-- [x] Ajouter `click_scale`.
-- [x] Ajouter `click_offset_y`.
-- [x] Piloter l’animation avec le véritable état `WidgetState.pressed`.
+- [x] Piloter les animations avec les véritables états `hovered` et `pressed`.
+- [x] Neutraliser les animations lorsque le bouton est désactivé ou en chargement.
 - [x] Conserver le ripple et le comportement Material natif.
-- [x] Laisser `WidgetStatesController` réinitialiser l’état après relâchement ou annulation.
 
 ### Propriétés natives préservées
 
@@ -138,49 +131,52 @@ PaperNestButton(
 - [x] Partager un seul `WidgetStatesController` entre le bouton, le gradient et les animations.
 - [x] Ajouter une `ShapeDecoration` animée autour du bouton.
 - [x] Garder cette surface présente avec ou sans gradient pour permettre les transitions.
-- [x] Utiliser `AnimatedContainer` pour le gradient.
-- [x] Utiliser `AnimatedScale` pour hover/clic.
-- [x] Utiliser `AnimatedSlide` pour la translation légère.
+- [x] Utiliser `AnimatedContainer`, `AnimatedScale` et `AnimatedSlide`.
 - [x] Ne modifier aucune contrainte de layout directement.
 - [x] Ne coder aucune variante ou palette en dur.
-- [ ] Compiler Flutter et corriger les incompatibilités éventuelles.
-- [ ] Vérifier que la forme, le clipping et le ripple coïncident parfaitement.
+- [x] Compiler Flutter sans erreur.
+- [ ] Vérifier visuellement que la forme, le clipping et le ripple coïncident parfaitement.
 - [ ] Vérifier focus clavier, souris, disabled et accessibilité.
 
 ## Phase 5 — Exports et enregistrement
 
-À commencer après la première compilation réussie.
-
-- [ ] Vérifier l’enregistrement de `PaperNestButton` dans `Extension.createWidget()`.
-- [ ] Vérifier l’export public de `PaperNestButton`.
-- [ ] Exporter `PaperNestButtonStyle`.
-- [ ] Supprimer les anciens exports ou références au prototype précédent.
+- [x] Vérifier l’enregistrement de `PaperNestButton` dans `Extension.createWidget()`.
+- [x] Vérifier l’export public de `PaperNestButton`.
+- [x] Exporter `PaperNestButtonStyle` depuis `controls.material`, `controls` et le package principal.
+- [x] Vérifier que l’ancien `PaperNestButtonVariant` n’est plus exporté.
+- [x] Vérifier que l’ancien prototype Flutter a été supprimé.
 
 ## Phase 6 — Application d’exemple
 
-- [ ] Bouton natif sans ajout PaperNest.
-- [ ] Bouton avec `bgcolor` uniquement.
-- [ ] Bouton avec gradient unique.
-- [ ] Bouton avec gradients `DEFAULT`, `HOVERED`, `FOCUSED`, `PRESSED`, `DISABLED`.
-- [ ] Bouton avec animation de survol.
-- [ ] Bouton avec animation de clic.
-- [ ] Bouton en chargement avec et sans `loading_text`.
-- [ ] Bouton désactivé.
-- [ ] Bouton avec et sans icône.
-- [ ] Bouton avec forme et bordure personnalisées.
-- [ ] Vérifier que tout le style est défini côté Python.
+La page `Actions` utilise uniquement des propriétés Python et `PaperNestButtonStyle`.
+
+- [x] Bouton natif sans ajout PaperNest.
+- [x] Bouton avec `bgcolor` uniquement.
+- [x] Bouton avec gradient linéaire unique.
+- [x] Bouton avec gradient radial unique.
+- [x] Bouton avec gradients `DEFAULT`, `HOVERED`, `FOCUSED` et `PRESSED`.
+- [x] Bouton avec gradient `DISABLED`.
+- [x] Bouton avec animation de survol.
+- [x] Bouton avec animation de clic.
+- [x] Bouton combinant gradient, hover et clic.
+- [x] Bouton en chargement avec `loading_text`.
+- [x] Bouton en chargement sans `loading_text`.
+- [x] Bouton désactivé.
+- [x] Boutons avec et sans icône.
+- [x] Boutons avec forme, padding, bordure et curseur personnalisés.
+- [x] Vérifier dans le code que tout le style est défini côté Python.
 
 ## Phase 7 — Validation PaperNestExtension
 
-- [ ] Vérifier les imports Python.
-- [ ] Vérifier la compilation Flutter.
-- [ ] Valider `flet run`.
-- [ ] Valider gradients et transitions.
+- [ ] Vérifier les imports Python après export de `PaperNestButtonStyle`.
+- [x] Vérifier la compilation Flutter des phases 2 à 4.
+- [ ] Valider `flet run` avec la nouvelle page `Actions`.
+- [ ] Valider les gradients et leurs transitions.
 - [ ] Valider le fallback vers `bgcolor`.
 - [ ] Valider hover, clic, focus, clavier et curseur.
 - [ ] Valider loading et disabled.
 - [ ] Vérifier l’absence de décalage de layout.
-- [ ] Valider le build Windows.
+- [ ] Valider le build Windows avec la nouvelle page d’exemple.
 - [ ] Faire valider visuellement et fonctionnellement le contrôle par l’utilisateur.
 
 ## Phase 8 — Intégration PaperNest
