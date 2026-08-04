@@ -29,6 +29,10 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
   late final FocusNode _focusNode;
   late final WidgetStatesController _statesController;
 
+  bool _clickAnimationActive = false;
+  DateTime? _clickAnimationStartedAt;
+  int _clickAnimationSequence = 0;
+
   @override
   void initState() {
     super.initState();
@@ -90,9 +94,42 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
       widget.control.getDuration("animation_duration") ??
       const Duration(milliseconds: 160);
 
+  void _startClickAnimation() {
+    _clickAnimationSequence += 1;
+    _clickAnimationStartedAt = DateTime.now();
+    if (!_clickAnimationActive && mounted) {
+      setState(() => _clickAnimationActive = true);
+    }
+  }
+
+  void _finishClickAnimation() {
+    final sequence = _clickAnimationSequence;
+    final startedAt = _clickAnimationStartedAt;
+    final elapsed = startedAt == null
+        ? Duration.zero
+        : DateTime.now().difference(startedAt);
+    final remaining = _duration() - elapsed;
+
+    if (remaining <= Duration.zero) {
+      _clearClickAnimation(sequence);
+      return;
+    }
+
+    Future<void>.delayed(remaining, () {
+      _clearClickAnimation(sequence);
+    });
+  }
+
+  void _clearClickAnimation(int sequence) {
+    if (!mounted || sequence != _clickAnimationSequence) return;
+    if (_clickAnimationActive) {
+      setState(() => _clickAnimationActive = false);
+    }
+  }
+
   double _scale(Set<WidgetState> states, bool enabled) {
     if (!enabled) return 1.0;
-    if (states.contains(WidgetState.pressed)) {
+    if (_clickAnimationActive) {
       return widget.control.getDouble("click_scale", 1.0)!;
     }
     if (states.contains(WidgetState.hovered)) {
@@ -103,7 +140,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
 
   double _offsetY(Set<WidgetState> states, bool enabled) {
     if (!enabled) return 0.0;
-    if (states.contains(WidgetState.pressed)) {
+    if (_clickAnimationActive) {
       return widget.control.getDouble("click_offset_y", 0)!;
     }
     if (states.contains(WidgetState.hovered)) {
@@ -349,6 +386,14 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
       ),
     );
 
-    return LayoutControl(control: widget.control, child: animated);
+    final interactive = Listener(
+      behavior: HitTestBehavior.translucent,
+      onPointerDown: enabled ? (_) => _startClickAnimation() : null,
+      onPointerUp: enabled ? (_) => _finishClickAnimation() : null,
+      onPointerCancel: enabled ? (_) => _finishClickAnimation() : null,
+      child: animated,
+    );
+
+    return LayoutControl(control: widget.control, child: interactive);
   }
 }
