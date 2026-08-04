@@ -5,6 +5,7 @@ from flet.controls.adaptive_control import AdaptiveControl
 from flet.controls.base_control import control
 from flet.controls.control import Control
 from flet.controls.control_event import ControlEventHandler
+from flet.controls.duration import DurationValue
 from flet.controls.icon_data import IconData
 from flet.controls.layout_control import LayoutControl
 from flet.controls.types import (
@@ -24,10 +25,11 @@ __all__ = ["PaperNestButton"]
 
 @control("PaperNestButton")
 class PaperNestButton(LayoutControl, AdaptiveControl):
-    """Copie PaperNest du contrôle Material ``Button`` de Flet.
+    """Bouton Material Flet enrichi pour les besoins de PaperNest.
 
-    Cette base conserve volontairement le comportement natif avant l'ajout des
-    fonctionnalités propres à PaperNestExtension dans les phases suivantes.
+    Le comportement natif de ``Button`` est conservé. Les ajouts concernent
+    uniquement le chargement et les transformations animées au survol/clic.
+    Le gradient est défini dans :class:`PaperNestButtonStyle`.
     """
 
     content: Optional[StrOrControl] = None
@@ -43,7 +45,7 @@ class PaperNestButton(LayoutControl, AdaptiveControl):
     """Couleur de premier plan du bouton."""
 
     bgcolor: Optional[ColorValue] = field(default=None, metadata={"skip": True})
-    """Couleur de fond du bouton."""
+    """Couleur de fond du bouton lorsqu'aucun gradient n'est résolu."""
 
     elevation: Number = field(default=1, metadata={"skip": True})
     """Élévation Material du bouton."""
@@ -52,7 +54,40 @@ class PaperNestButton(LayoutControl, AdaptiveControl):
         default=None,
         metadata={"skip": True},
     )
-    """Style Material du bouton."""
+    """Style Material et gradient par état du bouton."""
+
+    loading: bool = False
+    """Désactive l'action et affiche un indicateur de progression."""
+
+    loading_text: Optional[str] = None
+    """Texte temporaire affiché pendant le chargement lorsqu'il est renseigné."""
+
+    loading_indicator_color: Optional[ColorValue] = None
+    """Couleur de l'indicateur, sinon la couleur de premier plan est utilisée."""
+
+    loading_indicator_size: Number = 16
+    """Diamètre de l'indicateur de progression."""
+
+    loading_indicator_stroke_width: Number = 2
+    """Épaisseur du trait de l'indicateur de progression."""
+
+    hover_scale: Number = 1.0
+    """Facteur d'échelle appliqué au survol."""
+
+    click_scale: Number = 1.0
+    """Facteur d'échelle appliqué pendant le clic."""
+
+    hover_offset_y: Number = 0
+    """Translation verticale en pixels appliquée au survol."""
+
+    click_offset_y: Number = 0
+    """Translation verticale en pixels appliquée pendant le clic."""
+
+    animation_duration: DurationValue = 160
+    """Durée des animations PaperNest de survol et de clic."""
+
+    animation_curve: str = "easeOutCubic"
+    """Courbe Flutter utilisée pour les animations PaperNest."""
 
     autofocus: Optional[bool] = None
     """Indique si le bouton reçoit automatiquement le focus."""
@@ -117,3 +152,17 @@ class PaperNestButton(LayoutControl, AdaptiveControl):
     async def focus(self):
         """Demande le focus pour ce contrôle."""
         await self._invoke_method("focus")
+
+    def set_loading(
+        self,
+        loading: bool,
+        *,
+        loading_text: Optional[str] = None,
+        update: bool = True,
+    ) -> None:
+        """Active ou désactive l'état de chargement du bouton."""
+        self.loading = loading
+        if loading_text is not None:
+            self.loading_text = loading_text
+        if update:
+            self.update()
