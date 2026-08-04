@@ -60,20 +60,19 @@ class ActionsPage(ft.Column):
                     "Gradient normal",
                     [
                         PaperNestButton(
-                            content="Gradient fixe",
+                            content="Gradient direct",
                             icon=ft.Icons.AUTO_AWESOME_ROUNDED,
                             color=ft.Colors.GREY_900,
                             bgcolor=ft.Colors.AMBER_800,
-                            style=self._style(
-                                gradient=ft.LinearGradient(
-                                    begin=ft.Alignment.CENTER_LEFT,
-                                    end=ft.Alignment.CENTER_RIGHT,
-                                    colors=["#F9A825", "#FFD54F"],
-                                ),
+                            gradient=ft.LinearGradient(
+                                begin=ft.Alignment.CENTER_LEFT,
+                                end=ft.Alignment.CENTER_RIGHT,
+                                colors=["#F9A825", "#FFD54F"],
                             ),
+                            style=self._style(),
                         ),
                         PaperNestButton(
-                            content="Gradient radial",
+                            content="Gradient dans le style",
                             icon=ft.Icons.FLARE_ROUNDED,
                             color=ft.Colors.WHITE,
                             bgcolor=ft.Colors.PURPLE_700,
@@ -86,10 +85,10 @@ class ActionsPage(ft.Column):
                     ],
                 ),
                 self._section(
-                    "Gradients par état",
+                    "Gradients utiles pour Button",
                     [
                         PaperNestButton(
-                            content="Survole et clique",
+                            content="Survole-moi",
                             icon=ft.Icons.TOUCH_APP_ROUNDED,
                             color=ft.Colors.WHITE,
                             bgcolor=ft.Colors.BLUE_700,
@@ -100,12 +99,6 @@ class ActionsPage(ft.Column):
                                     ),
                                     ft.ControlState.HOVERED: ft.LinearGradient(
                                         colors=["#00838F", "#26C6DA"],
-                                    ),
-                                    ft.ControlState.FOCUSED: ft.LinearGradient(
-                                        colors=["#5E35B1", "#AB47BC"],
-                                    ),
-                                    ft.ControlState.PRESSED: ft.LinearGradient(
-                                        colors=["#283593", "#5C6BC0"],
                                     ),
                                 },
                             ),
@@ -143,7 +136,7 @@ class ActionsPage(ft.Column):
                             animation_duration=180,
                         ),
                         PaperNestButton(
-                            content="Animation clic",
+                            content="Animation clic rapide",
                             icon=ft.Icons.ADS_CLICK_ROUNDED,
                             color=ft.Colors.WHITE,
                             bgcolor=ft.Colors.RED_600,
@@ -164,9 +157,6 @@ class ActionsPage(ft.Column):
                                     ),
                                     ft.ControlState.HOVERED: ft.LinearGradient(
                                         colors=["#00695C", "#26A69A"],
-                                    ),
-                                    ft.ControlState.PRESSED: ft.LinearGradient(
-                                        colors=["#1B5E20", "#43A047"],
                                     ),
                                 },
                             ),
