@@ -83,6 +83,19 @@ ParsedPaperNestButtonStyle? parsePaperNestButtonStyle(
           return baseBackground?.resolve(states) ?? defaultBackgroundColor;
         });
 
+  final baseSurfaceTint = value == null
+      ? defaultValue?.surfaceTintColor
+      : WidgetStatePropertyAll<Color?>(defaultSurfaceTintColor);
+
+  final surfaceTint = gradient == null
+      ? baseSurfaceTint
+      : WidgetStateProperty.resolveWith((states) {
+          if (gradient.resolve(states) != null) {
+            return Colors.transparent;
+          }
+          return baseSurfaceTint?.resolve(states) ?? defaultSurfaceTintColor;
+        });
+
   final style = value == null
       ? defaultValue!
       : ButtonStyle(
@@ -102,6 +115,7 @@ ParsedPaperNestButtonStyle? parsePaperNestButtonStyle(
             theme,
             defaultColor: defaultShadowColor,
           ),
+          surfaceTintColor: surfaceTint,
           elevation: parseWidgetStateDouble(
             value["elevation"],
             defaultDouble: defaultElevation,
