@@ -6,6 +6,7 @@ from flet.controls.border import BorderSide
 from flet.controls.buttons import OutlinedBorder
 from flet.controls.control_state import ControlStateValue
 from flet.controls.duration import DurationValue
+from flet.controls.gradients import Gradient
 from flet.controls.padding import PaddingValue
 from flet.controls.text_style import TextStyle
 from flet.controls.types import (
@@ -20,17 +21,20 @@ __all__ = ["PaperNestButtonStyle"]
 
 @value
 class PaperNestButtonStyle:
-    """Copie PaperNest de ``flet.ButtonStyle``.
+    """Style Material de :class:`PaperNestButton`.
 
-    Aucune propriété supplémentaire n'est encore ajoutée. Cette classe sert de
-    base fidèle pour l'étude du gradient par état prévue dans la phase 2.
+    Cette classe reprend ``flet.ButtonStyle`` et ajoute uniquement un gradient
+    pouvant être défini globalement ou par ``ControlState``.
     """
 
     color: Optional[ControlStateValue[ColorValue]] = None
     """Couleur du texte et des icônes descendants."""
 
     bgcolor: Optional[ControlStateValue[ColorValue]] = None
-    """Couleur de fond du bouton."""
+    """Couleur de fond utilisée lorsqu'aucun gradient n'est résolu."""
+
+    gradient: Optional[ControlStateValue[Gradient]] = None
+    """Gradient du bouton, global ou dépendant de ``ControlState``."""
 
     overlay_color: Optional[ControlStateValue[ColorValue]] = None
     """Couleur de surbrillance des états interactifs."""
@@ -79,6 +83,7 @@ class PaperNestButtonStyle:
         *,
         color: Optional[ControlStateValue[ColorValue]] = None,
         bgcolor: Optional[ControlStateValue[ColorValue]] = None,
+        gradient: Optional[ControlStateValue[Gradient]] = None,
         overlay_color: Optional[ControlStateValue[ColorValue]] = None,
         shadow_color: Optional[ControlStateValue[ColorValue]] = None,
         elevation: Optional[ControlStateValue[Optional[Number]]] = None,
@@ -98,6 +103,7 @@ class PaperNestButtonStyle:
         return PaperNestButtonStyle(
             color=color if color is not None else self.color,
             bgcolor=bgcolor if bgcolor is not None else self.bgcolor,
+            gradient=gradient if gradient is not None else self.gradient,
             overlay_color=(
                 overlay_color if overlay_color is not None else self.overlay_color
             ),
