@@ -2,88 +2,58 @@
 
 ## État
 
-Phases 1 et 2 réalisées.
+Phases 1 à 4 implémentées dans PaperNestExtension.
 
-`PaperNestButton` et `PaperNestButtonStyle` repartent désormais des sources Flet fournies, copiées et renommées. L’ancien prototype de surface Flutter a été supprimé.
+Le contrôle repart des sources Flet `Button` et `ButtonStyle`, copiées et renommées. L’option A validée est maintenant implémentée : le gradient appartient à `PaperNestButtonStyle` et peut dépendre des états Material.
 
-L’étude technique du gradient par état conclut que **l’option A est techniquement réalisable** : le gradient peut être ajouté à `PaperNestButtonStyle` sous la forme d’un `ControlStateValue[Gradient]`. Cette décision doit être validée par l’utilisateur avant toute implémentation du gradient ou démarrage de la phase 3.
-
-Aucune propriété `gradient`, `loading`, animation de survol ou animation de clic n’est encore présente dans le nouveau contrôle de base.
+La compilation Flutter, l’application d’exemple et le build Windows ne sont pas encore validés. Les phases 5 à 8 ne doivent pas commencer avant cette première vérification technique.
 
 ## Références obligatoires
 
-Avant toute modification :
-
 - [x] Lire `docs/README_DEVELOPMENT.md`.
 - [x] Lire `docs/RULES.md`.
-- [x] Étudier la source Python Flet `button.py`.
-- [x] Étudier la source Python Flet `buttons.py` contenant `ButtonStyle`.
-- [x] Étudier la source Flutter Flet `button.dart`.
-- [x] Étudier la source Flutter Flet `buttons.dart` contenant `parseButtonStyle()`.
-- [x] Étudier `container.dart` pour comprendre le rendu d’un gradient avec une décoration.
-- [x] Étudier `ControlStateValue` côté Python.
-- [x] Étudier le helper Flutter générique `getWidgetStateProperty()`.
-- [x] Étudier `parseGradient()` côté Flutter.
-- [x] Étudier l’interpolation native des gradients Flutter.
-- [x] Vérifier l’existence de `WidgetStatesController` sur les boutons Material natifs.
+- [x] Étudier les sources Flet Python `button.py` et `buttons.py`.
+- [x] Étudier les sources Flet Flutter `button.dart` et `buttons.dart`.
+- [x] Étudier `container.dart` pour le rendu du gradient.
+- [x] Étudier `ControlStateValue`, `WidgetStateProperty`, `parseGradient()` et l’interpolation Flutter des gradients.
+- [x] Vérifier l’existence de `WidgetStatesController` sur les boutons Material.
 
-## Principe non négociable
+## Principes non négociables
 
-- Partir des sources Flet, pas d’un bouton reconstruit de zéro.
-- Conserver le comportement natif de `Button` et `ButtonStyle`.
-- Renommer les classes, contrôles, imports et parseurs pour PaperNestExtension.
-- Ajouter uniquement les fonctionnalités demandées.
-- Ne créer aucune variante métier dans Flutter.
+- Partir des sources Flet et conserver leur comportement natif.
+- Ajouter uniquement les besoins validés de PaperNest.
+- Ne coder aucune variante métier ou couleur PaperNest en dur dans Flutter.
+- Garder toute la personnalisation pilotable depuis Python.
 - Ne modifier aucun autre contrôle pendant ce chantier.
-- Ne migrer PaperNest qu’après validation complète de l’exemple PaperNestExtension.
-- Ne pas commencer une phase suivante sans validation lorsque la roadmap le prévoit.
+- Ne migrer PaperNest qu’après validation complète dans PaperNestExtension.
 
-## Phase 1 — Repartir des sources Flet
+## Phase 1 — Base Flet copiée et renommée
 
 ### Python
 
-- [x] Remplacer l’ancien prototype par la source Flet `button.py` copiée vers :
-  - `src/papernestextension/controls/material/papernest_button.py`
+- [x] Créer `controls/material/papernest_button.py` depuis `button.py`.
 - [x] Renommer `Button` en `PaperNestButton`.
-- [x] Enregistrer le contrôle sous le type `PaperNestButton`.
-- [x] Conserver l’héritage `LayoutControl` et `AdaptiveControl`.
-- [x] Copier la partie utile de `buttons.py` vers :
-  - `src/papernestextension/controls/papernest_button_style.py`
+- [x] Conserver `LayoutControl`, `AdaptiveControl`, la validation et `focus()`.
+- [x] Créer `controls/papernest_button_style.py` depuis la partie utile de `buttons.py`.
 - [x] Renommer `ButtonStyle` en `PaperNestButtonStyle`.
-- [x] Importer les formes natives de Flet puisqu’elles ne nécessitent aucune modification.
-- [x] Faire utiliser `PaperNestButtonStyle` par `PaperNestButton`.
-- [x] Conserver `before_update()` et la fusion de `color`, `bgcolor` et `elevation` dans le style.
-- [x] Conserver la validation exigeant un contenu ou une icône visible.
-- [x] Conserver la méthode `focus()`.
+- [x] Conserver les formes natives de Flet sans les recopier.
+- [x] Conserver `before_update()` et la fusion de `color`, `bgcolor` et `elevation`.
 
 ### Flutter
 
-- [x] Remplacer l’ancien prototype par la source Flet `button.dart` copiée vers :
-  - `src/flutter/papernestextension/lib/src/controls/papernest_button.dart`
+- [x] Créer `controls/papernest_button.dart` depuis `button.dart`.
 - [x] Renommer `ButtonControl` en `PaperNestButtonControl`.
-- [x] Copier le parseur utile de `buttons.dart` vers :
-  - `src/flutter/papernestextension/lib/src/utils/papernest_button_style.dart`
-- [x] Renommer `parseButtonStyle()` en `parsePaperNestButtonStyle()`.
-- [x] Faire utiliser exclusivement le parseur PaperNest copié par `PaperNestButtonControl`.
-- [x] Conserver les rendus Material natifs avec et sans icône.
-- [x] Conserver `FocusNode`, `focus()`, URL, click, long press, hover, focus et blur.
-- [x] Conserver la restitution via `LayoutControl`.
+- [x] Créer `utils/papernest_button_style.dart` depuis le parseur Flet.
+- [x] Renommer le parseur en `parsePaperNestButtonStyle()`.
+- [x] Conserver les boutons Material avec et sans icône.
+- [x] Conserver focus, URL, clic, appui long, survol et `LayoutControl`.
 - [x] Supprimer l’ancien prototype `papernest_button_surface.dart`.
 
-### État volontaire après la phase 1
+## Phase 2 — Gradient par état
 
-- Le contrôle est revenu à une base Flet renommée.
-- Les ajouts de l’ancien prototype ont été retirés.
-- La page d’exemple précédente n’est pas encore adaptée à cette nouvelle base ; elle sera reconstruite pendant la phase 6.
-- Les exports définitifs de `PaperNestButtonStyle` seront traités pendant la phase 5.
+### Décision
 
-## Phase 2 — Étude bloquante du gradient
-
-### Question principale
-
-Déterminer si `gradient` peut être ajouté proprement à `PaperNestButtonStyle` comme une valeur dépendante de `ControlState`.
-
-API étudiée :
+Option A validée et implémentée :
 
 ```python
 PaperNestButton(
@@ -94,190 +64,120 @@ PaperNestButton(
             ft.ControlState.DEFAULT: ft.LinearGradient(...),
             ft.ControlState.HOVERED: ft.LinearGradient(...),
             ft.ControlState.FOCUSED: ft.LinearGradient(...),
+            ft.ControlState.PRESSED: ft.LinearGradient(...),
+            ft.ControlState.DISABLED: ft.LinearGradient(...),
         },
     ),
 )
 ```
 
-### Résultats de l’étude
+### Python
 
-#### Sérialisation Python
+- [x] Ajouter `gradient: Optional[ControlStateValue[Gradient]]`.
+- [x] Ajouter `gradient` à `PaperNestButtonStyle.copy()`.
+- [x] Ne pas ajouter une seconde API `gradient_hover` dans `PaperNestButton`.
 
-- [x] `ControlStateValue[T]` accepte soit une valeur simple, soit un dictionnaire `ControlState → T`.
-- [x] Les gradients Flet sont des objets `@value`, comme les autres valeurs complexes déjà utilisées dans les styles.
-- [x] Le système de valeur Flet est générique et ne limite pas `ControlStateValue` aux couleurs ou aux nombres.
-- [x] Un champ `gradient: Optional[ControlStateValue[Gradient]]` est donc cohérent avec le modèle de sérialisation existant.
-- [ ] Confirmer définitivement cette sérialisation par un exemple compilé pendant les phases 6 et 7.
+### Flutter
 
-#### Parsing Flutter
+- [x] Parser le gradient avec `getWidgetStateProperty<Gradient?>()` et `parseGradient()`.
+- [x] Créer `ParsedPaperNestButtonStyle` contenant le `ButtonStyle` natif et le gradient par état.
+- [x] Utiliser les états réels du bouton via `WidgetStatesController`.
+- [x] Résoudre `DEFAULT`, `HOVERED`, `FOCUSED`, `PRESSED` et `DISABLED` avec le mécanisme Flet existant.
+- [x] Rendre le fond Material transparent uniquement lorsqu’un gradient est résolu.
+- [x] Garder `bgcolor` comme fallback lorsqu’aucun gradient n’est résolu.
+- [x] Faire suivre au gradient la `shape` résolue par le style.
+- [x] Garder ripple, overlay, bordure, élévation, focus et accessibilité sur le bouton Material natif.
+- [ ] Confirmer la sérialisation réelle par compilation.
+- [ ] Vérifier visuellement les transitions entre gradients compatibles et différents.
+- [ ] Vérifier le fallback gradient → `bgcolor`.
 
-- [x] `getWidgetStateProperty<T>()` accepte un convertisseur générique pour chaque valeur d’état.
-- [x] `parseGradient()` peut servir directement de convertisseur pour construire un `WidgetStateProperty<Gradient?>`.
-- [x] Les clés `default`, `hovered`, `focused`, `pressed` et `disabled` sont déjà reconnues par le helper Flet.
-- [x] L’ordre des états reste celui défini par l’utilisateur, avec `default` utilisé en dernier recours.
-
-Le parseur PaperNest pourra donc utiliser le principe suivant :
-
-```dart
-final gradient = getWidgetStateProperty<Gradient?>(
-  value["gradient"],
-  (jsonValue) => parseGradient(jsonValue, theme),
-);
-```
-
-#### Suivi des états Material
-
-- [x] Les boutons Material Flutter acceptent un `WidgetStatesController`.
-- [x] Ce contrôleur permet d’utiliser les mêmes états réels que le bouton natif au lieu de recréer séparément hover, focus, pressed et disabled.
-- [x] La résolution du gradient doit donc être branchée sur le contrôleur d’états du bouton Material.
-
-#### Relation entre gradient et `bgcolor`
-
-- [x] Le gradient doit remplacer visuellement `bgcolor` uniquement pour les états où un gradient est résolu.
-- [x] Le fond Material doit devenir transparent lorsqu’un gradient est effectivement affiché.
-- [x] `bgcolor` reste le fond de secours lorsqu’aucun gradient n’est résolu.
-- [x] Si le dictionnaire ne contient pas un état précis, la résolution revient à `DEFAULT`, puis à `bgcolor` si aucun gradient par défaut n’existe.
-- [x] Le gradient et `bgcolor` ne doivent pas être mélangés ou superposés comme deux fonds opaques.
-
-#### Forme, bordure et clipping
-
-- [x] Le gradient doit suivre la `shape` actuellement résolue par `PaperNestButtonStyle`.
-- [x] Une simple `BoxDecoration(borderRadius: ...)` est insuffisante, car `ButtonStyle` accepte plusieurs formes Material.
-- [x] Le rendu devra utiliser la forme résolue, par exemple avec `ShapeDecoration` et un clipping basé sur `ShapeBorderClipper`.
-- [x] La bordure, l’élévation, l’overlay, le ripple et le focus restent gérés par le bouton Material natif.
-
-#### Animation entre gradients
-
-- [x] Flutter sait interpoler nativement les gradients de même type.
-- [x] Les gradients linéaires peuvent avoir des couleurs et des stops différents ; Flutter recalcule les couleurs et stops intermédiaires.
-- [x] Lorsque les types de gradients diffèrent, Flutter utilise un fondu de sortie puis d’entrée autour de la moitié de l’animation.
-- [x] La transition peut donc rester animée sans imposer que tous les états utilisent exactement le même type de gradient.
-- [ ] Vérifier visuellement les transitions entre gradients très différents dans l’exemple.
-
-#### Comportement Material à préserver
-
-- [x] Le bouton Material natif reste le contrôle interactif.
-- [x] Son fond est rendu transparent uniquement lorsqu’un gradient est résolu.
-- [x] Le ripple et `overlay_color` doivent rester visibles au-dessus du gradient.
-- [x] Le focus, le clavier, la souris, l’état disabled et l’accessibilité restent natifs.
-- [x] L’enveloppe du gradient ne doit pas remplacer la logique du bouton Material.
-
-### Décision technique proposée
-
-#### Option A — Gradient dans `PaperNestButtonStyle`
-
-**Option retenue par l’étude, en attente de validation utilisateur avant implémentation.**
-
-- [x] La sérialisation par état est compatible avec le modèle Flet.
-- [x] Le parsing générique par `WidgetStateProperty` est possible.
-- [x] Les états Material réels peuvent être partagés avec le rendu du gradient.
-- [x] L’API est cohérente avec les autres propriétés dépendantes de l’état.
-- [ ] Validation explicite de l’utilisateur.
-- [ ] Ajouter `gradient: Optional[ControlStateValue[Gradient]]` à `PaperNestButtonStyle` après validation.
-- [ ] Ajouter `gradient` à `copy()` après validation.
-- [ ] Ajouter le parsing Flutter par `WidgetState` après validation.
-- [ ] Créer une structure de résultat PaperNest contenant le `ButtonStyle` natif et le gradient par état.
-
-#### Option B — Gradient directement dans `PaperNestButton`
-
-Option de repli uniquement si l’option A échoue pendant l’implémentation ou la compilation.
-
-- [ ] Ne pas retenir cette option tant que l’option A n’a pas démontré une incompatibilité réelle.
-- [ ] En cas d’échec confirmé, conserver le `ButtonStyle` natif de Flet.
-- [ ] Ajouter directement `gradient` et `gradient_hover` à `PaperNestButton`.
-
-Aucune des deux options n’est encore implémentée.
-
-## Phase 3 — API supplémentaire de PaperNestButton
-
-Cette phase ne commence qu’après validation de la décision de la phase 2.
-
-### Gradient
-
-- [ ] Implémenter l’option validée à la fin de la phase 2.
-- [ ] Ne pas ajouter une seconde API de gradient en parallèle.
+## Phase 3 — API supplémentaire
 
 ### Chargement
 
-- [ ] Ajouter `loading`.
-- [ ] Ajouter `loading_text`.
-- [ ] Ajouter les propriétés strictement nécessaires au loader après validation de l’exemple.
-- [ ] Lorsque `loading=True`, désactiver l’action pour empêcher les doubles clics.
-- [ ] Remplacer temporairement l’icône par un indicateur de progression.
-- [ ] Utiliser `loading_text` uniquement lorsqu’il est renseigné.
-- [ ] Conserver les dimensions du bouton pendant le changement d’état autant que possible.
+- [x] Ajouter `loading`.
+- [x] Ajouter `loading_text`.
+- [x] Ajouter `loading_indicator_color`.
+- [x] Ajouter `loading_indicator_size`.
+- [x] Ajouter `loading_indicator_stroke_width`.
+- [x] Ajouter `set_loading()` côté Python.
+- [x] Désactiver le clic et l’appui long pendant le chargement.
+- [x] Remplacer temporairement l’icône par un indicateur.
+- [x] Remplacer le contenu par `loading_text` uniquement lorsqu’il est renseigné.
+- [ ] Vérifier la stabilité des dimensions dans l’exemple.
 
 ### Animation de survol
 
-- [ ] Ajouter `hover_scale`.
-- [ ] Ajouter les éventuels paramètres complémentaires réellement nécessaires : durée, courbe et légère translation.
-- [ ] Ne pas modifier les contraintes du layout pendant l’animation.
-- [ ] Ne pas appliquer l’animation lorsque le bouton est désactivé ou en chargement.
+- [x] Ajouter `hover_scale`.
+- [x] Ajouter `hover_offset_y`.
+- [x] Ajouter `animation_duration` et `animation_curve`.
+- [x] Piloter l’animation avec le véritable état `WidgetState.hovered`.
+- [x] Neutraliser l’animation lorsque le bouton est désactivé ou en chargement.
 
 ### Animation de clic
 
-- [ ] Ajouter `click_scale`.
-- [ ] Ajouter les éventuels paramètres complémentaires réellement nécessaires : durée, courbe et légère translation.
-- [ ] Conserver le ripple et le comportement Material natif.
-- [ ] Réinitialiser correctement l’état après `pointerUp` et `pointerCancel`.
+- [x] Ajouter `click_scale`.
+- [x] Ajouter `click_offset_y`.
+- [x] Piloter l’animation avec le véritable état `WidgetState.pressed`.
+- [x] Conserver le ripple et le comportement Material natif.
+- [x] Laisser `WidgetStatesController` réinitialiser l’état après relâchement ou annulation.
 
-### Propriétés natives à préserver
+### Propriétés natives préservées
 
-- [x] `content`.
-- [x] `icon` et `icon_color`.
-- [x] `color`, `bgcolor`, `elevation` et `style`.
-- [x] `autofocus`, `clip_behavior` et `url`.
-- [x] `on_click`, `on_long_press`, `on_hover`, `on_focus` et `on_blur`.
-- [x] Validation exigeant un contenu ou une icône visible.
-- [x] Méthode `focus()`.
-- [x] `before_update()` et fusion des propriétés simples dans le style.
+- [x] `content`, `icon`, `icon_color`.
+- [x] `color`, `bgcolor`, `elevation`, `style`.
+- [x] `autofocus`, `clip_behavior`, `url`.
+- [x] `on_click`, `on_long_press`, `on_hover`, `on_focus`, `on_blur`.
+- [x] Validation du contenu ou de l’icône.
+- [x] `focus()` et `before_update()`.
 
 ## Phase 4 — Implémentation Flutter
 
-- [ ] Partir du code copié de `ButtonControl` sans reconstruire manuellement toute son API.
-- [ ] Conserver les boutons Material natifs utilisés par la source Flet.
-- [ ] Ajouter uniquement l’enveloppe nécessaire au gradient et aux animations.
-- [ ] Utiliser le même `WidgetStatesController` pour le bouton Material et le gradient.
-- [ ] Rendre le fond Material transparent lorsqu’un gradient résolu est affiché.
-- [ ] Utiliser `bgcolor` comme fallback lorsqu’aucun gradient n’est résolu.
-- [ ] Respecter la forme et le clipping issus du style.
-- [ ] Conserver overlay, ripple, focus, clavier, souris et accessibilité.
-- [ ] Ne coder aucune couleur ou variante PaperNest en dur dans Flutter.
+- [x] Conserver la structure issue de `ButtonControl`.
+- [x] Conserver les constructeurs Material natifs avec et sans icône.
+- [x] Partager un seul `WidgetStatesController` entre le bouton, le gradient et les animations.
+- [x] Ajouter une `ShapeDecoration` animée autour du bouton.
+- [x] Garder cette surface présente avec ou sans gradient pour permettre les transitions.
+- [x] Utiliser `AnimatedContainer` pour le gradient.
+- [x] Utiliser `AnimatedScale` pour hover/clic.
+- [x] Utiliser `AnimatedSlide` pour la translation légère.
+- [x] Ne modifier aucune contrainte de layout directement.
+- [x] Ne coder aucune variante ou palette en dur.
+- [ ] Compiler Flutter et corriger les incompatibilités éventuelles.
+- [ ] Vérifier que la forme, le clipping et le ripple coïncident parfaitement.
+- [ ] Vérifier focus clavier, souris, disabled et accessibilité.
 
 ## Phase 5 — Exports et enregistrement
 
-Après validation de la compilation du contrôle :
+À commencer après la première compilation réussie.
 
 - [ ] Vérifier l’enregistrement de `PaperNestButton` dans `Extension.createWidget()`.
-- [ ] Vérifier l’export de `PaperNestButton` depuis les modules publics Python.
-- [ ] Exporter `PaperNestButtonStyle` si l’option A est validée et implémentée.
-- [ ] Vérifier qu’aucun ancien export ou ancien prototype ne subsiste.
+- [ ] Vérifier l’export public de `PaperNestButton`.
+- [ ] Exporter `PaperNestButtonStyle`.
+- [ ] Supprimer les anciens exports ou références au prototype précédent.
 
 ## Phase 6 — Application d’exemple
 
-Reconstruire l’exemple pour tester la nouvelle API :
-
 - [ ] Bouton natif sans ajout PaperNest.
 - [ ] Bouton avec `bgcolor` uniquement.
-- [ ] Bouton avec gradient normal.
-- [ ] Bouton avec gradients par état si l’option A est validée.
+- [ ] Bouton avec gradient unique.
+- [ ] Bouton avec gradients `DEFAULT`, `HOVERED`, `FOCUSED`, `PRESSED`, `DISABLED`.
 - [ ] Bouton avec animation de survol.
 - [ ] Bouton avec animation de clic.
 - [ ] Bouton en chargement avec et sans `loading_text`.
 - [ ] Bouton désactivé.
-- [ ] Bouton avec icône.
-- [ ] Bouton sans icône.
-- [ ] Bouton avec `PaperNestButtonStyle` personnalisé.
-- [ ] Vérifier que tous les styles sont contrôlés depuis Python.
+- [ ] Bouton avec et sans icône.
+- [ ] Bouton avec forme et bordure personnalisées.
+- [ ] Vérifier que tout le style est défini côté Python.
 
 ## Phase 7 — Validation PaperNestExtension
 
 - [ ] Vérifier les imports Python.
 - [ ] Vérifier la compilation Flutter.
 - [ ] Valider `flet run`.
-- [ ] Valider les gradients et leurs transitions.
+- [ ] Valider gradients et transitions.
 - [ ] Valider le fallback vers `bgcolor`.
-- [ ] Valider hover, clic, focus et clavier.
+- [ ] Valider hover, clic, focus, clavier et curseur.
 - [ ] Valider loading et disabled.
 - [ ] Vérifier l’absence de décalage de layout.
 - [ ] Valider le build Windows.
@@ -288,14 +188,12 @@ Reconstruire l’exemple pour tester la nouvelle API :
 Cette phase ne commence qu’après validation complète de PaperNestExtension.
 
 - [ ] Auditer les boutons actuels de PaperNest.
-- [ ] Définir côté Python les wrappers nécessaires à PaperNest.
-- [ ] Ne créer aucune variante dans Flutter.
-- [ ] Préserver les besoins existants : texte, icône, loading, compact, largeur, hauteur et expansion.
-- [ ] Conserver `IconAction` et `MenuAction` hors de ce chantier.
-- [ ] Migrer les usages progressivement.
-- [ ] Supprimer les anciens wrappers uniquement après validation complète.
-- [ ] Valider `flet run --recursive`.
-- [ ] Valider le build Windows de PaperNest.
+- [ ] Définir les wrappers et variantes uniquement côté Python.
+- [ ] Préserver texte, icône, loading, compact, largeur, hauteur et expansion.
+- [ ] Garder `IconAction` et `MenuAction` hors de ce chantier.
+- [ ] Migrer progressivement les usages.
+- [ ] Supprimer les anciens wrappers uniquement après validation.
+- [ ] Valider `flet run --recursive` et le build Windows de PaperNest.
 
 ## Hors périmètre
 
@@ -310,11 +208,4 @@ Cette phase ne commence qu’après validation complète de PaperNestExtension.
 
 ## Critère de finalisation
 
-`PaperNestButton` sera terminé uniquement lorsque :
-
-- il repartira fidèlement des sources Flet copiées et renommées ;
-- le gradient par état aura été validé puis intégré à `PaperNestButtonStyle`, ou abandonné uniquement après échec technique démontré ;
-- gradient, chargement, hover et clic fonctionneront sans casser le comportement Material natif ;
-- l’exemple et le build Windows de PaperNestExtension seront validés ;
-- l’intégration et le build Windows de PaperNest seront validés ;
-- la roadmap et le changelog seront à jour.
+`PaperNestButton` sera terminé uniquement lorsque les gradients par état, le chargement et les animations fonctionneront sans casser le comportement Material natif, que l’exemple et les builds Windows seront validés, puis que l’intégration PaperNest aura été testée et approuvée.
