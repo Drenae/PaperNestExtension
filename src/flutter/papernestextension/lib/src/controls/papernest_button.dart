@@ -32,10 +32,9 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
   @override
   void initState() {
     super.initState();
-    _focusNode = FocusNode();
-    _focusNode.addListener(_onFocusChange);
-    _statesController = WidgetStatesController();
-    _statesController.addListener(_onStatesChange);
+    _focusNode = FocusNode()..addListener(_onFocusChange);
+    _statesController = WidgetStatesController()
+      ..addListener(_onStatesChange);
     widget.control.addInvokeMethodListener(_invokeMethod);
   }
 
@@ -54,9 +53,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
   }
 
   void _onStatesChange() {
-    if (mounted) {
-      setState(() {});
-    }
+    if (mounted) setState(() {});
   }
 
   Future<dynamic> _invokeMethod(String name, dynamic args) async {
@@ -70,15 +67,13 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
     }
   }
 
-  Set<WidgetState> _resolvedStates({required bool loading}) {
+  Set<WidgetState> _states(bool loading) {
     final states = Set<WidgetState>.from(_statesController.value);
-    if (widget.control.disabled || loading) {
-      states.add(WidgetState.disabled);
-    }
+    if (widget.control.disabled || loading) states.add(WidgetState.disabled);
     return states;
   }
 
-  Curve _animationCurve() {
+  Curve _curve() {
     return switch (
         widget.control.getString("animation_curve", "easeOutCubic")) {
       "linear" => Curves.linear,
@@ -91,12 +86,11 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
     };
   }
 
-  Duration _animationDuration() {
-    return widget.control.getDuration("animation_duration") ??
-        const Duration(milliseconds: 160);
-  }
+  Duration _duration() =>
+      widget.control.getDuration("animation_duration") ??
+      const Duration(milliseconds: 160);
 
-  double _scaleForStates(Set<WidgetState> states, {required bool enabled}) {
+  double _scale(Set<WidgetState> states, bool enabled) {
     if (!enabled) return 1.0;
     if (states.contains(WidgetState.pressed)) {
       return widget.control.getDouble("click_scale", 1.0)!;
@@ -107,7 +101,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
     return 1.0;
   }
 
-  double _offsetYForStates(Set<WidgetState> states, {required bool enabled}) {
+  double _offsetY(Set<WidgetState> states, bool enabled) {
     if (!enabled) return 0.0;
     if (states.contains(WidgetState.pressed)) {
       return widget.control.getDouble("click_offset_y", 0)!;
@@ -122,21 +116,19 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
   Widget build(BuildContext context) {
     debugPrint("PaperNestButton build: ${widget.control.id}");
 
-    final isFilledButton = widget.control.type == "FilledButton";
-    final isFilledTonalButton = widget.control.type == "FilledTonalButton";
-    final isTextButton = widget.control.type == "TextButton";
-    final isOutlinedButton = widget.control.type == "OutlinedButton";
-
+    final isFilled = widget.control.type == "FilledButton";
+    final isTonal = widget.control.type == "FilledTonalButton";
+    final isText = widget.control.type == "TextButton";
+    final isOutlined = widget.control.type == "OutlinedButton";
     final loading = widget.control.getBool("loading", false)!;
     final enabled = !widget.control.disabled && !loading;
-    final states = _resolvedStates(loading: loading);
-    final url = widget.control.getUrl("url");
-    final clipBehavior =
-        widget.control.getClipBehavior("clip_behavior", Clip.none)!;
-    final autofocus = widget.control.getBool("autofocus", false)!;
+    final states = _states(loading);
     final theme = Theme.of(context);
+    final url = widget.control.getUrl("url");
+    final autofocus = widget.control.getBool("autofocus", false)!;
+    final clip = widget.control.getClipBehavior("clip_behavior", Clip.none)!;
 
-    final parsedStyle = parsePaperNestButtonStyle(
+    final parsed = parsePaperNestButtonStyle(
       widget.control.internals?["style"] ?? widget.control.get("style"),
       theme,
       defaultForegroundColor: widget.control
@@ -154,123 +146,111 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
           : RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
     );
 
-    final style = parsedStyle?.style;
-    final gradient = parsedStyle?.gradient?.resolve(states);
-    final resolvedShape = style?.shape?.resolve(states) ??
+    final style = parsed?.style;
+    final gradient = parsed?.gradient?.resolve(states);
+    final shape = style?.shape?.resolve(states) ??
         (theme.useMaterial3
             ? const StadiumBorder()
             : RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)));
-    final resolvedForeground = style?.foregroundColor?.resolve(states) ??
+    final foreground = style?.foregroundColor?.resolve(states) ??
         widget.control
             .getColor("color", context, theme.colorScheme.primary)!;
+    final iconColor =
+        widget.control.getColor("icon_color", context, foreground);
 
-    final iconColor = widget.control.getColor(
-      "icon_color",
-      context,
-      resolvedForeground,
-    );
-    final normalIcon = widget.control.buildIconOrWidget(
-      "icon",
-      color: iconColor,
-    );
-    final loadingIndicator = SizedBox(
-      width: widget.control.getDouble("loading_indicator_size", 16),
-      height: widget.control.getDouble("loading_indicator_size", 16),
-      child: CircularProgressIndicator(
-        strokeWidth:
-            widget.control.getDouble("loading_indicator_stroke_width", 2)!,
-        color: widget.control.getColor(
-          "loading_indicator_color",
-          context,
-          resolvedForeground,
-        ),
-      ),
-    );
-    final icon = loading ? loadingIndicator : normalIcon;
+    final normalIcon =
+        widget.control.buildIconOrWidget("icon", color: iconColor);
+    final Widget? icon = loading
+        ? SizedBox(
+            width: widget.control.getDouble("loading_indicator_size", 16),
+            height: widget.control.getDouble("loading_indicator_size", 16),
+            child: CircularProgressIndicator(
+              strokeWidth:
+                  widget.control.getDouble("loading_indicator_stroke_width", 2)!,
+              color: widget.control.getColor(
+                "loading_indicator_color",
+                context,
+                foreground,
+              ),
+            ),
+          )
+        : normalIcon;
+
     final normalContent = widget.control.buildTextOrWidget("content");
     final loadingText = widget.control.getString("loading_text");
-    final content = loading && loadingText != null
+    final Widget? content = loading && loadingText != null
         ? Text(loadingText)
         : normalContent;
 
-    final Function()? onPressed = enabled
+    final VoidCallback? onPressed = enabled
         ? () {
-            if (url != null) {
-              openWebBrowser(url);
-            }
+            if (url != null) openWebBrowser(url);
             widget.control.triggerEvent("click");
           }
         : null;
-
-    final Function()? onLongPressHandler = enabled
-        ? () {
-            widget.control.triggerEvent("long_press");
-          }
+    final VoidCallback? onLongPress = enabled
+        ? () => widget.control.triggerEvent("long_press")
         : null;
-
-    final Function(bool)? onHoverHandler = enabled
-        ? (state) {
-            widget.control.triggerEvent("hover", state);
-          }
+    final ValueChanged<bool>? onHover = enabled
+        ? (value) => widget.control.triggerEvent("hover", value)
         : null;
-
-    Widget? button;
 
     const error = ErrorControl(
       "Error displaying PaperNestButton",
       description: "\"icon\" must be specified together with \"content\"",
     );
 
+    final Widget button;
     if (icon != null) {
-      if (isFilledButton) {
+      if (isFilled) {
         button = FilledButton.icon(
           style: style,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
           onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          clipBehavior: clipBehavior,
+          onLongPress: onLongPress,
+          onHover: onHover,
+          clipBehavior: clip,
           icon: icon,
           label: content ?? error,
         );
-      } else if (isFilledTonalButton) {
+      } else if (isTonal) {
         button = FilledButton.tonalIcon(
           style: style,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
           onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          clipBehavior: clipBehavior,
+          onLongPress: onLongPress,
+          onHover: onHover,
+          clipBehavior: clip,
           icon: icon,
           label: content ?? error,
         );
-      } else if (isTextButton) {
+      } else if (isText) {
         button = TextButton.icon(
+          style: style,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
           onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          style: style,
-          clipBehavior: clipBehavior,
+          onLongPress: onLongPress,
+          onHover: onHover,
+          clipBehavior: clip,
           icon: icon,
           label: content ?? error,
         );
-      } else if (isOutlinedButton) {
+      } else if (isOutlined) {
         button = OutlinedButton.icon(
+          style: style,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
           onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          clipBehavior: clipBehavior,
-          style: style,
+          onLongPress: onLongPress,
+          onHover: onHover,
+          clipBehavior: clip,
           icon: icon,
           label: content ?? error,
         );
@@ -281,105 +261,94 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
           focusNode: _focusNode,
           statesController: _statesController,
           onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          clipBehavior: clipBehavior,
+          onLongPress: onLongPress,
+          onHover: onHover,
+          clipBehavior: clip,
           icon: icon,
           label: content ?? error,
         );
       }
+    } else if (isFilled) {
+      button = FilledButton(
+        style: style,
+        autofocus: autofocus,
+        focusNode: _focusNode,
+        statesController: _statesController,
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        clipBehavior: clip,
+        child: content,
+      );
+    } else if (isTonal) {
+      button = FilledButton.tonal(
+        style: style,
+        autofocus: autofocus,
+        focusNode: _focusNode,
+        statesController: _statesController,
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        clipBehavior: clip,
+        child: content,
+      );
+    } else if (isText) {
+      button = TextButton(
+        style: style,
+        autofocus: autofocus,
+        focusNode: _focusNode,
+        statesController: _statesController,
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        clipBehavior: clip,
+        child: content ?? const Text(""),
+      );
+    } else if (isOutlined) {
+      button = OutlinedButton(
+        style: style,
+        autofocus: autofocus,
+        focusNode: _focusNode,
+        statesController: _statesController,
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        clipBehavior: clip,
+        child: content,
+      );
     } else {
-      if (isFilledButton) {
-        button = FilledButton(
-          style: style,
-          autofocus: autofocus,
-          focusNode: _focusNode,
-          statesController: _statesController,
-          onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          clipBehavior: clipBehavior,
-          child: content,
-        );
-      } else if (isFilledTonalButton) {
-        button = FilledButton.tonal(
-          style: style,
-          autofocus: autofocus,
-          focusNode: _focusNode,
-          statesController: _statesController,
-          onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          clipBehavior: clipBehavior,
-          child: content,
-        );
-      } else if (isTextButton) {
-        button = TextButton(
-          autofocus: autofocus,
-          focusNode: _focusNode,
-          statesController: _statesController,
-          style: style,
-          onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          clipBehavior: clipBehavior,
-          child: content ?? const Text(""),
-        );
-      } else if (isOutlinedButton) {
-        button = OutlinedButton(
-          autofocus: autofocus,
-          focusNode: _focusNode,
-          statesController: _statesController,
-          onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          clipBehavior: clipBehavior,
-          onHover: onHoverHandler,
-          style: style,
-          child: content,
-        );
-      } else {
-        button = ElevatedButton(
-          style: style,
-          autofocus: autofocus,
-          focusNode: _focusNode,
-          statesController: _statesController,
-          onPressed: onPressed,
-          onLongPress: onLongPressHandler,
-          onHover: onHoverHandler,
-          clipBehavior: clipBehavior,
-          child: content,
-        );
-      }
-    }
-
-    Widget renderedButton = button;
-    if (gradient != null) {
-      renderedButton = AnimatedContainer(
-        duration: _animationDuration(),
-        curve: _animationCurve(),
-        decoration: ShapeDecoration(
-          gradient: gradient,
-          shape: resolvedShape,
-        ),
-        child: button,
+      button = ElevatedButton(
+        style: style,
+        autofocus: autofocus,
+        focusNode: _focusNode,
+        statesController: _statesController,
+        onPressed: onPressed,
+        onLongPress: onLongPress,
+        onHover: onHover,
+        clipBehavior: clip,
+        child: content,
       );
     }
 
-    renderedButton = AnimatedSlide(
-      offset: Offset(
-        0,
-        _offsetYForStates(states, enabled: enabled) / 40,
-      ),
-      duration: _animationDuration(),
-      curve: _animationCurve(),
+    final decorated = AnimatedContainer(
+      duration: _duration(),
+      curve: _curve(),
+      decoration: ShapeDecoration(gradient: gradient, shape: shape),
+      child: button,
+    );
+
+    final animated = AnimatedSlide(
+      offset: Offset(0, _offsetY(states, enabled) / 40),
+      duration: _duration(),
+      curve: _curve(),
       child: AnimatedScale(
-        scale: _scaleForStates(states, enabled: enabled),
-        duration: _animationDuration(),
-        curve: _animationCurve(),
-        child: renderedButton,
+        scale: _scale(states, enabled),
+        duration: _duration(),
+        curve: _curve(),
+        child: decorated,
       ),
     );
 
-    return LayoutControl(control: widget.control, child: renderedButton);
+    return LayoutControl(control: widget.control, child: animated);
   }
 }
