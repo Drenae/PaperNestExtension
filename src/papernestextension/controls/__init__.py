@@ -28,6 +28,7 @@ from .material.papernest_textfield import (
     PaperNestTextField,
     PaperNestTextFieldState,
 )
+from .papernest_button_style import PaperNestButtonStyle
 from .services.papernest_file_picker import (
     PaperNestFilePicker,
     PaperNestFilePickerDropEvent,
@@ -46,6 +47,7 @@ __all__ = [
     "PaperNestAlertDialog",
     "PaperNestDialogVariant",
     "PaperNestButton",
+    "PaperNestButtonStyle",
     "PaperNestColorPicker",
     "PaperNestDatePicker",
     "PaperNestDatePickerEntryMode",
