@@ -189,6 +189,17 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
         (theme.useMaterial3
             ? const StadiumBorder()
             : RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)));
+    final elevation = style?.elevation?.resolve(states) ??
+        widget.control.getDouble("elevation", 1)!;
+    final shadowColor = style?.shadowColor?.resolve(states) ??
+        theme.colorScheme.shadow;
+    final buttonStyle = gradient == null
+        ? style
+        : style?.copyWith(
+            elevation: const WidgetStatePropertyAll<double?>(0),
+            surfaceTintColor:
+                const WidgetStatePropertyAll<Color?>(Colors.transparent),
+          );
     final foreground = style?.foregroundColor?.resolve(states) ??
         widget.control
             .getColor("color", context, theme.colorScheme.primary)!;
@@ -241,7 +252,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
     if (icon != null) {
       if (isFilled) {
         button = FilledButton.icon(
-          style: style,
+          style: buttonStyle,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
@@ -254,7 +265,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
         );
       } else if (isTonal) {
         button = FilledButton.tonalIcon(
-          style: style,
+          style: buttonStyle,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
@@ -267,7 +278,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
         );
       } else if (isText) {
         button = TextButton.icon(
-          style: style,
+          style: buttonStyle,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
@@ -280,7 +291,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
         );
       } else if (isOutlined) {
         button = OutlinedButton.icon(
-          style: style,
+          style: buttonStyle,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
@@ -293,7 +304,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
         );
       } else {
         button = ElevatedButton.icon(
-          style: style,
+          style: buttonStyle,
           autofocus: autofocus,
           focusNode: _focusNode,
           statesController: _statesController,
@@ -307,7 +318,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
       }
     } else if (isFilled) {
       button = FilledButton(
-        style: style,
+        style: buttonStyle,
         autofocus: autofocus,
         focusNode: _focusNode,
         statesController: _statesController,
@@ -319,7 +330,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
       );
     } else if (isTonal) {
       button = FilledButton.tonal(
-        style: style,
+        style: buttonStyle,
         autofocus: autofocus,
         focusNode: _focusNode,
         statesController: _statesController,
@@ -331,7 +342,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
       );
     } else if (isText) {
       button = TextButton(
-        style: style,
+        style: buttonStyle,
         autofocus: autofocus,
         focusNode: _focusNode,
         statesController: _statesController,
@@ -343,7 +354,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
       );
     } else if (isOutlined) {
       button = OutlinedButton(
-        style: style,
+        style: buttonStyle,
         autofocus: autofocus,
         focusNode: _focusNode,
         statesController: _statesController,
@@ -355,7 +366,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
       );
     } else {
       button = ElevatedButton(
-        style: style,
+        style: buttonStyle,
         autofocus: autofocus,
         focusNode: _focusNode,
         statesController: _statesController,
@@ -374,6 +385,17 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
       child: button,
     );
 
+    final elevated = gradient != null && elevation > 0
+        ? PhysicalShape(
+            clipper: ShapeBorderClipper(shape: shape),
+            elevation: elevation,
+            shadowColor: shadowColor,
+            color: Colors.transparent,
+            clipBehavior: Clip.none,
+            child: decorated,
+          )
+        : decorated;
+
     final animated = AnimatedSlide(
       offset: Offset(0, _offsetY(states, enabled) / 40),
       duration: _duration(),
@@ -382,7 +404,7 @@ class _PaperNestButtonControlState extends State<PaperNestButtonControl>
         scale: _scale(states, enabled),
         duration: _duration(),
         curve: _curve(),
-        child: decorated,
+        child: elevated,
       ),
     );
 
