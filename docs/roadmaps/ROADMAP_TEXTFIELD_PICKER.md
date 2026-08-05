@@ -2,15 +2,16 @@
 
 ## État
 
-**À valider avant implémentation.**
+**Phases 1 à 3 implémentées dans PaperNestExtension. Phase 4 en attente de validation.**
 
-L’objectif est d’ajouter à `PaperNestTextField` un mode permettant d’afficher, à l’intérieur du champ, un bouton Python entièrement personnalisable. Le TextField ne doit créer aucun bouton Flutter spécifique et ne doit ouvrir lui-même aucun picker ou dialogue.
+`PaperNestTextField` peut désormais afficher, à l’intérieur du champ, un bouton Python entièrement personnalisable. Le TextField ne crée aucun bouton Flutter spécifique et n’ouvre lui-même aucun picker ou dialogue.
 
-Exemple cible :
+Exemple :
 
 ```python
 PaperNestTextField(
     value="Banque",
+    read_only=True,
     picker=True,
     clear_button=True,
     picker_button=PrimaryButton(
@@ -32,110 +33,105 @@ Rendu attendu :
 
 ## Principes non négociables
 
-- [ ] Conserver le contrôle actuel et son comportement natif.
-- [ ] Ne pas recréer un bouton stylé directement en Flutter.
-- [ ] Ne pas ajouter `picker_bgcolor`, `picker_color` ou `picker_border_radius`.
-- [ ] Accepter un véritable contrôle Python dans `picker_button`.
-- [ ] Permettre notamment l’utilisation de `PaperNestButton` et des wrappers PaperNest (`PrimaryButton`, `SecondaryButton`, etc.).
-- [ ] Ne pas ouvrir un dialogue, ColorPicker, IconPicker ou DatePicker depuis le TextField.
-- [ ] Le callback d’ouverture reste porté par `picker_button.on_click`.
-- [ ] Ne modifier aucun autre contrôle pendant ce chantier.
+- [x] Conserver le contrôle actuel et son comportement natif.
+- [x] Ne pas recréer un bouton stylé directement en Flutter.
+- [x] Ne pas ajouter `picker_bgcolor`, `picker_color` ou `picker_border_radius`.
+- [x] Accepter un véritable contrôle Python dans `picker_button`.
+- [x] Permettre notamment l’utilisation de `PaperNestButton` et des wrappers PaperNest.
+- [x] Ne pas ouvrir un dialogue, ColorPicker, IconPicker ou DatePicker depuis le TextField.
+- [x] Le callback d’ouverture reste porté par `picker_button.on_click`.
+- [x] Ne modifier aucun autre contrôle pendant ce chantier.
 
 ## API retenue
-
-### Nouvelles propriétés
 
 ```python
 picker: bool = False
 picker_button: Optional[Control] = None
 ```
 
-### Règles
-
-- [ ] `picker=False` : aucun bouton picker n’est affiché.
-- [ ] `picker=True` : `picker_button` est affiché dans la zone suffixe du champ.
-- [ ] `picker=True` exige un `picker_button` visible.
-- [ ] `picker_button` reste un contrôle Flet complet, sans reconstruction Flutter de son style ou de ses événements.
-- [ ] Le TextField ne détourne pas son propre `on_click` pour ouvrir le picker.
-- [ ] `on_change`, `on_focus`, `on_blur`, `on_submit` et les autres événements existants restent inchangés.
+- [x] `picker=False` : aucun bouton picker n’est affiché.
+- [x] `picker=True` : `picker_button` est affiché dans la zone suffixe du champ.
+- [x] `picker=True` exige un `picker_button` visible.
+- [x] `picker_button` reste un contrôle Flet complet.
+- [x] Le TextField ne détourne pas son propre `on_click`.
+- [x] Les événements existants restent inchangés.
 
 ## Composition visuelle
 
-- [ ] Le bouton picker est placé à droite du contenu du champ.
-- [ ] Lorsque `clear_button=True` et qu’une valeur existe, le bouton d’effacement est placé avant le bouton picker.
-- [ ] Ordre final : contenu → bouton d’effacement → `picker_button`.
-- [ ] Le bouton picker doit conserver sa hauteur, son padding, sa forme, son gradient, ses animations et son état disabled définis côté Python.
-- [ ] Le suffixe doit utiliser `mainAxisSize: MainAxisSize.min` afin de ne pas absorber toute la largeur.
-- [ ] Le champ doit conserver son label flottant, son hint, ses bordures, ses états de validation et son padding.
-- [ ] Vérifier l’affichage avec une valeur longue et une fenêtre étroite.
+- [x] Le bouton picker est placé à l’intérieur, à droite du contenu.
+- [x] Le bouton d’effacement est placé avant le bouton picker.
+- [x] Ordre final : contenu → bouton d’effacement → `picker_button`.
+- [x] Le bouton conserve son style, gradient, animation et comportement Python.
+- [x] Le suffixe utilise `mainAxisSize: MainAxisSize.min`.
+- [x] Le champ conserve label, hint, bordures, validation et padding.
+- [ ] Valider visuellement une valeur longue et une fenêtre étroite.
 
 ## Bouton d’effacement
 
-Le contrôle possède déjà `clear_button`, mais son comportement actuel est principalement lié au mode recherche. Le mode picker doit rendre cette fonction utilisable sur un champ normal en lecture seule.
-
-- [ ] Afficher le bouton d’effacement lorsque `clear_button=True` et que `value` n’est pas vide.
-- [ ] Ne pas exiger `search_mode=True` pour afficher ce bouton en mode picker.
-- [ ] Vider le contrôleur et synchroniser `value` côté Python.
-- [ ] Déclencher l’événement existant `on_clear`.
-- [ ] Ne pas déclencher artificiellement `on_search` hors du mode recherche.
-- [ ] Conserver le comportement actuel de `_clearSearch()` pour `search_mode=True`.
-- [ ] Ajouter une fonction d’effacement générique si nécessaire plutôt que de détourner `_clearSearch()`.
+- [x] Afficher le bouton lorsque `clear_button=True`, que la valeur n’est pas vide et que le mode picker est actif.
+- [x] Ne pas exiger `search_mode=True`.
+- [x] Synchroniser `value` côté Python.
+- [x] Déclencher `on_clear`.
+- [x] Ne pas déclencher `on_search` hors du mode recherche.
+- [x] Conserver `_clearSearch()` pour le mode recherche.
+- [x] Utiliser une fonction d’effacement générique partagée.
 
 ## État du champ picker
 
-Pour un sélecteur, la valeur doit être affichée mais ne doit pas être saisissable manuellement.
-
-### Décision proposée
-
-- [ ] Utiliser `read_only=True` dans le wrapper `PickerTextField` de PaperNest.
-- [ ] Ne pas utiliser `disabled=True` par défaut, car cela griserait le champ et pourrait empêcher l’interaction avec les actions suffixes.
-- [ ] Laisser `disabled` disponible lorsqu’un écran veut réellement désactiver le champ et son picker.
-- [ ] Vérifier que le curseur, la sélection et le focus restent cohérents en lecture seule.
+- [x] Utiliser `read_only=True` dans le futur wrapper `PickerTextField`.
+- [x] Ne pas utiliser `disabled=True` par défaut.
+- [x] Laisser `disabled` disponible pour désactiver réellement le champ.
+- [ ] Valider le curseur, la sélection et le focus en lecture seule.
 
 ## Phase 1 — API Python PaperNestExtension
 
-Fichier :
+- [x] Importer `Control`.
+- [x] Ajouter `picker: bool = False`.
+- [x] Ajouter `picker_button: Optional[Control] = None`.
+- [x] Valider qu’un contrôle visible est fourni lorsque `picker=True`.
+- [x] Ne modifier aucune autre propriété existante.
+- [x] Conserver `_migrate_state()` et `before_update()`.
+
+Commit principal :
 
 ```text
-src/papernestextension/controls/material/papernest_textfield.py
+d4f995cb513a9b781c04b3651517413e3f94e748
 ```
-
-- [ ] Importer `Control` si nécessaire pour typer `picker_button`.
-- [ ] Ajouter `picker: bool = False`.
-- [ ] Ajouter `picker_button: Optional[Control] = None`.
-- [ ] Ajouter une validation exigeant un contrôle visible lorsque `picker=True`.
-- [ ] Ne modifier aucune autre propriété existante.
-- [ ] Conserver `_migrate_state()` et `before_update()`.
 
 ## Phase 2 — Rendu Flutter
 
-Fichier :
+- [x] Lire `picker`.
+- [x] Construire `picker_button` avec `control.buildWidget()`.
+- [x] Ne pas recréer le bouton en Dart.
+- [x] Unifier la composition du suffixe sans casser password, search, refresh ou validation.
+- [x] Afficher le bouton d’effacement générique avant `picker_button`.
+- [x] Préserver les tooltips et événements existants.
+- [x] Bloquer l’interaction du bouton enfant lorsque le TextField est désactivé.
+- [ ] Valider visuellement l’état désactivé.
+
+Commit principal :
 
 ```text
-src/flutter/papernestextension/lib/src/controls/papernest_textfield.dart
+31f931f73ae751877121a134b2e40ebaf4a53bf0
 ```
-
-- [ ] Lire `picker`.
-- [ ] Construire `picker_button` avec le mécanisme Flet de rendu des contrôles enfants.
-- [ ] Ne pas recréer le bouton avec `TextButton`, `ElevatedButton` ou un widget PaperNest codé en Dart.
-- [ ] Étendre la composition actuelle du suffixe sans casser password, search, refresh ou validation state.
-- [ ] Afficher le bouton d’effacement générique avant `picker_button`.
-- [ ] Préserver les tooltips et événements existants.
-- [ ] Vérifier que `disabled` du TextField produit un comportement cohérent pour le bouton enfant.
 
 ## Phase 3 — Exemple PaperNestExtension
 
-Mettre à jour la page Formulaires et le panneau TextField.
+- [x] Ajouter un TextField normal sans picker.
+- [x] Ajouter un TextField avec `picker=True` et un `PaperNestButton` simple.
+- [x] Ajouter clear + picker avec une valeur existante.
+- [x] Ajouter un bouton gradient et animé piloté depuis Python.
+- [x] Ajouter un picker désactivé.
+- [x] Tester `read_only=True`.
+- [x] Ajouter une valeur longue.
+- [x] Vérifier le callback du bouton dans l’exemple.
+- [x] Vérifier `on_clear` dans l’exemple.
 
-- [ ] Ajouter un TextField normal sans picker comme référence.
-- [ ] Ajouter un TextField avec `picker=True` et un `PaperNestButton` simple.
-- [ ] Ajouter un TextField avec `picker=True`, `clear_button=True` et une valeur existante.
-- [ ] Ajouter un bouton picker avec gradient et animation pour confirmer qu’il reste entièrement contrôlé depuis Python.
-- [ ] Ajouter un picker désactivé.
-- [ ] Tester `read_only=True`.
-- [ ] Tester une valeur longue.
-- [ ] Vérifier l’événement du bouton picker.
-- [ ] Vérifier `on_clear`.
+Commit principal :
+
+```text
+7b8cc27c99c666d4f313dbcf67137d7e26764c39
+```
 
 ## Phase 4 — Validation PaperNestExtension
 
@@ -151,6 +147,8 @@ Mettre à jour la page Formulaires et le panneau TextField.
 - [ ] Faire valider visuellement et fonctionnellement par l’utilisateur.
 
 ## Phase 5 — Intégration PaperNest
+
+Cette phase ne commence qu’après validation complète de PaperNestExtension.
 
 Fichier :
 
@@ -170,11 +168,11 @@ class PickerTextField(BaseTextField):
         super().__init__(**kwargs)
 ```
 
-- [ ] Importer les types nécessaires sans créer de dépendance circulaire.
-- [ ] Permettre n’importe quel bouton compatible, notamment `PrimaryButton("Choisir", ...)`.
-- [ ] Conserver tous les styles de `BaseTextField`.
-- [ ] Ne pas imposer un texte, une couleur ou un variant de bouton dans `PickerTextField`.
-- [ ] Migrer les usages progressivement lors des roadmaps ColorPicker et IconPicker.
+- [ ] Importer les types nécessaires sans dépendance circulaire.
+- [ ] Permettre tout bouton compatible, notamment `PrimaryButton("Choisir", ...)`.
+- [ ] Conserver les styles de `BaseTextField`.
+- [ ] Ne pas imposer le texte, la couleur ou le variant du bouton.
+- [ ] Migrer les usages pendant les roadmaps ColorPicker et IconPicker.
 - [ ] Valider `flet run --recursive`.
 - [ ] Valider le build Windows de PaperNest.
 
