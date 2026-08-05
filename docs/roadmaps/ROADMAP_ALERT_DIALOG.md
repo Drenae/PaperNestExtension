@@ -1,128 +1,84 @@
-# Roadmap — PaperNestAlertDialog
+# Roadmap — Abandon de PaperNestAlertDialog
 
 ## État
 
-**Phase 6 validée. Phase 7 implémentée dans PaperNest et en attente de validation applicative. Phase 8 volontairement bloquée.**
+**Décision validée : `PaperNestAlertDialog` doit être supprimé de PaperNestExtension.**
 
-`PaperNestAlertDialog` est désormais un fork direct de `AlertDialog` Flet. Il conserve le cycle de vie natif et expose une apparence entièrement pilotée depuis Python, sans variant dans l’extension.
+Le fork Flutter n’apporte aucune capacité fonctionnelle indispensable par rapport à `ft.AlertDialog`. Il ajoute uniquement une composition visuelle, tout en introduisant des incompatibilités de contraintes avec les contenus extensibles, les scrolls internes et les mises en page complexes de PaperNest.
 
-## Principes validés
+## Principe directeur
 
-- [x] Conserver le cycle de vie natif de Flet : route, ouverture, fermeture, barrière et événement `dismiss`.
-- [x] Piloter toute l’apparence depuis Python.
-- [x] Ne connaître aucun variant métier dans PaperNestExtension.
-- [x] Rendre les actions comme de véritables contrôles Python.
-- [x] Ne créer aucun bouton Flutter spécifique.
-- [x] Ne créer aucune dépendance du dialogue vers les pickers.
+L’apparence et la composition d’un dialogue relèvent de PaperNest et doivent rester entièrement contrôlables en Python.
 
-## API validée
+Architecture cible :
 
-### En-tête
+```text
+PaperNest
+└── AppDialog(ft.AlertDialog)
+    ├── header Python
+    ├── content Python
+    ├── actions Python
+    └── variants Python
 
-- [x] `header_bgcolor`, `header_padding`, `header_spacing`.
-- [x] `icon`, `icon_bgcolor`, `icon_color`, `icon_size`.
-- [x] `icon_container_size`, `icon_border_radius`.
-- [x] `title`, `subtitle`, `title_action`.
-- [x] `title_text_style`, `subtitle_text_style`.
+PaperNestExtension
+└── aucun contrôle AlertDialog personnalisé
+```
 
-### Surface
+## Ce qui doit rester fonctionnel
 
-- [x] `width`, `max_height`, `bgcolor`, `shape`.
-- [x] `shadow_color`, `elevation`, `barrier_color`.
-- [x] `inset_padding`, `clip_behavior`.
+- [ ] `AppDialog` hérite directement de `ft.AlertDialog`.
+- [ ] Header sombre PaperNest construit en Python.
+- [ ] Pastille d’icône construite en Python.
+- [ ] Titre et sous-titre contrôlables en Python.
+- [ ] `title_action` contrôlable en Python.
+- [ ] Contenu libre : `Column`, `Row`, `ListView`, `GridView`, `Tabs`, contrôles avec `expand` et scroll interne.
+- [ ] Actions utilisant les boutons PaperNest.
+- [ ] Variants `STANDARD`, `PRIMARY`, `SUCCESS`, `WARNING` et `DANGER` gérés uniquement dans `dialogs.py`.
+- [ ] Modalité, barrière, fermeture et événement `on_dismiss` conservés via `ft.AlertDialog`.
 
-### Contenu et actions
+## Phase 1 — Reconstruction Python dans PaperNest
 
-- [x] `content`, `content_padding`, `scrollable`.
-- [x] `actions`, `actions_alignment`, `actions_padding`, `actions_spacing`.
-- [x] Header et actions fixes lorsque le contenu défile.
-- [x] Seul le contenu est placé dans `SingleChildScrollView`.
+- [ ] Reprendre l’apparence historique de `AppDialog` avant la migration vers l’extension.
+- [ ] Construire le header avec des contrôles Python.
+- [ ] Construire la surface générale sans imposer de hauteur artificielle.
+- [ ] Préserver les contenus avec `expand=True`.
+- [ ] Préserver les contenus qui gèrent leur propre scroll.
+- [ ] Préserver `ConfirmDialog`, `DangerDialog` et `FormDialog`.
+- [ ] Préserver l’enum local `DialogVariant`.
+- [ ] Auditer tous les appels directs à `AppDialog`.
 
-### Comportement
+## Phase 2 — Validation PaperNest
 
-- [x] `modal`, `dismissible`, `open`, `on_dismiss`.
+- [ ] Tester les dialogues courts à hauteur naturelle.
+- [ ] Tester les formulaires extensibles.
+- [ ] Tester `MetadataDialog`.
+- [ ] Tester `CategoryEditorDialog`.
+- [ ] Tester les dialogues de déplacement, renommage, suppression et restauration.
+- [ ] Vérifier les contenus scrollables avec header et actions fixes.
+- [ ] Vérifier les dialogues successifs et imbriqués.
+- [ ] Valider `flet run --recursive`.
+- [ ] Valider le build Windows.
+- [ ] Faire valider visuellement et fonctionnellement par l’utilisateur.
 
-## Phase 1 — Étude des sources
+## Phase 3 — Suppression de PaperNestExtension
 
-- [x] Étudier `alert_dialog.py`.
-- [x] Étudier `alert_dialog.dart`.
-- [x] Étudier `dialog_control.py`.
-- [x] Identifier les imports et comportements natifs à conserver.
+Cette phase ne commence qu’après validation complète de la version Python dans PaperNest.
 
-## Phase 2 — Fork des sources Flet
+- [ ] Supprimer `papernest_alert_dialog.py`.
+- [ ] Supprimer `papernest_alert_dialog.dart`.
+- [ ] Supprimer l’enregistrement Flutter du contrôle.
+- [ ] Supprimer les exports Python.
+- [ ] Supprimer la page d’exemple dédiée ou la remplacer par un exemple Python natif si utile.
+- [ ] Supprimer `PaperNestDialogSurface` une fois les pickers migrés.
+- [ ] Nettoyer les imports, la documentation et les changelogs.
+- [ ] Compiler et valider PaperNestExtension après nettoyage.
 
-- [x] Remplacer le contrôle Python par une copie renommée de `AlertDialog`.
-- [x] Remplacer le contrôle Flutter par une copie renommée de `AlertDialogControl`.
-- [x] Conserver la route propre à chaque dialogue.
-- [x] Conserver la fermeture après animation.
-- [x] Supprimer `PaperNestDialogVariant` et `variant` de l’extension.
+## Phase 4 — Clôture
 
-## Phase 3 — API PaperNest
-
-- [x] Ajouter l’API d’en-tête.
-- [x] Ajouter les dimensions et la hauteur maximale.
-- [x] Ajouter l’espacement des actions.
-- [x] Conserver les propriétés natives de Flet.
-
-## Phase 4 — Rendu Flutter
-
-- [x] Construire le header PaperNest uniquement lorsqu’il est utilisé.
-- [x] Conserver le titre natif pour un dialogue minimal.
-- [x] Appliquer les styles reçus depuis Python.
-- [x] Conserver le `AlertDialog` Material natif.
-- [x] Maintenir le header et les actions fixes pendant le scroll.
-- [x] Ne coder aucune palette dans Flutter.
-
-## Phase 5 — Exports et exemple
-
-- [x] Enregistrer `PaperNestAlertDialog` dans l’extension Flutter.
-- [x] Exporter le contrôle côté Python.
-- [x] Supprimer tous les exports de `PaperNestDialogVariant`.
-- [x] Reconstruire la page d’exemple sans variants.
-- [x] Tester titre, sous-titre, icône, `title_action`, formulaire et contenu long.
-- [ ] Supprimer `PaperNestDialogSurface` après la refonte complète des pickers.
-
-## Phase 6 — Validation PaperNestExtension
-
-- [x] Vérifier les imports Python.
-- [x] Compiler Flutter sans erreur.
-- [x] Valider `flet run --recursive`.
-- [x] Vérifier les ouvertures et fermetures successives.
-- [x] Vérifier la modalité et la barrière.
-- [x] Vérifier le clic extérieur.
-- [x] Vérifier les actions Python.
-- [x] Vérifier la hauteur naturelle.
-- [x] Vérifier que seul le contenu scrollable défile.
-- [x] Vérifier la forme, l’ombre, l’élévation et le clipping.
-- [x] Valider le build Windows.
-- [x] Validation visuelle et fonctionnelle par l’utilisateur.
-
-## Phase 7 — Intégration PaperNest
-
-- [x] Faire hériter `AppDialog` du nouveau `PaperNestAlertDialog`.
-- [x] Recréer `DialogVariant` uniquement dans PaperNest.
-- [x] Gérer les palettes exclusivement côté Python.
-- [x] Ne plus transmettre de variant à PaperNestExtension.
-- [x] Conserver `ConfirmDialog`, `DangerDialog` et `FormDialog`.
-- [x] Conserver les wrappers PaperNestButton dans les actions.
-- [x] Conserver la compatibilité des imports applicatifs existants.
-- [x] Ajouter `subtitle`, `max_height` et les nouveaux paramètres visuels au wrapper.
-- [ ] Valider `flet run --recursive` dans PaperNest.
-- [ ] Valider tous les dialogues applicatifs.
-- [ ] Valider le build Windows de PaperNest.
-- [ ] Validation visuelle et fonctionnelle par l’utilisateur.
-
-## Phase 8 — Utilisation par les pickers
-
-**Bloquée jusqu’à la refonte de `PaperNestColorPicker`, `PaperNestIconPicker` et `PaperNestDatePicker`.**
-
-- [ ] Refaire `PaperNestColorPicker` comme contenu de sélection uniquement.
-- [ ] Refaire `PaperNestIconPicker` comme contenu de sélection uniquement.
-- [ ] Remplacer `PaperNestDatePicker` par le contrôle natif si confirmé.
-- [ ] Composer les dialogues de picker côté Python.
-- [ ] Utiliser `PickerTextField` pour les boutons d’ouverture.
-- [ ] Supprimer `PaperNestDialogSurface` après les migrations.
+- [ ] Vérifier qu’aucune référence à `PaperNestAlertDialog` ne subsiste.
+- [ ] Vérifier qu’aucun picker ne dépend d’un dialogue Flutter interne.
+- [ ] Marquer le contrôle comme supprimé et remplacé par une composition Python.
 
 ## Critère de finalisation
 
-`PaperNestAlertDialog` sera clôturé après validation de la phase 7 dans PaperNest. La phase 8 reste un chantier séparé dépendant de la refonte des pickers.
+La roadmap sera terminée lorsque tous les dialogues PaperNest fonctionneront avec `ft.AlertDialog`, que les contenus extensibles et scrollables seront validés, puis que `PaperNestAlertDialog` et ses dépendances auront été retirés de l’extension sans régression.
