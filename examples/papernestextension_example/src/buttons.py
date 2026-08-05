@@ -4,100 +4,196 @@ from typing import Optional, Union
 
 import flet as ft
 
+from papernestextension import PaperNestButton, PaperNestButtonStyle
+from tokens import AppColors, AppTheme, AppRadius, AppSpacing, AppSizes
+
 ButtonContent = Union[str, ft.Control]
 
 
-class AppButton(ft.Button):
+class AppButton(PaperNestButton):
     def __init__(
         self,
         text: ButtonContent | None = None,
         on_click=None,
         icon=None,
-        bgcolor=ft.Colors.YELLOW_700,
-        color=ft.Colors.GREY_900,
+        bgcolor=AppColors.PRIMARY,
+        color=AppColors.TEXT,
+        gradient: ft.Gradient | None = None,
         width: Optional[float] = None,
         expand: bool = False,
         disabled: bool = False,
         loading: bool = False,
+        loading_text: str | None = None,
         compact: bool = False,
         tooltip: str = "",
         **kwargs,
     ):
-        if text is None and "content" in kwargs: text = kwargs.pop("content")
-        if text is None: text = ""
+        if text is None and "content" in kwargs:
+            text = kwargs.pop("content")
+        if text is None:
+            text = ""
 
         self._label = text
         self._source_icon = icon
         self._loading = loading
         self._compact = compact
 
-        content = (text if isinstance(text, ft.Control) else ft.Text(text, size=13 if compact else 14, weight=ft.FontWeight.W_600, max_lines=1))
-        style = kwargs.pop("style", ft.ButtonStyle(shape=ft.RoundedRectangleBorder(radius=10), padding=ft.Padding.symmetric(horizontal=(12 if compact else 16), vertical=0)))
+        content = (
+            text
+            if isinstance(text, ft.Control)
+            else ft.Text(
+                text,
+                size=13 if compact else 14,
+                weight=ft.FontWeight.W_600,
+                max_lines=1,
+            )
+        )
+
+        style = kwargs.pop(
+            "style",
+            PaperNestButtonStyle(
+                shape=AppTheme.button_shape(AppRadius.MD),
+                padding=ft.Padding.symmetric(
+                    horizontal=AppSpacing.MD if compact else AppSpacing.LG,
+                    vertical=0,
+                ),
+                mouse_cursor={
+                    ft.ControlState.DISABLED: ft.MouseCursor.BASIC,
+                    ft.ControlState.DEFAULT: ft.MouseCursor.CLICK,
+                },
+            ),
+        )
 
         super().__init__(
             content=content,
-            icon=None if loading else icon,
+            icon=icon,
             on_click=on_click,
             bgcolor=bgcolor,
             color=color,
+            gradient=gradient,
             width=width,
-            height=(40 if compact else 44),
+            height=(
+                AppSizes.BUTTON_HEIGHT_COMPACT
+                if compact
+                else AppSizes.BUTTON_HEIGHT
+            ),
             expand=expand,
-            disabled=disabled or loading,
+            disabled=disabled,
+            loading=loading,
+            loading_text=loading_text,
             tooltip=tooltip,
             style=style,
+            hover_scale=kwargs.pop("hover_scale", 1.02),
+            hover_offset_y=kwargs.pop("hover_offset_y", -1),
+            click_scale=kwargs.pop("click_scale", 0.97),
+            animation_duration=kwargs.pop("animation_duration", 140),
             **kwargs,
         )
-
-        if loading:
-            self.content = ft.Row(spacing=8, alignment=ft.MainAxisAlignment.CENTER, controls=[ft.ProgressRing(width=16, height=16, stroke_width=2, color=color), content])
 
 
 class PrimaryButton(AppButton):
     def __init__(self, text: ButtonContent, **kwargs):
-        kwargs.setdefault("bgcolor", ft.Colors.YELLOW_700)
-        kwargs.setdefault("color", ft.Colors.GREY_900)
+        kwargs.setdefault("bgcolor", AppColors.PRIMARY)
+        kwargs.setdefault(
+            "gradient",
+            AppTheme.button_gradient(
+                AppColors.PRIMARY,
+                AppColors.PRIMARY_DARK,
+            ),
+        )
+        kwargs.setdefault("color", AppColors.TEXT)
         super().__init__(text=text, **kwargs)
 
 
 class SecondaryButton(AppButton):
     def __init__(self, text: ButtonContent, **kwargs):
-        kwargs.setdefault("bgcolor", ft.Colors.GREY_300)
-        kwargs.setdefault("color", ft.Colors.GREY_900)
+        kwargs.setdefault("bgcolor", AppColors.PANEL)
+        kwargs.setdefault(
+            "gradient",
+            AppTheme.button_gradient(
+                AppColors.PANEL,
+                AppColors.PANEL_STRONG,
+            ),
+        )
+        kwargs.setdefault("color", AppColors.TEXT)
         super().__init__(text=text, **kwargs)
 
 
 class SuccessButton(AppButton):
     def __init__(self, text: ButtonContent, **kwargs):
-        kwargs.setdefault("bgcolor", ft.Colors.GREEN_700)
-        kwargs.setdefault("color", ft.Colors.WHITE)
+        kwargs.setdefault("bgcolor", AppColors.SUCCESS)
+        kwargs.setdefault(
+            "gradient",
+            AppTheme.button_gradient(
+                AppColors.SUCCESS,
+                AppColors.SUCCESS_DARK,
+            ),
+        )
+        kwargs.setdefault("color", AppColors.TEXT_LIGHT)
         super().__init__(text=text, **kwargs)
 
 
 class DangerButton(AppButton):
     def __init__(self, text: ButtonContent, **kwargs):
-        kwargs.setdefault("bgcolor", ft.Colors.RED_700)
-        kwargs.setdefault("color", ft.Colors.WHITE)
+        kwargs.setdefault("bgcolor", AppColors.ERROR)
+        kwargs.setdefault(
+            "gradient",
+            AppTheme.button_gradient(
+                AppColors.ERROR,
+                AppColors.ERROR_DARK,
+            ),
+        )
+        kwargs.setdefault("color", AppColors.TEXT_LIGHT)
+        super().__init__(text=text, **kwargs)
+
+
+class InfoButton(AppButton):
+    def __init__(self, text: ButtonContent, **kwargs):
+        kwargs.setdefault("bgcolor", AppColors.INFO)
+        kwargs.setdefault(
+            "gradient",
+            AppTheme.button_gradient(
+                AppColors.INFO,
+                AppColors.INFO_DARK,
+            ),
+        )
+        kwargs.setdefault("color", AppColors.TEXT_LIGHT)
         super().__init__(text=text, **kwargs)
 
 
 class GhostButton(AppButton):
     def __init__(self, text: ButtonContent, **kwargs):
         kwargs.setdefault("bgcolor", ft.Colors.TRANSPARENT)
-        kwargs.setdefault("color", ft.Colors.GREY_900)
+        kwargs.setdefault("gradient", None)
+        kwargs.setdefault("color", AppColors.TEXT)
         super().__init__(text=text, **kwargs)
 
 
 class OutlineButton(AppButton):
     def __init__(self, text: ButtonContent, **kwargs):
-        kwargs.setdefault("bgcolor", ft.Colors.WHITE)
-        kwargs.setdefault("color", ft.Colors.GREY_900)
+        compact = kwargs.get("compact", False)
+        kwargs.setdefault("bgcolor", AppColors.SURFACE)
+        kwargs.setdefault(
+            "gradient",
+            AppTheme.button_gradient(
+                AppColors.SURFACE,
+                AppColors.BACKGROUND,
+            ),
+        )
+        kwargs.setdefault("color", AppColors.TEXT)
         kwargs.setdefault(
             "style",
-            ft.ButtonStyle(
-                shape=ft.RoundedRectangleBorder(radius=10),
-                padding=ft.Padding.symmetric(horizontal=16, vertical=0),
-                side=ft.BorderSide(1, ft.Colors.GREY_400),
+            PaperNestButtonStyle(
+                shape=AppTheme.button_shape(AppRadius.MD),
+                padding=ft.Padding.symmetric(
+                    horizontal=AppSpacing.MD if compact else AppSpacing.LG,
+                    vertical=0,
+                ),
+                side=ft.BorderSide(1, AppColors.BORDER),
+                mouse_cursor={
+                    ft.ControlState.DISABLED: ft.MouseCursor.BASIC,
+                    ft.ControlState.DEFAULT: ft.MouseCursor.CLICK,
+                },
             ),
         )
         super().__init__(text=text, **kwargs)
