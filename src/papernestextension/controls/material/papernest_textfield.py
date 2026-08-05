@@ -3,6 +3,7 @@ from typing import Annotated, Optional, Union
 
 from flet.controls.adaptive_control import AdaptiveControl
 from flet.controls.base_control import BaseControl, control, value
+from flet.controls.control import Control
 from flet.controls.control_event import ControlEventHandler, EventHandler
 from flet.controls.core.autofill_group import AutofillHint
 from flet.controls.core.text import TextSelection, TextSelectionChangeEvent
@@ -137,6 +138,13 @@ class PaperNestTextField(FormFieldControl, AdaptiveControl):
     mouse_cursor: Optional[MouseCursor] = None
     strut_style: Optional[StrutStyle] = None
     autofill_hints: Optional[Union[AutofillHint, list[AutofillHint]]] = None
+
+    picker: bool = False
+    """Affiche ``picker_button`` dans la zone suffixe du champ."""
+
+    picker_button: Optional[Control] = None
+    """Contrôle Python affiché à droite du champ lorsque ``picker`` est actif."""
+
     search_mode: bool = False
     clear_button: bool = True
     debounce_ms: Annotated[int, V.ge(0)] = 300
@@ -161,6 +169,19 @@ class PaperNestTextField(FormFieldControl, AdaptiveControl):
     on_clear: Optional[ControlEventHandler["PaperNestTextField"]] = None
     on_escape: Optional[ControlEventHandler["PaperNestTextField"]] = None
     on_refresh_action: Optional[ControlEventHandler["PaperNestTextField"]] = None
+
+    __validation_rules__ = (
+        V.ensure(
+            lambda ctrl: (
+                not ctrl.picker
+                or (
+                    isinstance(ctrl.picker_button, Control)
+                    and ctrl.picker_button.visible
+                )
+            ),
+            message="picker_button must be a visible Control when picker=True",
+        ),
+    )
 
     def _migrate_state(self, other: BaseControl):
         super()._migrate_state(other)
