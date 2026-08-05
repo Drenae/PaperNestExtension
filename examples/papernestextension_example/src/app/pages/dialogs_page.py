@@ -1,7 +1,8 @@
 import flet as ft
-from papernestextension import PaperNestAlertDialog, PaperNestButton
 
+from buttons import OutlineButton, PrimaryButton, InfoButton
 from cards import PageHeader
+from papernestextension import PaperNestAlertDialog
 
 
 class DialogsPage(ft.Column):
@@ -29,18 +30,17 @@ class DialogsPage(ft.Column):
             "En-têtes pilotés depuis Python",
             "Les couleurs et la composition sont définies par chaque appel.",
             ft.Row(
-                wrap=True,
                 spacing=12,
                 run_spacing=12,
                 controls=[
-                    ft.FilledButton(
+                    OutlineButton(
                         "Titre seul",
                         on_click=lambda _event: self._open_dialog(
                             title="Dialogue minimal",
                             icon=None,
                         ),
                     ),
-                    ft.FilledButton(
+                    OutlineButton(
                         "Icône et titre",
                         icon=ft.Icons.STAR_OUTLINE_ROUNDED,
                         on_click=lambda _event: self._open_dialog(
@@ -50,7 +50,7 @@ class DialogsPage(ft.Column):
                             icon_color=ft.Colors.GREY_900,
                         ),
                     ),
-                    ft.FilledButton(
+                    OutlineButton(
                         "Titre et sous-titre",
                         icon=ft.Icons.INFO_OUTLINE_ROUNDED,
                         on_click=lambda _event: self._open_dialog(
@@ -60,7 +60,7 @@ class DialogsPage(ft.Column):
                             icon_bgcolor=ft.Colors.BLUE_700,
                         ),
                     ),
-                    ft.FilledButton(
+                    OutlineButton(
                         "Action d’en-tête",
                         icon=ft.Icons.TUNE_ROUNDED,
                         on_click=lambda _event: self._open_dialog(
@@ -80,21 +80,20 @@ class DialogsPage(ft.Column):
             "Comportements natifs conservés",
             "Modalité, fermeture extérieure, hauteur naturelle et défilement.",
             ft.Row(
-                wrap=True,
                 spacing=12,
                 run_spacing=12,
                 controls=[
-                    ft.FilledButton(
+                    OutlineButton(
                         "Formulaire naturel",
                         icon=ft.Icons.EDIT_NOTE_ROUNDED,
                         on_click=lambda _event: self._open_form_dialog(),
                     ),
-                    ft.FilledButton(
+                    OutlineButton(
                         "Contenu scrollable",
                         icon=ft.Icons.ARTICLE_OUTLINED,
                         on_click=lambda _event: self._open_scrollable_dialog(),
                     ),
-                    ft.FilledButton(
+                    OutlineButton(
                         "Modal",
                         icon=ft.Icons.LOCK_OUTLINE_ROUNDED,
                         on_click=lambda _event: self._open_dialog(
@@ -106,7 +105,7 @@ class DialogsPage(ft.Column):
                             dismissible=False,
                         ),
                     ),
-                    ft.OutlinedButton(
+                    OutlineButton(
                         "Fermeture extérieure",
                         icon=ft.Icons.TOUCH_APP_OUTLINED,
                         on_click=lambda _event: self._open_dialog(
@@ -155,7 +154,7 @@ class DialogsPage(ft.Column):
             ),
             "actions_alignment": ft.MainAxisAlignment.END,
             "actions_spacing": 8,
-            "shape": ft.RoundedRectangleBorder(radius=20),
+            "shape": ft.RoundedRectangleBorder(radius=10),
             "clip_behavior": ft.ClipBehavior.ANTI_ALIAS,
             "shadow_color": ft.Colors.with_opacity(0.22, ft.Colors.BLACK),
             "barrier_color": ft.Colors.with_opacity(0.48, ft.Colors.BLACK),
@@ -186,23 +185,12 @@ class DialogsPage(ft.Column):
             **self._dialog_defaults(),
         )
         dialog.actions = [
-            PaperNestButton(
-                content="Annuler",
-                color=ft.Colors.GREY_800,
-                bgcolor=ft.Colors.GREY_200,
-                elevation=0,
+            OutlineButton(
+                "Annuler",
                 on_click=lambda _event: self._close_dialog(dialog),
             ),
-            PaperNestButton(
-                content="Fermer",
-                color=ft.Colors.GREY_900,
-                gradient=ft.LinearGradient(
-                    begin=ft.Alignment.CENTER_LEFT,
-                    end=ft.Alignment.CENTER_RIGHT,
-                    colors=[ft.Colors.YELLOW_700, ft.Colors.YELLOW_800],
-                ),
-                hover_scale=1.02,
-                click_scale=0.97,
+            PrimaryButton(
+                "Fermer",
                 on_click=lambda _event: self._close_dialog(dialog),
             ),
         ]
@@ -234,19 +222,12 @@ class DialogsPage(ft.Column):
             **self._dialog_defaults(),
         )
         dialog.actions = [
-            PaperNestButton(
-                content="Annuler",
-                bgcolor=ft.Colors.GREY_200,
-                color=ft.Colors.GREY_800,
-                elevation=0,
+            OutlineButton(
+                "Annuler",
                 on_click=lambda _event: self._close_dialog(dialog),
             ),
-            PaperNestButton(
-                content="Enregistrer",
-                gradient=ft.LinearGradient(
-                    colors=[ft.Colors.YELLOW_700, ft.Colors.YELLOW_800],
-                ),
-                color=ft.Colors.GREY_900,
+            PrimaryButton(
+                "Enregistrer",
                 on_click=lambda _event: self._close_dialog(dialog),
             ),
         ]
@@ -260,7 +241,7 @@ class DialogsPage(ft.Column):
                 size=14,
                 color=ft.Colors.GREY_700,
             )
-            for index in range(1, 16)
+            for index in range(1, 40)
         ]
         dialog = PaperNestAlertDialog(
             title="Contenu long et scrollable",
@@ -279,10 +260,8 @@ class DialogsPage(ft.Column):
             },
         )
         dialog.actions = [
-            PaperNestButton(
-                content="Fermer",
-                bgcolor=ft.Colors.BLUE_700,
-                color=ft.Colors.WHITE,
+            InfoButton(
+                "Fermer",
                 on_click=lambda _event: self._close_dialog(dialog),
             )
         ]
