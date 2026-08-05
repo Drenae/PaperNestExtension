@@ -38,11 +38,16 @@ class _PaperNestAlertDialogControlState
     final subtitle = control.buildTextOrWidget("subtitle");
     final titleAction = control.buildWidget("title_action");
     final iconSize = control.getDouble("icon_size", 20)!;
-    final icon = control.buildIconOrWidget(
-      "icon",
-      size: iconSize,
-      color: control.getColor("icon_color", context),
-    );
+    final rawIcon = control.buildIconOrWidget("icon");
+    final icon = rawIcon == null
+        ? null
+        : IconTheme(
+            data: IconThemeData(
+              size: iconSize,
+              color: control.getColor("icon_color", context),
+            ),
+            child: rawIcon,
+          );
 
     if (title == null &&
         subtitle == null &&
