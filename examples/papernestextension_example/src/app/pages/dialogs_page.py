@@ -129,7 +129,6 @@ class DialogsPage(ft.Column):
             "header_bgcolor": ft.Colors.GREY_900,
             "header_padding": ft.Padding.symmetric(horizontal=24, vertical=16),
             "header_spacing": 12,
-            "icon_color": ft.Colors.WHITE,
             "icon_size": 20,
             "icon_container_size": 38,
             "icon_border_radius": 12,
@@ -268,11 +267,16 @@ class DialogsPage(ft.Column):
             subtitle="Hauteur maximale définie depuis Python",
             icon=ft.Icons.ARTICLE_OUTLINED,
             icon_bgcolor=ft.Colors.BLUE_700,
+            icon_color=ft.Colors.WHITE,
             width=640,
             max_height=620,
             scrollable=True,
             content=ft.Column(tight=True, spacing=14, controls=paragraphs),
-            **{key: value for key, value in self._dialog_defaults().items() if key != "width"},
+            **{
+                key: value
+                for key, value in self._dialog_defaults().items()
+                if key != "width"
+            },
         )
         dialog.actions = [
             PaperNestButton(
