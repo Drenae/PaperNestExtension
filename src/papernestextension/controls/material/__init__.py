@@ -1,8 +1,5 @@
 from ..papernest_button_style import PaperNestButtonStyle
-from .papernest_alert_dialog import (
-    PaperNestAlertDialog,
-    PaperNestDialogVariant,
-)
+from .papernest_alert_dialog import PaperNestAlertDialog
 from .papernest_button import PaperNestButton
 from .papernest_color_picker import PaperNestColorPicker
 from .papernest_glide_rail import (
@@ -16,7 +13,6 @@ from .papernest_icon_picker import (
 
 __all__ = [
     "PaperNestAlertDialog",
-    "PaperNestDialogVariant",
     "PaperNestButton",
     "PaperNestButtonStyle",
     "PaperNestColorPicker",
