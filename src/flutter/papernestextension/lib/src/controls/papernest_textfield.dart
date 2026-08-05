@@ -11,7 +11,8 @@ class PaperNestTextFieldControl extends StatefulWidget {
       : super(key: key ?? ValueKey("control_${control.id}"));
 
   @override
-  State<PaperNestTextFieldControl> createState() => _PaperNestTextFieldControlState();
+  State<PaperNestTextFieldControl> createState() =>
+      _PaperNestTextFieldControlState();
 }
 
 class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
@@ -26,8 +27,10 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
   TextSelection? _selection;
   Timer? _searchDebounce;
 
-  KeyEventResult _handleTextFieldKeyEvent(KeyEvent event,
-      {required bool submitOnEnter}) {
+  KeyEventResult _handleTextFieldKeyEvent(
+    KeyEvent event, {
+    required bool submitOnEnter,
+  }) {
     if (event is KeyDownEvent &&
         event.logicalKey == LogicalKeyboardKey.escape) {
       final searchMode = widget.control.getBool("search_mode", false)!;
@@ -47,7 +50,6 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
       return KeyEventResult.handled;
     }
 
-    // ignore up/down arrow keys if flag is set
     if ((event is KeyDownEvent || event is KeyRepeatEvent) &&
         widget.control.getBool("ignore_up_down_keys", false)! &&
         (event.logicalKey == LogicalKeyboardKey.arrowUp ||
@@ -55,7 +57,6 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
       return KeyEventResult.handled;
     }
 
-    // submit on Enter if flag is set and shift is not pressed
     if (submitOnEnter &&
         event is KeyDownEvent &&
         !HardwareKeyboard.instance.isShiftPressed &&
@@ -65,7 +66,6 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
       return KeyEventResult.handled;
     }
 
-    // let the system handle other key events
     return KeyEventResult.ignored;
   }
 
@@ -105,6 +105,7 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
     switch (name) {
       case "focus":
         _focusNode.requestFocus();
+        return null;
       default:
         throw Exception("Unknown TextField method: $name");
     }
@@ -139,16 +140,26 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
     widget.control.triggerEvent(_focusNode.hasFocus ? "focus" : "blur");
   }
 
-  void _clearSearch() {
+  void _clearValue({required bool triggerSearch}) {
     _searchDebounce?.cancel();
     _controller.clear();
     _value = "";
     widget.control.updateProperties({"value": ""});
     widget.control.triggerEvent("clear", "");
-    widget.control.triggerEvent("search", "");
+    if (triggerSearch) {
+      widget.control.triggerEvent("search", "");
+    }
     if (mounted) {
       setState(() {});
     }
+  }
+
+  void _clearSearch() {
+    _clearValue(triggerSearch: true);
+  }
+
+  void _clearPickerValue() {
+    _clearValue(triggerSearch: false);
   }
 
   void _handleControllerChange() {
@@ -166,7 +177,7 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
     widget.control.triggerEvent("selection_change", {
       "selected_text":
           _controller.text.substring(selection.start, selection.end),
-      "selection": selection.toMap()
+      "selection": selection.toMap(),
     });
   }
 
@@ -174,54 +185,56 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
   Widget build(BuildContext context) {
     debugPrint("TextField build: ${widget.control.id}");
 
-    bool autofocus = widget.control.getBool("autofocus", false)!;
+    final autofocus = widget.control.getBool("autofocus", false)!;
 
-    String value = widget.control.getString("value", "")!;
+    final value = widget.control.getString("value", "")!;
     if (_value != value) {
       _value = value;
       _controller.value = TextEditingValue(
         text: value,
-        // preserve cursor position at the end
         selection: TextSelection.collapsed(offset: value.length),
       );
       _selection = _controller.selection;
     }
 
-    var selection = widget.control.getTextSelection("selection",
-        minOffset: 0, maxOffset: _controller.text.length);
+    final selection = widget.control.getTextSelection(
+      "selection",
+      minOffset: 0,
+      maxOffset: _controller.text.length,
+    );
     if (selection != null && selection != _controller.selection) {
       _controller.selection = selection;
       _selection = selection;
     }
 
-    var shiftEnter = widget.control.getBool("shift_enter", false)!;
-    var multiline = widget.control.getBool("multiline", false)! || shiftEnter;
-    var minLines = widget.control.getInt("min_lines", 1)!;
-    var maxLines = widget.control.getInt("max_lines", multiline ? null : 1);
+    final shiftEnter = widget.control.getBool("shift_enter", false)!;
+    final multiline =
+        widget.control.getBool("multiline", false)! || shiftEnter;
+    final minLines = widget.control.getInt("min_lines", 1)!;
+    final maxLines = widget.control.getInt("max_lines", multiline ? null : 1);
 
-    var password = widget.control.getBool("password", false)!;
-    var canRevealPassword =
+    final password = widget.control.getBool("password", false)!;
+    final canRevealPassword =
         widget.control.getBool("can_reveal_password", false)!;
-    var cursorColor = widget.control.getColor("cursor_color", context);
-    var selectionColor = widget.control.getColor("selection_color", context);
-    var textSize = widget.control.getDouble("text_size");
-    var color = widget.control.getColor("color", context);
-    var focusedColor = widget.control.getColor("focused_color", context);
+    final cursorColor = widget.control.getColor("cursor_color", context);
+    final selectionColor = widget.control.getColor("selection_color", context);
+    final textSize = widget.control.getDouble("text_size");
+    final color = widget.control.getColor("color", context);
+    final focusedColor = widget.control.getColor("focused_color", context);
     var textStyle = widget.control
         .getTextStyle("text_style", Theme.of(context), const TextStyle())!;
     if (textSize != null || color != null || focusedColor != null) {
       textStyle = textStyle.copyWith(
-          fontSize: textSize, color: _focused ? focusedColor ?? color : color);
+        fontSize: textSize,
+        color: _focused ? focusedColor ?? color : color,
+      );
     }
 
-    TextCapitalization textCapitalization = widget.control
+    final textCapitalization = widget.control
         .getTextCapitalization("capitalization", TextCapitalization.none)!;
+    final inputFilter = widget.control.getTextInputFormatter("input_filter");
 
-    FilteringTextInputFormatter? inputFilter =
-        widget.control.getTextInputFormatter("input_filter");
-
-    List<TextInputFormatter>? inputFormatters = [];
-    // add non-null input formatters
+    final inputFormatters = <TextInputFormatter>[];
     if (inputFilter != null) {
       inputFormatters.add(inputFilter);
     }
@@ -230,10 +243,14 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
     }
 
     final searchMode = widget.control.getBool("search_mode", false)!;
+    final picker = widget.control.getBool("picker", false)!;
     final clearButton = widget.control.getBool("clear_button", true)!;
     final searching = widget.control.getBool("searching", false)!;
     final showRefreshAction =
         widget.control.getBool("show_refresh_action", false)!;
+    final pickerButton = picker
+        ? widget.control.buildWidget("picker_button")
+        : null;
 
     final fieldState =
         widget.control.getString("state", "normal")!.toLowerCase();
@@ -251,64 +268,98 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
       _ => null,
     };
 
-    Widget? suffixIcon;
-    if (password && canRevealPassword) {
-      suffixIcon = IconButton(
-        icon: Icon(
-          _revealPassword ? Icons.visibility_off : Icons.visibility,
+    final suffixControls = <Widget>[];
+
+    if (searching) {
+      suffixControls.add(
+        const Padding(
+          padding: EdgeInsets.symmetric(horizontal: 12),
+          child: SizedBox.square(
+            dimension: 16,
+            child: CircularProgressIndicator(strokeWidth: 2),
+          ),
         ),
-        tooltip: _revealPassword ? "Masquer" : "Afficher",
-        onPressed: () {
-          setState(() {
-            _revealPassword = !_revealPassword;
-          });
-        },
-      );
-    } else if ((searchMode &&
-            (searching || showRefreshAction ||
-                (clearButton && _value.isNotEmpty))) ||
-        stateIcon != null) {
-      suffixIcon = Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (searching)
-            const Padding(
-              padding: EdgeInsets.symmetric(horizontal: 12),
-              child: SizedBox.square(
-                dimension: 16,
-                child: CircularProgressIndicator(strokeWidth: 2),
-              ),
-            ),
-          if (showRefreshAction)
-            IconButton(
-              icon: const Icon(Icons.refresh),
-              tooltip: widget.control
-                  .getString("refresh_action_tooltip", "Actualiser"),
-              onPressed:
-                  widget.control.getBool("refresh_action_disabled", false)!
-                      ? null
-                      : () => widget.control.triggerEvent("refresh_action"),
-            ),
-          if (stateIcon != null && stateColor != null)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10),
-              child: Icon(stateIcon, color: stateColor, size: 20),
-            ),
-          if (clearButton && _value.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.close),
-              tooltip: "Effacer la recherche",
-              onPressed: _clearSearch,
-            ),
-        ],
       );
     }
 
-    var textVerticalAlign = widget.control.getDouble("text_vertical_align");
+    if (showRefreshAction) {
+      suffixControls.add(
+        IconButton(
+          icon: const Icon(Icons.refresh),
+          tooltip: widget.control
+              .getString("refresh_action_tooltip", "Actualiser"),
+          onPressed: widget.control
+                  .getBool("refresh_action_disabled", false)!
+              ? null
+              : () => widget.control.triggerEvent("refresh_action"),
+        ),
+      );
+    }
 
-    FocusNode focusNode = shiftEnter ? _shiftEnterfocusNode : _focusNode;
-    var focusValue = widget.control.getString("focus");
-    var blurValue = widget.control.getString("blur");
+    if (password && canRevealPassword) {
+      suffixControls.add(
+        IconButton(
+          icon: Icon(
+            _revealPassword ? Icons.visibility_off : Icons.visibility,
+          ),
+          tooltip: _revealPassword ? "Masquer" : "Afficher",
+          onPressed: () {
+            setState(() {
+              _revealPassword = !_revealPassword;
+            });
+          },
+        ),
+      );
+    }
+
+    if (stateIcon != null && stateColor != null) {
+      suffixControls.add(
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          child: Icon(stateIcon, color: stateColor, size: 20),
+        ),
+      );
+    }
+
+    if (clearButton && _value.isNotEmpty && (searchMode || picker)) {
+      suffixControls.add(
+        IconButton(
+          icon: const Icon(Icons.close),
+          tooltip: searchMode ? "Effacer la recherche" : "Effacer",
+          onPressed: searchMode ? _clearSearch : _clearPickerValue,
+        ),
+      );
+    }
+
+    if (pickerButton != null) {
+      final disabled = widget.control.disabled;
+      suffixControls.add(
+        Padding(
+          padding: const EdgeInsets.only(right: 6),
+          child: IgnorePointer(
+            ignoring: disabled,
+            child: Opacity(
+              opacity: disabled ? 0.5 : 1,
+              child: pickerButton,
+            ),
+          ),
+        ),
+      );
+    }
+
+    final Widget? suffixIcon = suffixControls.isEmpty
+        ? null
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: suffixControls,
+          );
+
+    final textVerticalAlign =
+        widget.control.getDouble("text_vertical_align");
+
+    final focusNode = shiftEnter ? _shiftEnterfocusNode : _focusNode;
+    final focusValue = widget.control.getString("focus");
+    final blurValue = widget.control.getString("blur");
     if (focusValue != null && focusValue != _lastFocusValue) {
       _lastFocusValue = focusValue;
       focusNode.requestFocus();
@@ -318,8 +369,9 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
       _focusNode.unfocus();
     }
 
-    var fitParentSize = widget.control.getBool("fit_parent_size", false)!;
-    var maxLength = widget.control.getInt("max_length");
+    final fitParentSize =
+        widget.control.getBool("fit_parent_size", false)!;
+    final maxLength = widget.control.getInt("max_length");
 
     InputBorder? withStateBorder(InputBorder? border, double width) {
       if (border == null || stateColor == null) return border;
@@ -383,136 +435,145 @@ class _PaperNestTextFieldControlState extends State<PaperNestTextFieldControl> {
     }
 
     Widget textField = TextFormField(
-        style: textStyle,
-        autofocus: autofocus,
-        enabled: !widget.control.disabled,
-        onFieldSubmitted: !multiline
-            ? (value) {
-                _searchDebounce?.cancel();
-                widget.control.triggerEvent("submit", value);
-                if (searchMode) {
-                  widget.control.triggerEvent("search", value);
-                }
+      style: textStyle,
+      autofocus: autofocus,
+      enabled: !widget.control.disabled,
+      onFieldSubmitted: !multiline
+          ? (value) {
+              _searchDebounce?.cancel();
+              widget.control.triggerEvent("submit", value);
+              if (searchMode) {
+                widget.control.triggerEvent("search", value);
               }
-            : null,
-        decoration: decoration,
-        showCursor: widget.control.getBool("show_cursor"),
-        textAlignVertical: textVerticalAlign != null
-            ? TextAlignVertical(y: textVerticalAlign)
-            : null,
-        cursorHeight: widget.control.getDouble("cursor_height"),
-        cursorWidth: widget.control.getDouble("cursor_width", 2.0)!,
-        cursorRadius: widget.control.getRadius("cursor_radius"),
-        keyboardType: multiline
-            ? TextInputType.multiline
-            : widget.control
-                .getTextInputType("keyboard_type", TextInputType.text)!,
-        autocorrect: widget.control.getBool("autocorrect", true)!,
-        enableSuggestions: widget.control.getBool("enable_suggestions", true)!,
-        smartDashesType: widget.control.getBool("smart_dashes_type", true)!
-            ? SmartDashesType.enabled
-            : SmartDashesType.disabled,
-        smartQuotesType: widget.control.getBool("smart_quotes_type", true)!
-            ? SmartQuotesType.enabled
-            : SmartQuotesType.disabled,
-        textAlign: widget.control.getTextAlign("text_align", TextAlign.start)!,
-        minLines: fitParentSize ? null : minLines,
-        maxLines: fitParentSize ? null : maxLines,
-        maxLength: maxLength,
-        readOnly: widget.control.getBool("read_only", false)!,
-        inputFormatters: inputFormatters.isNotEmpty ? inputFormatters : null,
-        obscureText: password && !_revealPassword,
-        controller: _controller,
-        focusNode: focusNode,
-        autofillHints: widget.control.getAutofillHints("autofill_hints"),
-        expands: fitParentSize,
-        enableInteractiveSelection:
-            widget.control.getBool("enable_interactive_selection"),
-        canRequestFocus: widget.control.getBool("can_request_focus", true)!,
-        clipBehavior:
-            widget.control.getClipBehavior("clip_behavior", Clip.hardEdge)!,
-        cursorColor: cursorColor,
-        ignorePointers: widget.control.getBool("ignore_pointers"),
-        cursorErrorColor:
-            widget.control.getColor("cursor_error_color", context),
-        stylusHandwritingEnabled:
-            widget.control.getBool("enable_stylus_handwriting", true)!,
-        scrollPadding: widget.control
-            .getPadding("scroll_padding", const EdgeInsets.all(20.0))!,
-        keyboardAppearance: widget.control.getBrightness("keyboard_brightness"),
-        enableIMEPersonalizedLearning:
-            widget.control.getBool("enable_ime_personalized_learning", true)!,
-        obscuringCharacter:
-            widget.control.getString("obscuring_character", '•')!,
-        mouseCursor: widget.control.getMouseCursor("mouse_cursor"),
-        cursorOpacityAnimates: widget.control.getBool("animate_cursor_opacity",
-            Theme.of(context).platform == TargetPlatform.iOS)!,
-        onTapAlwaysCalled: widget.control.getBool("always_call_on_tap", false)!,
-        strutStyle: widget.control.getStrutStyle("strut_style"),
-        onTap: () {
-          widget.control.triggerEvent("click");
-        },
-        onTapOutside: widget.control.hasEventHandler("tap_outside")
-            ? (PointerDownEvent? event) {
-                widget.control.triggerEvent("tap_outside");
-              }
-            : null,
-        onChanged: (String value) {
-          final visibilityChanged = searchMode &&
-              clearButton &&
-              ((_value.isEmpty && value.isNotEmpty) ||
-                  (_value.isNotEmpty && value.isEmpty));
-
-          _value = value;
-          widget.control.updateProperties({"value": value});
-
-          if (visibilityChanged) {
-            setState(() {});
-          }
-
-          if (widget.control.hasEventHandler("change")) {
-            widget.control.triggerEvent("change", value);
-          }
-
-          if (searchMode && widget.control.hasEventHandler("search")) {
-            _searchDebounce?.cancel();
-            final debounceMs = widget.control.getInt("debounce_ms", 300)!;
-            if (debounceMs == 0) {
-              widget.control.triggerEvent("search", value);
-            } else {
-              _searchDebounce = Timer(Duration(milliseconds: debounceMs), () {
-                if (mounted) {
-                  widget.control.triggerEvent("search", _value);
-                }
-              });
             }
+          : null,
+      decoration: decoration,
+      showCursor: widget.control.getBool("show_cursor"),
+      textAlignVertical: textVerticalAlign != null
+          ? TextAlignVertical(y: textVerticalAlign)
+          : null,
+      cursorHeight: widget.control.getDouble("cursor_height"),
+      cursorWidth: widget.control.getDouble("cursor_width", 2.0)!,
+      cursorRadius: widget.control.getRadius("cursor_radius"),
+      keyboardType: multiline
+          ? TextInputType.multiline
+          : widget.control
+              .getTextInputType("keyboard_type", TextInputType.text)!,
+      autocorrect: widget.control.getBool("autocorrect", true)!,
+      enableSuggestions:
+          widget.control.getBool("enable_suggestions", true)!,
+      smartDashesType: widget.control.getBool("smart_dashes_type", true)!
+          ? SmartDashesType.enabled
+          : SmartDashesType.disabled,
+      smartQuotesType: widget.control.getBool("smart_quotes_type", true)!
+          ? SmartQuotesType.enabled
+          : SmartQuotesType.disabled,
+      textAlign: widget.control.getTextAlign("text_align", TextAlign.start)!,
+      minLines: fitParentSize ? null : minLines,
+      maxLines: fitParentSize ? null : maxLines,
+      maxLength: maxLength,
+      readOnly: widget.control.getBool("read_only", false)!,
+      inputFormatters: inputFormatters.isNotEmpty ? inputFormatters : null,
+      obscureText: password && !_revealPassword,
+      controller: _controller,
+      focusNode: focusNode,
+      autofillHints: widget.control.getAutofillHints("autofill_hints"),
+      expands: fitParentSize,
+      enableInteractiveSelection:
+          widget.control.getBool("enable_interactive_selection"),
+      canRequestFocus: widget.control.getBool("can_request_focus", true)!,
+      clipBehavior:
+          widget.control.getClipBehavior("clip_behavior", Clip.hardEdge)!,
+      cursorColor: cursorColor,
+      ignorePointers: widget.control.getBool("ignore_pointers"),
+      cursorErrorColor:
+          widget.control.getColor("cursor_error_color", context),
+      stylusHandwritingEnabled:
+          widget.control.getBool("enable_stylus_handwriting", true)!,
+      scrollPadding: widget.control
+          .getPadding("scroll_padding", const EdgeInsets.all(20.0))!,
+      keyboardAppearance:
+          widget.control.getBrightness("keyboard_brightness"),
+      enableIMEPersonalizedLearning:
+          widget.control.getBool("enable_ime_personalized_learning", true)!,
+      obscuringCharacter:
+          widget.control.getString("obscuring_character", '•')!,
+      mouseCursor: widget.control.getMouseCursor("mouse_cursor"),
+      cursorOpacityAnimates: widget.control.getBool(
+        "animate_cursor_opacity",
+        Theme.of(context).platform == TargetPlatform.iOS,
+      )!,
+      onTapAlwaysCalled:
+          widget.control.getBool("always_call_on_tap", false)!,
+      strutStyle: widget.control.getStrutStyle("strut_style"),
+      onTap: () {
+        widget.control.triggerEvent("click");
+      },
+      onTapOutside: widget.control.hasEventHandler("tap_outside")
+          ? (PointerDownEvent? event) {
+              widget.control.triggerEvent("tap_outside");
+            }
+          : null,
+      onChanged: (String value) {
+        final visibilityChanged =
+            clearButton &&
+            (searchMode || picker) &&
+            ((_value.isEmpty && value.isNotEmpty) ||
+                (_value.isNotEmpty && value.isEmpty));
+
+        _value = value;
+        widget.control.updateProperties({"value": value});
+
+        if (visibilityChanged) {
+          setState(() {});
+        }
+
+        if (widget.control.hasEventHandler("change")) {
+          widget.control.triggerEvent("change", value);
+        }
+
+        if (searchMode && widget.control.hasEventHandler("search")) {
+          _searchDebounce?.cancel();
+          final debounceMs = widget.control.getInt("debounce_ms", 300)!;
+          if (debounceMs == 0) {
+            widget.control.triggerEvent("search", value);
+          } else {
+            _searchDebounce = Timer(Duration(milliseconds: debounceMs), () {
+              if (mounted) {
+                widget.control.triggerEvent("search", _value);
+              }
+            });
           }
-        });
+        }
+      },
+    );
 
     if (cursorColor != null || selectionColor != null) {
       textField = TextSelectionTheme(
-          data: TextSelectionTheme.of(context).copyWith(
-              cursorColor: cursorColor, selectionColor: selectionColor),
-          child: textField);
+        data: TextSelectionTheme.of(context).copyWith(
+          cursorColor: cursorColor,
+          selectionColor: selectionColor,
+        ),
+        child: textField,
+      );
     }
 
-    // linux workaround for https://github.com/flet-dev/flet/issues/3934
     textField =
         isLinuxDesktop() ? ExcludeSemantics(child: textField) : textField;
 
     if (widget.control.getExpand("expand", 0)! > 0) {
       return LayoutControl(control: widget.control, child: textField);
-    } else {
-      double? width = widget.control.getDouble("width");
-
-      return LayoutControl(
-        control: widget.control,
-        child: width == null
-            ? ConstrainedBox(
-                constraints: const BoxConstraints.tightFor(width: 300),
-                child: textField)
-            : textField,
-      );
     }
+
+    final width = widget.control.getDouble("width");
+    return LayoutControl(
+      control: widget.control,
+      child: width == null
+          ? ConstrainedBox(
+              constraints: const BoxConstraints.tightFor(width: 300),
+              child: textField,
+            )
+          : textField,
+    );
   }
 }
