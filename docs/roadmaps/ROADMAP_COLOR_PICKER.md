@@ -1,51 +1,120 @@
-# Roadmap — PaperNestColorPicker
+# Roadmap — Refonte de PaperNestColorPicker
 
 ## État
 
-La roadmap `PaperNestColorPicker` est terminée.
+**Décision non encore définitive : la suppression du fork Flutter dépend de la validation d’un prototype Python fondé sur `flet-color-picker`.**
 
-## Objectif
+L’audit du contrôle actuel montre que :
 
-Créer un contrôle de sélection de couleur cohérent avec PaperNestExtension et remplacer le champ couleur historique de PaperNest.
+- la normalisation `#RGB`, `#RRGGBB` et `#AARRGGBB` est déjà réalisée côté Python ;
+- la valeur publique peut être forcée en `#RRGGBB` côté Python ;
+- les couleurs Flet sont résolues côté Flutter par `getColor()` ;
+- le Dart actuel sert principalement à afficher `MaterialPicker`, ouvrir son dialogue, construire le faux champ et renvoyer le résultat en hexadécimal ;
+- le dialogue, les actions et le champ d’ouverture ne doivent plus appartenir au picker.
 
-## Implémentation de l’extension
+## Principe directeur
 
-- [x] API Python définie.
-- [x] Architecture Flutter définie.
-- [x] Rendu fermé sous forme de champ Material.
-- [x] Ouverture du `MaterialPicker` sur toute la surface.
-- [x] Indicateur circulaire de la couleur sélectionnée.
-- [x] Valeur normalisée au format `#RRGGBB`.
-- [x] Suppression des valeurs publiques `#AARRGGBB`.
-- [x] Gestion de la valeur initiale et des changements programmatiques.
-- [x] Gestion du focus, du clavier, d’Échap et du survol.
-- [x] Gestion des états `disabled` et `read_only`.
-- [x] Implémentation de `clear_button` et de l’événement `on_clear`.
-- [x] Compatibilité temporaire avec l’ancien événement `on_cleared`.
-- [x] Implémentation de `on_change`, `on_focus`, `on_blur` et `on_escape`.
-- [x] Exemple de l’extension mis à jour.
+Le picker doit uniquement afficher et gérer la sélection d’une couleur. Le champ d’ouverture, le dialogue, les actions, la normalisation publique et l’intégration au formulaire restent en Python.
 
-## Intégration dans PaperNest
+Architecture cible privilégiée :
 
-- [x] Étude de l’ancien champ couleur.
-- [x] Création de `BaseColorPicker` héritant directement de `PaperNestColorPicker`.
-- [x] Application du thème avec des `kwargs.setdefault(...)` surchargeables.
-- [x] Remplacement de l’ancien champ couleur.
-- [x] Suppression du code et des imports devenus inutiles.
-- [x] Vérification des formulaires utilisant une couleur.
+```text
+PaperNest
+├── PickerTextField
+├── AppDialog(ft.AlertDialog)
+└── BaseColorPicker Python
+    ├── contenu flet-color-picker
+    ├── normalisation ColorValue → #RRGGBB
+    ├── sélection temporaire
+    ├── annulation
+    └── validation
 
-## Validation
+PaperNestExtension
+└── aucun PaperNestColorPicker
+```
 
-- [x] Build de l’extension sous Windows.
-- [x] Test de l’ouverture du sélecteur.
-- [x] Test de la sélection et de la normalisation `#RRGGBB`.
-- [x] Test de l’effacement et de `on_clear`.
-- [x] Test du focus, du clavier, du survol, de `disabled` et de `read_only`.
-- [x] Validation du rendu et du comportement dans PaperNest.
-- [x] Validation du build Windows de PaperNest.
-- [x] Validation avec l’utilisateur.
-- [x] Mise à jour de la roadmap globale et des changelogs.
+Architecture de repli uniquement si le prototype Python échoue :
 
-## Critères de finalisation
+```text
+PaperNestExtension
+└── PaperNestColorPickerContent
+    └── affichage du picker uniquement
+```
 
-`PaperNestColorPicker` est implémenté, intégré et validé sous Windows. L’ancien champ couleur a été supprimé et le contrôle est utilisé dans tous les parcours réels de PaperNest.
+Dans ce cas de repli, le contrôle Flutter ne doit gérer ni champ, ni dialogue, ni bouton, ni actions.
+
+## Phase 1 — Audit technique
+
+- [x] Identifier la normalisation Python actuelle.
+- [x] Identifier la conversion Flutter actuelle vers `#RRGGBB`.
+- [x] Confirmer que le contrôle actuel mélange trop de responsabilités : champ, dialogue, picker et actions.
+- [x] Confirmer que `PaperNestDialogSurface` doit disparaître du ColorPicker.
+- [ ] Récupérer et lire intégralement les sources de la version exacte de `flet-color-picker` utilisée comme base.
+- [ ] Comparer son API Python et son widget Flutter avec le fork PaperNest.
+- [ ] Identifier précisément la modification qui a rendu compatibles les couleurs hexadécimales et les `ft.Colors`.
+
+## Phase 2 — Prototype 100 % Python
+
+- [ ] Ajouter temporairement `flet-color-picker` au projet de test.
+- [ ] Construire le contenu du picker sans dialogue interne.
+- [ ] Accepter une valeur initiale de type `ColorValue`.
+- [ ] Accepter `#RGB`, `#RRGGBB`, `#AARRGGBB` et les valeurs issues de `ft.Colors`.
+- [ ] Normaliser la valeur publique en `#RRGGBB`.
+- [ ] Gérer une sélection temporaire distincte de la valeur finale.
+- [ ] Composer le dialogue avec `AppDialog`.
+- [ ] Ouvrir le dialogue depuis `PickerTextField`.
+- [ ] Vérifier l’annulation et la validation explicite.
+- [ ] Vérifier la mise à jour programmée de la valeur.
+
+## Décision bloquante
+
+Après le prototype :
+
+### Option A — Prototype Python validé
+
+- [ ] Supprimer complètement `PaperNestColorPicker` de l’extension.
+- [ ] Conserver toute la normalisation dans PaperNest.
+- [ ] Utiliser directement `flet-color-picker` comme dépendance de PaperNest.
+
+### Option B — Limitation technique confirmée
+
+- [ ] Conserver un contrôle Flutter minimal limité au contenu de sélection.
+- [ ] Supprimer tout le rendu de champ Material.
+- [ ] Supprimer l’ouverture du dialogue Flutter.
+- [ ] Supprimer les boutons Annuler/Valider Flutter.
+- [ ] Supprimer le focus, le clear button et les événements liés au faux champ.
+- [ ] Exposer uniquement la valeur temporaire et l’événement de changement.
+
+Aucune option ne sera implémentée définitivement avant validation de ce choix par l’utilisateur.
+
+## Phase 3 — Intégration PaperNest
+
+- [ ] Refaire `BaseColorPicker` autour de `PickerTextField`.
+- [ ] Composer le dialogue côté Python.
+- [ ] Préserver `normalize_value()` et le fallback métier.
+- [ ] Préserver la prévisualisation dynamique des catégories.
+- [ ] Migrer l’éditeur de classeur et de sous-catégorie.
+- [ ] Tester les valeurs existantes et invalides.
+
+## Phase 4 — Validation
+
+- [ ] Tester une valeur hexadécimale.
+- [ ] Tester une couleur Flet.
+- [ ] Tester une valeur `#AARRGGBB`.
+- [ ] Tester l’annulation et la validation.
+- [ ] Tester l’effacement.
+- [ ] Tester les changements programmatiques.
+- [ ] Valider `flet run --recursive`.
+- [ ] Valider le build Windows PaperNest.
+- [ ] Faire valider visuellement et fonctionnellement par l’utilisateur.
+
+## Phase 5 — Nettoyage de l’extension
+
+- [ ] Supprimer `PaperNestDialogSurface` lorsque plus aucun picker ne l’utilise.
+- [ ] Supprimer ou réduire le contrôle Flutter selon l’option validée.
+- [ ] Nettoyer les exports, les exemples et la documentation.
+- [ ] Compiler et valider PaperNestExtension après nettoyage.
+
+## Critère de finalisation
+
+La roadmap sera terminée lorsque la compatibilité hexadécimale et `ft.Colors` sera préservée avec la solution la plus simple possible, que le champ et le dialogue seront entièrement pilotés depuis Python, puis que le code Flutter inutile aura été supprimé.
