@@ -2,23 +2,9 @@
 
 ## État
 
-**Audit terminé. Option A validée : `PaperNestColorPicker` sera supprimé de PaperNestExtension après validation de son remplacement Python dans PaperNest.**
+**Option A implémentée dans PaperNest et en attente de validation.**
 
-Le contrôle officiel `MaterialPicker` du paquet `flet-color-pickers` fournit déjà les capacités nécessaires :
-
-- propriété `color: ColorValue | None` ;
-- compatibilité avec les couleurs hexadécimales et les couleurs Flet ;
-- événements renvoyant la couleur sélectionnée sous forme hexadécimale ;
-- rendu autonome pouvant être placé directement dans un `ft.AlertDialog`.
-
-Notre fork actuel n’apporte donc plus de capacité technique indispensable. Il mélange au contraire quatre responsabilités :
-
-- faux champ Material ;
-- ouverture du dialogue ;
-- affichage du `MaterialPicker` ;
-- actions Annuler / Valider.
-
-La normalisation stricte vers `#RRGGBB` reste entièrement réalisable côté Python.
+PaperNest utilise désormais directement `MaterialPicker` depuis `flet-color-pickers` dans un `AppDialog` Python. L’ancien `PaperNestColorPicker` reste temporairement présent dans PaperNestExtension jusqu’à validation complète de `flet run` et du build Windows.
 
 ## Architecture cible validée
 
@@ -28,14 +14,14 @@ PaperNest
 ├── AppDialog(ft.AlertDialog)
 └── BaseColorPicker Python
     ├── MaterialPicker de flet-color-pickers
-    ├── normalisation ColorValue → #RRGGBB
+    ├── normalisation → #RRGGBB
     ├── sélection temporaire
     ├── annulation
     ├── validation
     └── effacement
 
 PaperNestExtension
-└── aucun PaperNestColorPicker
+└── suppression future de PaperNestColorPicker
 ```
 
 ## Phase 1 — Audit technique
@@ -65,33 +51,37 @@ Aucun contrôle Flutter minimal ne sera conservé : le paquet officiel couvre d�
 
 ## Phase 2 — Implémentation Python dans PaperNest
 
-- [ ] Ajouter `flet-color-pickers` aux dépendances de PaperNest.
-- [ ] Créer un helper de normalisation acceptant :
-  - [ ] `#RGB` ;
-  - [ ] `#RRGGBB` ;
-  - [ ] `#AARRGGBB` ;
-  - [ ] valeurs issues de `ft.Colors` ;
-  - [ ] `None` et valeurs invalides avec fallback.
-- [ ] Refaire `BaseColorPicker` autour de `PickerTextField`.
-- [ ] Afficher la couleur courante dans le champ.
-- [ ] Construire un `MaterialPicker` dans `AppDialog`.
-- [ ] Gérer une valeur temporaire pendant l’ouverture du dialogue.
-- [ ] Appliquer la valeur uniquement lors de la validation.
-- [ ] Ne pas modifier la valeur lors de l’annulation.
-- [ ] Gérer l’effacement avec `clear_button`.
-- [ ] Préserver `on_change` et la prévisualisation dynamique.
+- [x] Ajouter `flet-color-pickers==0.85.3` aux dépendances de PaperNest.
+- [x] Conserver un helper de normalisation acceptant `#RGB`, `#RRGGBB`, `#AARRGGBB`, `None` et les valeurs invalides avec fallback.
+- [x] Refaire `BaseColorPicker` autour de `PickerTextField`.
+- [x] Afficher la couleur courante avec une pastille dans le champ.
+- [x] Utiliser un vrai `PrimaryButton` comme bouton Choisir.
+- [x] Construire un `MaterialPicker` dans `AppDialog`.
+- [x] Gérer une valeur temporaire pendant l’ouverture du dialogue.
+- [x] Appliquer la valeur uniquement lors de la validation.
+- [x] Ne pas modifier la valeur lors de l’annulation.
+- [x] Gérer l’effacement avec `clear_button`.
+- [x] Préserver `on_change` et `on_clear`.
+
+Commits PaperNest :
+
+```text
+28007f5c5475379af78652ea00f79b03cdce2bb1
+3557729b657172cafd6e38554a8fc6448d846e2b
+```
 
 ## Phase 3 — Migration PaperNest
 
-- [ ] Migrer l’éditeur de classeur et de sous-catégorie.
-- [ ] Préserver `BaseColorPicker.normalize_value()` ou fournir un alias compatible.
-- [ ] Préserver les valeurs déjà enregistrées.
-- [ ] Préserver le fallback métier `DEFAULT_COLOR`.
-- [ ] Vérifier les valeurs invalides historiques.
-- [ ] Ne modifier aucun autre picker pendant cette phase.
+- [x] Remplacer le wrapper de l’éditeur de classeur et de sous-catégorie sans modifier son appel public.
+- [x] Préserver `BaseColorPicker.normalize_value()`.
+- [x] Préserver les valeurs déjà enregistrées.
+- [x] Préserver le fallback métier `DEFAULT_COLOR`.
+- [x] Préserver la prévisualisation dynamique après validation.
+- [x] Ne modifier aucun autre picker pendant cette phase.
 
 ## Phase 4 — Validation
 
+- [ ] Installer/synchroniser la nouvelle dépendance.
 - [ ] Tester une valeur `#RGB`.
 - [ ] Tester une valeur `#RRGGBB`.
 - [ ] Tester une valeur `#AARRGGBB`.
@@ -101,6 +91,7 @@ Aucun contrôle Flutter minimal ne sera conservé : le paquet officiel couvre d�
 - [ ] Tester la validation.
 - [ ] Tester l’effacement.
 - [ ] Tester les changements programmatiques.
+- [ ] Vérifier la création et la modification d’un classeur.
 - [ ] Valider `flet run --recursive`.
 - [ ] Valider le build Windows PaperNest.
 - [ ] Faire valider visuellement et fonctionnellement par l’utilisateur.
