@@ -1,8 +1,5 @@
 from .control_state import ValidationState
-from .material.papernest_alert_dialog import (
-    PaperNestAlertDialog,
-    PaperNestDialogVariant,
-)
+from .material.papernest_alert_dialog import PaperNestAlertDialog
 from .material.papernest_button import PaperNestButton
 from .material.papernest_color_picker import PaperNestColorPicker
 from .material.papernest_date_picker import (
@@ -45,7 +42,6 @@ from .services.papernest_file_picker import (
 
 __all__ = [
     "PaperNestAlertDialog",
-    "PaperNestDialogVariant",
     "PaperNestButton",
     "PaperNestButtonStyle",
     "PaperNestColorPicker",
