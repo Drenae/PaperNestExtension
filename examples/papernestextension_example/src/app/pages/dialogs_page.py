@@ -1,5 +1,5 @@
 import flet as ft
-from papernestextension import PaperNestAlertDialog, PaperNestDialogVariant
+from papernestextension import PaperNestAlertDialog, PaperNestButton
 
 from cards import PageHeader
 
@@ -15,67 +15,79 @@ class DialogsPage(ft.Column):
                 PageHeader(
                     title="Dialogues",
                     subtitle=(
-                        "Variantes, modalité, fermeture extérieure, action d’en-tête "
-                        "et contenu scrollable"
+                        "PaperNestAlertDialog piloté entièrement depuis Python, "
+                        "sans variant dans l’extension"
                     ),
                 ),
-                self._build_variants_section(),
+                self._build_headers_section(),
                 self._build_behaviors_section(),
             ],
         )
 
-    def _build_variants_section(self) -> ft.Control:
-        buttons = [
-            self._dialog_button(
-                "Standard",
-                ft.Icons.INFO_OUTLINE_ROUNDED,
-                PaperNestDialogVariant.STANDARD,
-            ),
-            self._dialog_button(
-                "Principal",
-                ft.Icons.STAR_OUTLINE_ROUNDED,
-                PaperNestDialogVariant.PRIMARY,
-            ),
-            self._dialog_button(
-                "Succès",
-                ft.Icons.CHECK_CIRCLE_OUTLINE_ROUNDED,
-                PaperNestDialogVariant.SUCCESS,
-            ),
-            self._dialog_button(
-                "Avertissement",
-                ft.Icons.WARNING_AMBER_ROUNDED,
-                PaperNestDialogVariant.WARNING,
-            ),
-            self._dialog_button(
-                "Danger",
-                ft.Icons.DELETE_OUTLINE_ROUNDED,
-                PaperNestDialogVariant.DANGER,
-            ),
-        ]
+    def _build_headers_section(self) -> ft.Control:
         return self._section(
-            "Variantes",
-            "Chaque variante modifie l’accent visuel de l’en-tête.",
-            ft.Row(controls=buttons, wrap=True, spacing=12, run_spacing=12),
-        )
-
-    def _build_behaviors_section(self) -> ft.Control:
-        return self._section(
-            "Comportements",
-            "Cas particuliers à valider avant l’intégration dans les pickers.",
+            "En-têtes pilotés depuis Python",
+            "Les couleurs et la composition sont définies par chaque appel.",
             ft.Row(
                 wrap=True,
                 spacing=12,
                 run_spacing=12,
                 controls=[
                     ft.FilledButton(
-                        "Titre avec action",
-                        icon=ft.Icons.CLOSE_ROUNDED,
+                        "Titre seul",
+                        on_click=lambda _event: self._open_dialog(
+                            title="Dialogue minimal",
+                            icon=None,
+                        ),
+                    ),
+                    ft.FilledButton(
+                        "Icône et titre",
+                        icon=ft.Icons.STAR_OUTLINE_ROUNDED,
+                        on_click=lambda _event: self._open_dialog(
+                            title="Dialogue principal",
+                            icon=ft.Icons.STAR_OUTLINE_ROUNDED,
+                            icon_bgcolor=ft.Colors.YELLOW_700,
+                            icon_color=ft.Colors.GREY_900,
+                        ),
+                    ),
+                    ft.FilledButton(
+                        "Titre et sous-titre",
+                        icon=ft.Icons.INFO_OUTLINE_ROUNDED,
+                        on_click=lambda _event: self._open_dialog(
+                            title="Informations",
+                            subtitle="Un sous-titre fourni depuis Python",
+                            icon=ft.Icons.INFO_OUTLINE_ROUNDED,
+                            icon_bgcolor=ft.Colors.BLUE_700,
+                        ),
+                    ),
+                    ft.FilledButton(
+                        "Action d’en-tête",
+                        icon=ft.Icons.TUNE_ROUNDED,
                         on_click=lambda _event: self._open_dialog(
                             title="Action dans l’en-tête",
+                            subtitle="Le bouton à droite est un contrôle Python",
                             icon=ft.Icons.TUNE_ROUNDED,
-                            variant=PaperNestDialogVariant.PRIMARY,
+                            icon_bgcolor=ft.Colors.PURPLE_700,
                             title_action=True,
                         ),
+                    ),
+                ],
+            ),
+        )
+
+    def _build_behaviors_section(self) -> ft.Control:
+        return self._section(
+            "Comportements natifs conservés",
+            "Modalité, fermeture extérieure, hauteur naturelle et défilement.",
+            ft.Row(
+                wrap=True,
+                spacing=12,
+                run_spacing=12,
+                controls=[
+                    ft.FilledButton(
+                        "Formulaire naturel",
+                        icon=ft.Icons.EDIT_NOTE_ROUNDED,
+                        on_click=lambda _event: self._open_form_dialog(),
                     ),
                     ft.FilledButton(
                         "Contenu scrollable",
@@ -87,14 +99,11 @@ class DialogsPage(ft.Column):
                         icon=ft.Icons.LOCK_OUTLINE_ROUNDED,
                         on_click=lambda _event: self._open_dialog(
                             title="Dialogue modal",
+                            subtitle="Le clic extérieur ne doit pas le fermer",
                             icon=ft.Icons.LOCK_OUTLINE_ROUNDED,
-                            variant=PaperNestDialogVariant.WARNING,
+                            icon_bgcolor=ft.Colors.ORANGE_700,
                             modal=True,
                             dismissible=False,
-                            message=(
-                                "Un clic à l’extérieur ne doit pas fermer ce dialogue. "
-                                "Utilisez le bouton Fermer."
-                            ),
                         ),
                     ),
                     ft.OutlinedButton(
@@ -102,90 +111,176 @@ class DialogsPage(ft.Column):
                         icon=ft.Icons.TOUCH_APP_OUTLINED,
                         on_click=lambda _event: self._open_dialog(
                             title="Dialogue non modal",
+                            subtitle="Cliquez à l’extérieur pour le fermer",
                             icon=ft.Icons.TOUCH_APP_OUTLINED,
-                            variant=PaperNestDialogVariant.STANDARD,
+                            icon_bgcolor=ft.Colors.GREY_700,
                             modal=False,
                             dismissible=True,
-                            message=(
-                                "Cliquez à l’extérieur du dialogue pour vérifier "
-                                "l’événement de fermeture."
-                            ),
                         ),
                     ),
                 ],
             ),
         )
 
-    def _dialog_button(
-        self,
-        label: str,
-        icon,
-        variant: PaperNestDialogVariant,
-    ) -> ft.Control:
-        return ft.FilledButton(
-            label,
-            icon=icon,
-            on_click=lambda _event: self._open_dialog(
-                title=f"Variante {label.lower()}",
-                icon=icon,
-                variant=variant,
+    def _dialog_defaults(self) -> dict:
+        return {
+            "width": 560,
+            "bgcolor": ft.Colors.WHITE,
+            "header_bgcolor": ft.Colors.GREY_900,
+            "header_padding": ft.Padding.symmetric(horizontal=24, vertical=16),
+            "header_spacing": 12,
+            "icon_color": ft.Colors.WHITE,
+            "icon_size": 20,
+            "icon_container_size": 38,
+            "icon_border_radius": 12,
+            "title_text_style": ft.TextStyle(
+                size=18,
+                weight=ft.FontWeight.BOLD,
+                color=ft.Colors.WHITE,
             ),
-        )
+            "subtitle_text_style": ft.TextStyle(
+                size=12,
+                color=ft.Colors.GREY_400,
+            ),
+            "content_padding": ft.Padding.only(
+                left=24,
+                right=24,
+                top=20,
+                bottom=16,
+            ),
+            "actions_padding": ft.Padding.only(
+                left=24,
+                right=24,
+                top=8,
+                bottom=20,
+            ),
+            "actions_alignment": ft.MainAxisAlignment.END,
+            "actions_spacing": 8,
+            "shape": ft.RoundedRectangleBorder(radius=20),
+            "clip_behavior": ft.ClipBehavior.ANTI_ALIAS,
+            "shadow_color": ft.Colors.with_opacity(0.22, ft.Colors.BLACK),
+            "barrier_color": ft.Colors.with_opacity(0.48, ft.Colors.BLACK),
+        }
 
     def _open_dialog(
         self,
         *,
         title: str,
         icon,
-        variant: PaperNestDialogVariant,
-        message: str = "Ce dialogue utilise PaperNestAlertDialog.",
+        subtitle: str | None = None,
+        icon_bgcolor=ft.Colors.GREY_700,
+        icon_color=ft.Colors.WHITE,
+        message: str = "Ce dialogue utilise le nouveau fork de AlertDialog.",
         modal: bool = False,
         dismissible: bool = True,
         title_action: bool = False,
     ) -> None:
         dialog = PaperNestAlertDialog(
             title=title,
+            subtitle=subtitle,
             icon=icon,
-            variant=variant,
+            icon_bgcolor=icon_bgcolor,
+            icon_color=icon_color,
             modal=modal,
             dismissible=dismissible,
-            width=560,
-            content=ft.Text(message, size=14, color="#4B5563"),
+            content=ft.Text(message, size=14, color=ft.Colors.GREY_700),
+            **self._dialog_defaults(),
         )
         dialog.actions = [
-            ft.TextButton("Annuler", on_click=lambda _event: self._close_dialog(dialog)),
-            ft.FilledButton("Fermer", on_click=lambda _event: self._close_dialog(dialog)),
+            PaperNestButton(
+                content="Annuler",
+                color=ft.Colors.GREY_800,
+                bgcolor=ft.Colors.GREY_200,
+                elevation=0,
+                on_click=lambda _event: self._close_dialog(dialog),
+            ),
+            PaperNestButton(
+                content="Fermer",
+                color=ft.Colors.GREY_900,
+                gradient=ft.LinearGradient(
+                    begin=ft.Alignment.CENTER_LEFT,
+                    end=ft.Alignment.CENTER_RIGHT,
+                    colors=[ft.Colors.YELLOW_700, ft.Colors.YELLOW_800],
+                ),
+                hover_scale=1.02,
+                click_scale=0.97,
+                on_click=lambda _event: self._close_dialog(dialog),
+            ),
         ]
         if title_action:
             dialog.title_action = ft.IconButton(
                 icon=ft.Icons.CLOSE_ROUNDED,
-                icon_color="#FFFFFF",
+                icon_color=ft.Colors.WHITE,
                 tooltip="Fermer",
                 on_click=lambda _event: self._close_dialog(dialog),
             )
         self._show_dialog(dialog)
 
+    def _open_form_dialog(self) -> None:
+        form = ft.Column(
+            tight=True,
+            spacing=12,
+            controls=[
+                ft.TextField(label="Nom", value="PaperNest"),
+                ft.TextField(label="Description", multiline=True, min_lines=2),
+            ],
+        )
+        dialog = PaperNestAlertDialog(
+            title="Formulaire compact",
+            subtitle="Les actions doivent suivre immédiatement le contenu",
+            icon=ft.Icons.EDIT_NOTE_ROUNDED,
+            icon_bgcolor=ft.Colors.YELLOW_700,
+            icon_color=ft.Colors.GREY_900,
+            content=form,
+            **self._dialog_defaults(),
+        )
+        dialog.actions = [
+            PaperNestButton(
+                content="Annuler",
+                bgcolor=ft.Colors.GREY_200,
+                color=ft.Colors.GREY_800,
+                elevation=0,
+                on_click=lambda _event: self._close_dialog(dialog),
+            ),
+            PaperNestButton(
+                content="Enregistrer",
+                gradient=ft.LinearGradient(
+                    colors=[ft.Colors.YELLOW_700, ft.Colors.YELLOW_800],
+                ),
+                color=ft.Colors.GREY_900,
+                on_click=lambda _event: self._close_dialog(dialog),
+            ),
+        ]
+        self._show_dialog(dialog)
+
     def _open_scrollable_dialog(self) -> None:
         paragraphs = [
             ft.Text(
-                f"Section {index} — Ce contenu permet de vérifier le défilement, "
-                "la hauteur maximale et le maintien visible des actions.",
+                f"Section {index} — Vérification du défilement et du maintien "
+                "des actions visibles.",
                 size=14,
-                color="#4B5563",
+                color=ft.Colors.GREY_700,
             )
-            for index in range(1, 13)
+            for index in range(1, 16)
         ]
         dialog = PaperNestAlertDialog(
             title="Contenu long et scrollable",
+            subtitle="Hauteur maximale définie depuis Python",
             icon=ft.Icons.ARTICLE_OUTLINED,
-            variant=PaperNestDialogVariant.PRIMARY,
+            icon_bgcolor=ft.Colors.BLUE_700,
             width=640,
             max_height=620,
             scrollable=True,
             content=ft.Column(tight=True, spacing=14, controls=paragraphs),
+            **{key: value for key, value in self._dialog_defaults().items() if key != "width"},
         )
         dialog.actions = [
-            ft.FilledButton("Fermer", on_click=lambda _event: self._close_dialog(dialog))
+            PaperNestButton(
+                content="Fermer",
+                bgcolor=ft.Colors.BLUE_700,
+                color=ft.Colors.WHITE,
+                on_click=lambda _event: self._close_dialog(dialog),
+            )
         ]
         self._show_dialog(dialog)
 
@@ -202,15 +297,15 @@ class DialogsPage(ft.Column):
     def _section(title: str, subtitle: str, content: ft.Control) -> ft.Control:
         return ft.Container(
             padding=24,
-            bgcolor="#FFFFFF",
-            border=ft.Border.all(1, "#D9DCE3"),
+            bgcolor=ft.Colors.WHITE,
+            border=ft.Border.all(1, ft.Colors.GREY_300),
             border_radius=16,
             content=ft.Column(
                 tight=True,
                 spacing=16,
                 controls=[
                     ft.Text(title, size=18, weight=ft.FontWeight.BOLD),
-                    ft.Text(subtitle, size=13, color="#6B7280"),
+                    ft.Text(subtitle, size=13, color=ft.Colors.GREY_600),
                     content,
                 ],
             ),
