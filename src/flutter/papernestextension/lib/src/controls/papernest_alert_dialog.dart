@@ -14,8 +14,6 @@ class PaperNestAlertDialogControl extends StatefulWidget {
 
 class _PaperNestAlertDialogControlState
     extends State<PaperNestAlertDialogControl> {
-  // Route pushed by showDialog. Kept in state so this control only closes the
-  // route it opened, matching the native Flet AlertDialog implementation.
   ModalRoute? _dialogRoute;
 
   Control get control => widget.control;
@@ -148,9 +146,12 @@ class _PaperNestAlertDialogControlState
         final usesPaperNestHeader = _usesPaperNestHeader();
         final width = control.getDouble("width");
         final maxHeight = control.getDouble("max_height");
-        final contentScrollable =
-            control.getBool("scrollable", false)! || maxHeight != null;
+        final contentScrollable = control.getBool("scrollable", false)!;
         final rawContent = control.buildWidget("content");
+
+        // Only an explicitly requested dialog scroll wraps the content.
+        // max_height merely constrains the dialog and remains compatible with
+        // expandable controls or content which manages its own scrolling.
         final dialogContent = contentScrollable && rawContent != null
             ? SingleChildScrollView(child: rawContent)
             : rawContent;
@@ -190,8 +191,6 @@ class _PaperNestAlertDialogControlState
               ? null
               : control.buildIconOrWidget("icon"),
           iconColor: control.getColor("icon_color", context),
-          // AlertDialog's native scrollable mode scrolls title and content
-          // together. PaperNest keeps its header fixed and scrolls content only.
           scrollable: false,
           actionsOverflowButtonSpacing:
               control.getDouble("actions_overflow_button_spacing"),
@@ -259,7 +258,6 @@ class _PaperNestAlertDialogControlState
       WidgetsBinding.instance.addPostFrameCallback((_) {
         showDialog(
           barrierDismissible: dismissible && !modal,
-          // Render the barrier in the dialog widget so it updates live.
           barrierColor: Colors.transparent,
           useSafeArea: false,
           useRootNavigator: false,
@@ -271,8 +269,6 @@ class _PaperNestAlertDialogControlState
         ).then((value) {
           final route = _dialogRoute;
           _dialogRoute = null;
-          // Wait until the exit animation has fully completed before firing
-          // dismiss, matching the native Flet implementation.
           (route?.completed ?? Future.value()).then((_) {
             debugPrint("Dismissing PaperNestAlertDialog(${control.id})");
             control.updateProperties({"_open": false}, python: false);
