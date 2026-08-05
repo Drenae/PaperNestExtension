@@ -148,8 +148,12 @@ class _PaperNestAlertDialogControlState
         final usesPaperNestHeader = _usesPaperNestHeader();
         final width = control.getDouble("width");
         final maxHeight = control.getDouble("max_height");
-        final scrollable = control.getBool("scrollable", false)! ||
-            maxHeight != null;
+        final contentScrollable =
+            control.getBool("scrollable", false)! || maxHeight != null;
+        final rawContent = control.buildWidget("content");
+        final dialogContent = contentScrollable && rawContent != null
+            ? SingleChildScrollView(child: rawContent)
+            : rawContent;
 
         final alertDialog = AlertDialog(
           title: usesPaperNestHeader
@@ -158,7 +162,7 @@ class _PaperNestAlertDialogControlState
           titlePadding: usesPaperNestHeader
               ? EdgeInsets.zero
               : control.getPadding("title_padding"),
-          content: control.buildWidget("content"),
+          content: dialogContent,
           contentPadding: control.getPadding(
             "content_padding",
             const EdgeInsets.fromLTRB(24.0, 20.0, 24.0, 24.0),
@@ -173,8 +177,9 @@ class _PaperNestAlertDialogControlState
             "inset_padding",
             const EdgeInsets.symmetric(horizontal: 40.0, vertical: 24.0),
           )!,
-          iconPadding:
-              usesPaperNestHeader ? EdgeInsets.zero : control.getPadding("icon_padding"),
+          iconPadding: usesPaperNestHeader
+              ? EdgeInsets.zero
+              : control.getPadding("icon_padding"),
           backgroundColor: control.getColor("bgcolor", context),
           buttonPadding: control.getPadding("action_button_padding"),
           shadowColor: control.getColor("shadow_color", context),
@@ -185,7 +190,9 @@ class _PaperNestAlertDialogControlState
               ? null
               : control.buildIconOrWidget("icon"),
           iconColor: control.getColor("icon_color", context),
-          scrollable: scrollable,
+          // AlertDialog's native scrollable mode scrolls title and content
+          // together. PaperNest keeps its header fixed and scrolls content only.
+          scrollable: false,
           actionsOverflowButtonSpacing:
               control.getDouble("actions_overflow_button_spacing"),
           alignment: control.getAlignment("alignment"),
