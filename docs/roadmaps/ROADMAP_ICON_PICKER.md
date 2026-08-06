@@ -2,9 +2,9 @@
 
 ## État
 
-**Décision validée : le sélecteur d’icônes doit être reconstruit entièrement en Python dans PaperNest, puis supprimé de PaperNestExtension.**
+**Implémentation Python terminée dans PaperNest. Validation applicative en attente.**
 
-Le contrôle Flutter actuel n’apporte aucune capacité inaccessible en Python. La recherche, la galerie, la sélection temporaire, l’aperçu, l’annulation et la validation peuvent être composés avec les contrôles Flet natifs.
+Le contrôle Flutter actuel n’apporte aucune capacité inaccessible en Python. La recherche, la galerie, la sélection temporaire, l’aperçu, l’annulation et la validation sont désormais composés avec les contrôles Flet natifs.
 
 ## Architecture cible
 
@@ -12,7 +12,7 @@ Le contrôle Flutter actuel n’apporte aucune capacité inaccessible en Python.
 PaperNest
 ├── PickerTextField
 ├── AppDialog(ft.AlertDialog)
-└── IconPicker Python
+└── BaseIconPicker Python
     ├── recherche
     ├── grille responsive
     ├── sélection temporaire
@@ -20,39 +20,40 @@ PaperNest
     └── validation
 
 PaperNestExtension
-└── aucun PaperNestIconPicker
+└── aucun PaperNestIconPicker après validation
 ```
 
 ## Phase 1 — Conception Python
 
-- [ ] Définir une classe ou un composant Python dédié à l’affichage du picker.
-- [ ] Réutiliser `PickerTextField` comme champ d’ouverture.
-- [ ] Utiliser `AppDialog` pour la composition du dialogue.
-- [ ] Conserver `PaperNestIconPickerOption` ou créer un modèle Python local équivalent.
-- [ ] Conserver la valeur métier sous forme de nom Material (`FOLDER_ROUNDED`, etc.).
-- [ ] Conserver le fallback `FOLDER_ROUNDED`.
-- [ ] Ajouter la recherche par libellé et valeur.
-- [ ] Construire une grille responsive.
-- [ ] Gérer la sélection temporaire sans modifier la valeur finale avant validation.
-- [ ] Gérer l’annulation, la validation et l’état désactivé.
+- [x] Définir un composant Python dédié.
+- [x] Réutiliser `PickerTextField` comme champ d’ouverture.
+- [x] Utiliser `AppDialog` pour le dialogue.
+- [x] Créer un modèle Python local `PaperNestIconPickerOption`.
+- [x] Conserver la valeur métier sous forme de nom Material.
+- [x] Conserver le fallback `FOLDER_ROUNDED`.
+- [x] Ajouter la recherche par libellé et valeur.
+- [x] Construire une grille responsive.
+- [x] Gérer la sélection temporaire.
+- [x] Gérer l’annulation, la validation, `disabled` et `read_only`.
 
 ## Phase 2 — Intégration PaperNest
 
-- [ ] Remplacer `BaseIconPicker` par un wrapper Python utilisant `PickerTextField`.
-- [ ] Migrer l’éditeur de classeur et de sous-catégorie.
-- [ ] Préserver les valeurs déjà enregistrées.
-- [ ] Préserver la prévisualisation dynamique.
-- [ ] Vérifier le comportement avec une valeur inconnue.
-- [ ] Vérifier la création et la modification des classeurs.
+- [x] Remplacer `BaseIconPicker` par une composition Python.
+- [x] Conserver l’API utilisée par l’éditeur de classeur.
+- [x] Supprimer la dépendance PaperNest vers `PaperNestIconPicker`.
+- [x] Supprimer la dépendance PaperNest vers l’option de l’extension.
+- [x] Préserver les valeurs déjà enregistrées et le fallback.
+- [x] Préserver la prévisualisation dynamique via `on_change`.
 
 ## Phase 3 — Validation
 
-- [ ] Tester la recherche.
-- [ ] Tester la sélection et l’annulation.
+- [ ] Tester la recherche et son effacement.
+- [ ] Tester la sélection puis l’annulation.
 - [ ] Tester la validation explicite.
 - [ ] Tester la conservation d’une valeur existante.
-- [ ] Tester le fallback.
+- [ ] Tester une valeur inconnue et le fallback.
 - [ ] Tester `disabled` et `read_only`.
+- [ ] Vérifier la création et la modification d’un classeur.
 - [ ] Valider le rendu Windows.
 - [ ] Valider `flet run --recursive`.
 - [ ] Valider le build Windows PaperNest.
@@ -63,7 +64,7 @@ PaperNestExtension
 Cette phase ne commence qu’après validation du remplacement Python.
 
 - [ ] Supprimer le contrôle Python `PaperNestIconPicker` de l’extension.
-- [ ] Supprimer `PaperNestIconPickerOption` de l’extension si le modèle devient local à PaperNest.
+- [ ] Supprimer `PaperNestIconPickerOption` de l’extension.
 - [ ] Supprimer le contrôle Flutter.
 - [ ] Supprimer son enregistrement et ses exports.
 - [ ] Supprimer les exemples spécifiques devenus inutiles.
@@ -72,4 +73,4 @@ Cette phase ne commence qu’après validation du remplacement Python.
 
 ## Critère de finalisation
 
-La roadmap sera terminée lorsque le sélecteur Python offrira tous les comportements réellement utilisés dans PaperNest, sera validé sous Windows, puis que le fork Flutter aura été retiré sans régression.
+La roadmap sera terminée lorsque le sélecteur Python sera validé sous Windows, puis que le fork Flutter aura été retiré sans régression.
