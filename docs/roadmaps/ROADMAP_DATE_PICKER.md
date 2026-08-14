@@ -2,9 +2,9 @@
 
 ## État
 
-**Wrapper Python natif implémenté dans PaperNest. Validation applicative en attente.**
+**Nettoyage terminé : wrapper Python natif validé dans PaperNest et ancien contrôle supprimé de PaperNestExtension. Rebuild Windows final à valider.**
 
-`BaseDatePickerField` utilise désormais `ft.DatePicker` directement. Le fork Flutter reste temporairement présent dans PaperNestExtension jusqu’à validation complète sous Windows.
+`BaseDatePickerField` utilise désormais `ft.DatePicker` directement. Le fork Flutter a été retiré de PaperNestExtension après validation sous Windows.
 
 ## Architecture cible
 
@@ -49,29 +49,29 @@ PaperNestExtension
 
 ## Phase 3 — Validation
 
-- [ ] Tester une valeur initiale ISO.
-- [ ] Tester une valeur initiale `datetime`.
-- [ ] Tester la sélection et la modification.
-- [ ] Tester l’effacement.
-- [ ] Tester les limites de dates.
-- [ ] Tester la locale et tous les libellés français.
-- [ ] Vérifier l’absence de décalage d’un jour.
-- [ ] Vérifier les valeurs ISO envoyées aux services.
-- [ ] Vérifier les deux dates du dialogue des métadonnées.
-- [ ] Valider `flet run --recursive`.
-- [ ] Valider le build Windows PaperNest.
-- [ ] Faire valider visuellement et fonctionnellement par l’utilisateur.
+- [x] Tester une valeur initiale ISO.
+- [x] Tester une valeur initiale `datetime`.
+- [x] Tester la sélection et la modification.
+- [x] Tester l’effacement.
+- [x] Tester les limites de dates.
+- [x] Tester la locale et tous les libellés français.
+- [x] Vérifier l’absence de décalage d’un jour.
+- [x] Vérifier les valeurs ISO envoyées aux services.
+- [x] Vérifier les deux dates du dialogue des métadonnées.
+- [x] Valider `flet run --recursive`.
+- [x] Valider le build Windows PaperNest.
+- [x] Faire valider visuellement et fonctionnellement par l’utilisateur.
 
 ## Phase 4 — Suppression de PaperNestExtension
 
 Cette phase ne commence qu’après validation du wrapper Python natif.
 
-- [ ] Supprimer `PaperNestDatePicker` côté Python.
-- [ ] Supprimer les enums et événements spécifiques devenus inutiles.
-- [ ] Supprimer le contrôle Flutter.
-- [ ] Supprimer l’enregistrement et les exports.
-- [ ] Supprimer l’exemple dédié devenu inutile.
-- [ ] Nettoyer la documentation et les imports.
+- [x] Supprimer `PaperNestDatePicker` côté Python.
+- [x] Supprimer les enums et événements spécifiques devenus inutiles.
+- [x] Supprimer le contrôle Flutter.
+- [x] Supprimer l’enregistrement et les exports.
+- [x] Supprimer l’exemple dédié devenu inutile.
+- [x] Nettoyer la documentation et les imports.
 - [ ] Compiler et valider PaperNestExtension après suppression.
 
 ## Critère de finalisation

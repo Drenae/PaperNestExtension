@@ -2,7 +2,7 @@
 
 ## État
 
-La nouvelle application d’exemple navigable est implémentée. Les tests Windows restent à effectuer.
+La nouvelle application d’exemple navigable est implémentée et nettoyée après le retrait des contrôles composés désormais gérés dans PaperNest.
 
 L’ancien écran unique a été remplacé par une petite application structurée autour de `PaperNestGlideRail`.
 
@@ -17,8 +17,9 @@ Créer une application d’exemple claire, extensible et agréable à utiliser, 
 - [x] Utiliser `PaperNestGlideRail` comme navigation principale et comme exemple réel du contrôle.
 - [x] Créer une page `Accueil` présentant tous les contrôles disponibles et leur fonction.
 - [x] Créer une page `Formulaires` contenant les panneaux `PaperNestTextField` et `PaperNestDropdown`.
-- [x] Créer une page `Pickers` contenant les panneaux `PaperNestColorPicker`, `PaperNestDatePicker`, `PaperNestFilePicker` et `PaperNestIconPicker`.
-- [x] Créer un panneau dédié pour `PaperNestIconPicker`.
+- [x] Conserver une page `Pickers` dédiée au `PaperNestFilePicker` restant dans l’extension.
+- [x] Retirer les panneaux des anciens ColorPicker, DatePicker et IconPicker.
+- [x] Retirer la page de démonstration de l’ancien AlertDialog.
 - [x] Prévoir une structure permettant d’ajouter plus tard d’autres pages par famille de contrôles.
 
 ## Organisation réalisée
@@ -35,7 +36,7 @@ examples/papernestextension_example/src/
             forms_page.py
             pickers_page.py
     panels/
-        papernest_iconpicker_panel.py
+        papernest_filepicker_panel.py
         ...
 ```
 
@@ -53,7 +54,7 @@ examples/papernestextension_example/src/
 - [x] Déplacer les fonctions d’exemple hors de `main.py`.
 - [x] Conserver les panneaux spécialisés existants.
 - [x] Supprimer les anciens imports et fonctions de `main.py`.
-- [x] Vérifier que chaque contrôle public actuel apparaît dans l’application d’exemple.
+- [x] Vérifier que chaque famille de contrôles publics actuelle apparaît dans l’application d’exemple.
 
 ## Validation
 

@@ -6,10 +6,7 @@ from cards import PageHeader
 _COMPONENTS = [
     ("PaperNestTextField", "Champs de saisie enrichis, recherche, états et validation.", ft.Icons.TEXT_FIELDS_ROUNDED),
     ("PaperNestDropdown", "Listes déroulantes personnalisables avec options structurées.", ft.Icons.ARROW_DROP_DOWN_CIRCLE_ROUNDED),
-    ("PaperNestColorPicker", "Sélection d'une couleur avec valeur normalisée en #RRGGBB.", ft.Icons.PALETTE_ROUNDED),
-    ("PaperNestDatePicker", "Sélection de date avec champ Material et dialogue natif.", ft.Icons.CALENDAR_MONTH_ROUNDED),
     ("PaperNestFilePicker", "Sélection et glisser-déposer de fichiers avec validation.", ft.Icons.UPLOAD_FILE_ROUNDED),
-    ("PaperNestIconPicker", "Galerie d'icônes avec sélection temporaire et confirmation.", ft.Icons.EMOJI_SYMBOLS_ROUNDED),
     ("PaperNestGlideRail", "Navigation compacte qui se déploie au survol sans déplacer le contenu.", ft.Icons.VIEW_SIDEBAR_ROUNDED),
 ]
 
@@ -30,6 +27,12 @@ class HomePage(ft.Column):
                     "Utilisez la navigation à gauche pour ouvrir les démonstrations par famille.",
                     size=15,
                     color="#555B66",
+                ),
+                ft.Text(
+                    "Les dialogues et les sélecteurs de couleur, de date et d’icône sont désormais "
+                    "composés côté Python dans PaperNest avec les contrôles Flet natifs.",
+                    size=13,
+                    color="#777D87",
                 ),
                 ft.ResponsiveRow(
                     spacing=16,

@@ -10,27 +10,19 @@ Tous les contrôles actuellement nécessaires à PaperNest sont implémentés, i
 
 - `PaperNestTextField`
 - `PaperNestDropdown` avec `PaperNestDropdownOption`
-- `PaperNestColorPicker`
-- `PaperNestDatePicker`
 - `PaperNestFilePicker`
+- `PaperNestButton`
+- `PaperNestGlideRail`
 
 `PaperNestDropdown` et `PaperNestDropdownOption` appartiennent au même composant fonctionnel.
 
-## PaperNestColorPicker
+## Contrôles retirés
 
-- API Python et implémentation Flutter finalisées.
-- Valeurs publiques normalisées au format `#RRGGBB`.
-- Gestion de `read_only`, du focus, du survol, du clavier et d’Échap.
-- Ajout de `clear_button` et de l’événement `on_clear`.
-- Exemple, build Windows et intégration PaperNest validés.
-
-## PaperNestDatePicker
-
-- Contrôle autonome avec rendu Material.
-- Gestion des valeurs, limites, modes, événements et méthodes asynchrones.
-- Normalisation des dates civiles pour éviter les décalages de fuseau horaire.
-- Exemple et interactions validés sous Windows.
-- Intégration PaperNest validée via un wrapper thématique héritant directement du contrôle.
+- `PaperNestAlertDialog` : remplacé par `AppDialog(ft.AlertDialog)` dans PaperNest.
+- `PaperNestColorPicker` : remplacé par une composition Python autour de `MaterialPicker`.
+- `PaperNestDatePicker` : remplacé par `ft.DatePicker` et un wrapper Python.
+- `PaperNestIconPicker` : remplacé par une galerie Python utilisant les icônes Flet natives.
+- `PaperNestDialogSurface` : supprimé avec les contrôles Flutter qui l’utilisaient.
 
 ## PaperNestFilePicker
 

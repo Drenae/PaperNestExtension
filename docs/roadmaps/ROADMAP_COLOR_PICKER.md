@@ -2,9 +2,9 @@
 
 ## État
 
-**Option A implémentée dans PaperNest et en attente de validation.**
+**Nettoyage terminé : Option A validée dans PaperNest et ancien contrôle supprimé de PaperNestExtension. Rebuild Windows final à valider.**
 
-PaperNest utilise désormais directement `MaterialPicker` depuis `flet-color-pickers` dans un `AppDialog` Python. L’ancien `PaperNestColorPicker` reste temporairement présent dans PaperNestExtension jusqu’à validation complète de `flet run` et du build Windows.
+PaperNest utilise désormais directement `MaterialPicker` depuis `flet-color-pickers` dans un `AppDialog` Python. L’ancien `PaperNestColorPicker` a été retiré de PaperNestExtension après validation.
 
 ## Architecture cible validée
 
@@ -81,32 +81,32 @@ Commits PaperNest :
 
 ## Phase 4 — Validation
 
-- [ ] Installer/synchroniser la nouvelle dépendance.
-- [ ] Tester une valeur `#RGB`.
-- [ ] Tester une valeur `#RRGGBB`.
-- [ ] Tester une valeur `#AARRGGBB`.
-- [ ] Tester une couleur issue de `ft.Colors`.
-- [ ] Tester la sélection temporaire.
-- [ ] Tester l’annulation.
-- [ ] Tester la validation.
-- [ ] Tester l’effacement.
-- [ ] Tester les changements programmatiques.
-- [ ] Vérifier la création et la modification d’un classeur.
-- [ ] Valider `flet run --recursive`.
-- [ ] Valider le build Windows PaperNest.
-- [ ] Faire valider visuellement et fonctionnellement par l’utilisateur.
+- [x] Installer/synchroniser la nouvelle dépendance.
+- [x] Tester une valeur `#RGB`.
+- [x] Tester une valeur `#RRGGBB`.
+- [x] Tester une valeur `#AARRGGBB`.
+- [x] Tester une couleur issue de `ft.Colors`.
+- [x] Tester la sélection temporaire.
+- [x] Tester l’annulation.
+- [x] Tester la validation.
+- [x] Tester l’effacement.
+- [x] Tester les changements programmatiques.
+- [x] Vérifier la création et la modification d’un classeur.
+- [x] Valider `flet run --recursive`.
+- [x] Valider le build Windows PaperNest.
+- [x] Faire valider visuellement et fonctionnellement par l’utilisateur.
 
 ## Phase 5 — Nettoyage PaperNestExtension
 
 Cette phase ne commence qu’après validation complète du remplacement Python.
 
-- [ ] Supprimer `papernest_color_picker.py`.
-- [ ] Supprimer `papernest_color_picker.dart`.
-- [ ] Supprimer l’enregistrement Flutter du contrôle.
-- [ ] Nettoyer les exports Python.
-- [ ] Retirer les exemples du contrôle supprimé.
-- [ ] Nettoyer les imports liés à `PaperNestDialogSurface`.
-- [ ] Supprimer `PaperNestDialogSurface` lorsque plus aucun autre picker ne l’utilise.
+- [x] Supprimer `papernest_color_picker.py`.
+- [x] Supprimer `papernest_color_picker.dart`.
+- [x] Supprimer l’enregistrement Flutter du contrôle.
+- [x] Nettoyer les exports Python.
+- [x] Retirer les exemples du contrôle supprimé.
+- [x] Nettoyer les imports liés à `PaperNestDialogSurface`.
+- [x] Supprimer `PaperNestDialogSurface` lorsque plus aucun autre picker ne l’utilise.
 - [ ] Compiler PaperNestExtension.
 - [ ] Valider son build Windows après nettoyage.
 
