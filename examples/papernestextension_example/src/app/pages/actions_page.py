@@ -43,6 +43,8 @@ class _ButtonSection(AppSection):
             expand=1,
             content=ft.Row(
                 spacing=SECTION_SPACING,
+                run_spacing=SECTION_SPACING,
+                wrap=True,
                 controls=list(buttons),
             ),
         )
