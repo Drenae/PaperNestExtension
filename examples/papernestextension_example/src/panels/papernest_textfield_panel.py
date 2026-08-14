@@ -1,6 +1,6 @@
 import flet as ft
-from cards import AppSection
 
+from cards import AppSection
 from papernestextension import (
     PaperNestButton,
     PaperNestButtonStyle,
@@ -26,6 +26,7 @@ class PaperNestTextFieldPanel(AppSection):
             label_style=ft.TextStyle(color=ft.Colors.GREY_700, size=14),
             hover_color=ft.Colors.TRANSPARENT,
             content_padding=ft.Padding.symmetric(horizontal=12, vertical=0),
+            expand=True,
         )
 
         self.search_field = PaperNestTextField(
@@ -34,7 +35,6 @@ class PaperNestTextFieldPanel(AppSection):
             hint_text="Nom, catégorie, tag…",
             search_mode=True,
             clear_button=True,
-            expand=True,
             debounce_ms=300,
             on_search=self.on_search,
         )
@@ -76,18 +76,6 @@ class PaperNestTextFieldPanel(AppSection):
             picker_button=PaperNestButton(
                 content="Choisir",
                 color=ft.Colors.GREY_900,
-                gradient={
-                    ft.ControlState.DEFAULT: ft.LinearGradient(
-                        begin=ft.Alignment.CENTER_LEFT,
-                        end=ft.Alignment.CENTER_RIGHT,
-                        colors=[ft.Colors.YELLOW_700, ft.Colors.YELLOW_800],
-                    ),
-                    ft.ControlState.HOVERED: ft.LinearGradient(
-                        begin=ft.Alignment.CENTER_LEFT,
-                        end=ft.Alignment.CENTER_RIGHT,
-                        colors=[ft.Colors.YELLOW_600, ft.Colors.YELLOW_700],
-                    ),
-                },
                 elevation=1,
                 height=36,
                 hover_scale=1.03,
@@ -97,6 +85,18 @@ class PaperNestTextFieldPanel(AppSection):
                     shape=ft.RoundedRectangleBorder(radius=8),
                     padding=ft.Padding.symmetric(horizontal=16, vertical=0),
                     mouse_cursor=ft.MouseCursor.CLICK,
+                    gradient={
+                        ft.ControlState.DEFAULT: ft.LinearGradient(
+                            begin=ft.Alignment.CENTER_LEFT,
+                            end=ft.Alignment.CENTER_RIGHT,
+                            colors=[ft.Colors.YELLOW_700, ft.Colors.YELLOW_800],
+                        ),
+                        ft.ControlState.HOVERED: ft.LinearGradient(
+                            begin=ft.Alignment.CENTER_LEFT,
+                            end=ft.Alignment.CENTER_RIGHT,
+                            colors=[ft.Colors.YELLOW_600, ft.Colors.YELLOW_700],
+                        ),
+                    },
                 ),
                 on_click=self.on_picker_click,
             ),
