@@ -2,7 +2,7 @@
 
 ## État
 
-**PaperNestExtension validé. Wrapper `PickerTextField` ajouté dans PaperNest. Migration des usages volontairement différée.**
+**Clôturée : PaperNestExtension et le wrapper `PickerTextField` sont validés, tous les usages prévus ont été migrés dans PaperNest.**
 
 `PaperNestTextField` peut afficher, à l’intérieur du champ, un bouton Python entièrement personnalisable. Le TextField ne crée aucun bouton Flutter spécifique et n’ouvre lui-même aucun picker ou dialogue.
 
@@ -126,9 +126,9 @@ class PickerTextField(BaseTextField):
 - [x] Ajouter `PickerTextField` sans dépendance circulaire.
 - [x] Conserver les styles de `BaseTextField`.
 - [x] Ne pas imposer le texte, la couleur ou la variante du bouton.
-- [ ] Ne migrer aucun usage avant la refonte de `PaperNestAlertDialog`, `PaperNestColorPicker` et `PaperNestIconPicker`.
-- [ ] Migrer progressivement les usages après validation de ces contrôles.
-- [ ] Valider PaperNest après migration complète.
+- [x] Ne migrer aucun usage avant la refonte de `PaperNestAlertDialog`, `PaperNestColorPicker` et `PaperNestIconPicker`.
+- [x] Migrer progressivement les usages après validation de ces contrôles.
+- [x] Valider PaperNest après migration complète.
 
 Commit :
 
@@ -138,4 +138,4 @@ a1fd71a34776c0cd0903409515aae3fab016d2ba
 
 ## Critère de finalisation
 
-Le contrôle et son wrapper sont validés. La roadmap restera ouverte uniquement jusqu’à la migration finale des pickers dans PaperNest.
+Le contrôle, son wrapper et la migration finale des pickers dans PaperNest sont validés.

@@ -2,7 +2,7 @@
 
 ## État
 
-**Nettoyage terminé : implémentation Python validée dans PaperNest et ancien contrôle supprimé de PaperNestExtension. Rebuild Windows final à valider.**
+**Clôturée : implémentation Python validée dans PaperNest, ancien contrôle supprimé de PaperNestExtension et build Windows validé.**
 
 Le contrôle Flutter n’apporte aucune capacité inaccessible en Python. La recherche globale dans `ft.Icons`, la galerie, la sélection temporaire, l’aperçu, l’annulation et la validation sont désormais composés avec les contrôles Flet natifs.
 
@@ -73,7 +73,7 @@ Cette phase sera réalisée avec le nettoyage groupé des anciens pickers.
 - [x] Supprimer son enregistrement et ses exports.
 - [x] Supprimer les exemples spécifiques devenus inutiles.
 - [x] Nettoyer la documentation et les imports.
-- [ ] Compiler et valider PaperNestExtension après suppression.
+- [x] Compiler et valider PaperNestExtension après suppression.
 
 ## Critère de finalisation
 

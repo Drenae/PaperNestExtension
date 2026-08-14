@@ -2,7 +2,7 @@
 
 ## État
 
-**Nettoyage terminé : `PaperNestAlertDialog` a été remplacé par `AppDialog(ft.AlertDialog)` côté Python puis supprimé de PaperNestExtension. Rebuild Windows final à valider.**
+**Clôturée : `PaperNestAlertDialog` a été remplacé par `AppDialog(ft.AlertDialog)` côté Python, supprimé de PaperNestExtension puis validé par un build Windows.**
 
 Le fork Flutter n’apporte aucune capacité fonctionnelle indispensable par rapport à `ft.AlertDialog`. Il ajoute uniquement une composition visuelle, tout en introduisant des incompatibilités de contraintes avec les contenus extensibles, les scrolls internes et les mises en page complexes de PaperNest.
 
@@ -71,7 +71,7 @@ Cette phase ne commence qu’après validation complète de la version Python da
 - [x] Supprimer la page d’exemple dédiée.
 - [x] Supprimer `PaperNestDialogSurface` une fois les pickers migrés.
 - [x] Nettoyer les imports, la documentation et les changelogs.
-- [ ] Compiler et valider PaperNestExtension après nettoyage.
+- [x] Compiler et valider PaperNestExtension après nettoyage.
 
 ## Phase 4 — Clôture
 

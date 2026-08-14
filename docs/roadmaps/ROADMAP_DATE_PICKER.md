@@ -2,7 +2,7 @@
 
 ## État
 
-**Nettoyage terminé : wrapper Python natif validé dans PaperNest et ancien contrôle supprimé de PaperNestExtension. Rebuild Windows final à valider.**
+**Clôturée : wrapper Python natif validé dans PaperNest, ancien contrôle supprimé de PaperNestExtension et build Windows validé.**
 
 `BaseDatePickerField` utilise désormais `ft.DatePicker` directement. Le fork Flutter a été retiré de PaperNestExtension après validation sous Windows.
 
@@ -72,7 +72,7 @@ Cette phase ne commence qu’après validation du wrapper Python natif.
 - [x] Supprimer l’enregistrement et les exports.
 - [x] Supprimer l’exemple dédié devenu inutile.
 - [x] Nettoyer la documentation et les imports.
-- [ ] Compiler et valider PaperNestExtension après suppression.
+- [x] Compiler et valider PaperNestExtension après suppression.
 
 ## Critère de finalisation
 

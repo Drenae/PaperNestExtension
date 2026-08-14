@@ -2,7 +2,7 @@
 
 ## État
 
-**Nettoyage terminé : Option A validée dans PaperNest et ancien contrôle supprimé de PaperNestExtension. Rebuild Windows final à valider.**
+**Clôturée : Option A validée dans PaperNest, ancien contrôle supprimé de PaperNestExtension et build Windows validé.**
 
 PaperNest utilise désormais directement `MaterialPicker` depuis `flet-color-pickers` dans un `AppDialog` Python. L’ancien `PaperNestColorPicker` a été retiré de PaperNestExtension après validation.
 
@@ -21,7 +21,7 @@ PaperNest
     └── effacement
 
 PaperNestExtension
-└── suppression future de PaperNestColorPicker
+└── aucun PaperNestColorPicker
 ```
 
 ## Phase 1 — Audit technique
@@ -107,8 +107,8 @@ Cette phase ne commence qu’après validation complète du remplacement Python.
 - [x] Retirer les exemples du contrôle supprimé.
 - [x] Nettoyer les imports liés à `PaperNestDialogSurface`.
 - [x] Supprimer `PaperNestDialogSurface` lorsque plus aucun autre picker ne l’utilise.
-- [ ] Compiler PaperNestExtension.
-- [ ] Valider son build Windows après nettoyage.
+- [x] Compiler PaperNestExtension.
+- [x] Valider son build Windows après nettoyage.
 
 ## Critère de finalisation
 

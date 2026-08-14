@@ -1,89 +1,50 @@
-# Roadmap — Refonte Python-first des Pickers
+# Roadmap — Refonte Python-first des pickers
 
-## État
+## Statut final
 
-Refonte planifiée après validation de PaperNestButton.
+**Roadmap terminée et validée sous Windows.**
 
-## Principe directeur
+La stratégie Python-first a été appliquée jusqu’au bout :
 
-La composition des contrôles, les variantes, le thème, l’ouverture des dialogues et la logique applicative doivent rester côté Python.
+- `PaperNestButton` est finalisé et conservé dans l’extension ;
+- `PaperNestTextField` fournit le mode picker avec un véritable contrôle Python ;
+- `PaperNestAlertDialog` a été remplacé par `AppDialog(ft.AlertDialog)` ;
+- `PaperNestColorPicker` a été remplacé par une composition Python autour de `MaterialPicker` ;
+- `PaperNestIconPicker` a été remplacé par une galerie Python utilisant `ft.Icons` ;
+- `PaperNestDatePicker` a été remplacé par `ft.DatePicker` et un wrapper Python ;
+- `PaperNestFilePicker` a été conservé sans modification d’architecture ;
+- les anciens contrôles Flutter, leurs exports, leurs exemples et `PaperNestDialogSurface` ont été supprimés.
 
-Flutter ne doit contenir que le rendu ou le comportement impossible à obtenir proprement avec les contrôles Flet composés côté Python.
+## Architecture finale
 
-## Ordre des chantiers
+```text
+PaperNestExtension
+├── PaperNestButton
+├── PaperNestTextField
+├── PaperNestDropdown
+├── PaperNestFilePicker
+└── PaperNestGlideRail
 
-1. [ ] Finaliser PaperNestButton.
-2. [ ] Ajouter le mode picker à PaperNestTextField.
-3. [ ] Simplifier PaperNestAlertDialog.
-4. [ ] Réduire PaperNestColorPicker à l’affichage du picker.
-5. [ ] Réduire PaperNestIconPicker à l’affichage de la galerie.
-6. [ ] Supprimer PaperNestDatePicker après migration vers le DatePicker natif.
-7. [ ] Migrer PaperNest progressivement et supprimer le code devenu inutile.
+PaperNest
+├── AppDialog(ft.AlertDialog)
+├── PickerTextField
+├── BaseColorPicker + MaterialPicker
+├── BaseIconPicker + ft.Icons
+└── BaseDatePickerField + ft.DatePicker
+```
 
-## PaperNestTextField
+## Validation
 
-- [ ] Ajouter `picker: bool`.
-- [ ] Ajouter un bouton texte `CHOISIR` dans le champ.
-- [ ] Ajouter `picker_bgcolor`.
-- [ ] Ajouter `picker_color`.
-- [ ] Ajouter `picker_border_radius`.
-- [ ] Ajouter un événement dédié `on_picker_click` ou `picker_on_click`.
-- [ ] Vérifier l’interaction avec `on_click`, `on_change`, `on_submit` et `clear_button`.
-- [ ] Conserver le comportement normal lorsque `picker=False`.
-- [ ] Permettre la composition Python `PickerTextField(BaseTextField)` dans PaperNest.
+- [x] Composition et logique métier conservées côté Python.
+- [x] Absence de dépendance circulaire entre boutons, dialogues et pickers.
+- [x] Migration complète des usages PaperNest.
+- [x] Suppression des anciens contrôles devenus inutiles.
+- [x] Nettoyage de l’application d’exemple.
+- [x] Validation fonctionnelle sous Windows.
+- [x] Validation du build Windows après nettoyage.
 
-## PaperNestAlertDialog
+## Décisions de maintenance
 
-- [ ] Limiter le contrôle à la structure du dialogue.
-- [ ] Header : title, subtitle et title_action.
-- [ ] Content.
-- [ ] Footer/actions.
-- [ ] Supprimer `variant` de l’API publique.
-- [ ] Supprimer toute résolution de variante côté Flutter.
-- [ ] Appliquer les palettes et styles uniquement depuis Python.
-- [ ] Ne dépendre d’aucun picker ni de PaperNestButton.
+`PaperNestDropdown` reste volontairement dans l’extension : il s’agit d’un fork de Dropdown M2 modernisé et personnalisé, stable et validé. Il ne doit pas être remplacé par le Dropdown natif sans besoin concret.
 
-## PaperNestColorPicker
-
-- [ ] Supprimer le champ d’ouverture intégré.
-- [ ] Supprimer l’ouverture du dialogue Flutter.
-- [ ] Supprimer les actions Flutter du dialogue.
-- [ ] Conserver uniquement l’affichage et les événements du picker.
-- [ ] Étudier le remplacement par `flet-color-pickers`.
-- [ ] Composer le TextField, le dialogue et le picker côté Python.
-
-## PaperNestIconPicker
-
-- [ ] Supprimer le champ d’ouverture intégré.
-- [ ] Supprimer l’ouverture du dialogue Flutter.
-- [ ] Supprimer les actions Flutter du dialogue.
-- [ ] Conserver uniquement la galerie, la sélection et les événements.
-- [ ] Composer le TextField, le dialogue et le picker côté Python.
-
-## PaperNestDatePicker
-
-- [ ] Recenser les fonctionnalités encore utiles.
-- [ ] Migrer le thème vers la configuration Python du DatePicker natif.
-- [ ] Migrer la localisation française côté Python/application.
-- [ ] Migrer la normalisation de date côté Python.
-- [ ] Remplacer les usages par le DatePicker natif.
-- [ ] Supprimer PaperNestDatePicker après validation.
-
-## PaperNestFilePicker
-
-- [x] Conserver le contrôle sans modification.
-- [x] Conserver son drag-and-drop, ses événements et son intégration native.
-
-## Migration PaperNest
-
-- [ ] Créer `PickerTextField(BaseTextField)` dans `forms.py`.
-- [ ] Composer ColorPicker et IconPicker avec AppDialog côté Python.
-- [ ] Utiliser directement le DatePicker natif.
-- [ ] Migrer écran par écran.
-- [ ] Valider `flet run --recursive` après chaque étape.
-- [ ] Valider le build Windows après chaque contrôle.
-- [ ] Supprimer les anciens wrappers seulement après validation.
-
-## Critère de finalisation
-
-La refonte sera terminée lorsque Python contrôlera entièrement la composition et le thème des pickers, que Flutter ne contiendra plus de dialogues ou variantes métier inutiles et que PaperNest fonctionnera sous Windows sans dépendances circulaires entre contrôles.
+Les composants validés ne doivent plus être refondus en l’absence de problème réel.

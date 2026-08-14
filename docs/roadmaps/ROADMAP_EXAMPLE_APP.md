@@ -2,7 +2,7 @@
 
 ## État
 
-La nouvelle application d’exemple navigable est implémentée et nettoyée après le retrait des contrôles composés désormais gérés dans PaperNest.
+La nouvelle application d’exemple navigable est implémentée, nettoyée et validée sous Windows après le retrait des contrôles composés désormais gérés dans PaperNest.
 
 L’ancien écran unique a été remplacé par une petite application structurée autour de `PaperNestGlideRail`.
 
@@ -47,7 +47,7 @@ examples/papernestextension_example/src/
 - [x] Déploiement de la rail en superposition.
 - [x] Pages indépendantes avec leur propre défilement.
 - [x] Navigation Accueil, Formulaires et Pickers.
-- [ ] Vérifier la présentation réelle sur Windows.
+- [x] Vérifier la présentation réelle sur Windows.
 
 ## Nettoyage
 
@@ -58,12 +58,12 @@ examples/papernestextension_example/src/
 
 ## Validation
 
-- [ ] Lancer l’exemple avec `flet run`.
-- [ ] Tester toutes les destinations.
-- [ ] Tester tous les contrôles existants.
-- [ ] Vérifier le comportement responsive des pages.
-- [ ] Valider le build Windows.
-- [ ] Faire valider visuellement et fonctionnellement l’application par l’utilisateur.
+- [x] Lancer l’exemple avec `flet run`.
+- [x] Tester toutes les destinations.
+- [x] Tester tous les contrôles existants.
+- [x] Vérifier le comportement responsive des pages.
+- [x] Valider le build Windows.
+- [x] Faire valider visuellement et fonctionnellement l’application par l’utilisateur.
 
 ## Critère de finalisation
 

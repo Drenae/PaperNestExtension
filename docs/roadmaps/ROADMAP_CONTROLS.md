@@ -2,22 +2,22 @@
 
 ## État
 
-`PaperNestFilePicker`, `PaperNestGlideRail` et les contrôles de formulaire validés restent stables.
+Tous les contrôles conservés dans PaperNestExtension sont terminés, stables et validés sous Windows.
 
-`PaperNestButton` est le chantier actif. Une refonte Python-first des pickers et dialogues suivra ensuite pour retirer les responsabilités métier inutilement placées côté Flutter.
+La refonte Python-first des pickers et dialogues est terminée. Les anciens contrôles devenus inutiles ont été supprimés.
 
 ## Contrôles stables
 
-- [x] `PaperNestTextField` — une extension picker sera ajoutée sans casser l’API actuelle.
+- [x] `PaperNestTextField`, avec mode picker validé.
 - [x] `PaperNestDropdown` + `PaperNestDropdownOption`.
 - [x] `PaperNestFilePicker`.
 - [x] `PaperNestGlideRail` + `PaperNestGlideRailDestination`.
 
-## Chantier actif
+## Contrôle finalisé
 
 ### PaperNestButton
 
-- [ ] `PaperNestButton`
+- [x] `PaperNestButton`
 
 Règles :
 
@@ -30,9 +30,9 @@ Roadmap détaillée :
 
 - `ROADMAP_BUTTON.md`
 
-## Refonte planifiée des Pickers
+## Refonte terminée des pickers
 
-Les implémentations actuelles de `PaperNestAlertDialog`, `PaperNestColorPicker`, `PaperNestIconPicker` et `PaperNestDatePicker` seront réévaluées selon une architecture Python-first.
+`PaperNestAlertDialog`, `PaperNestColorPicker`, `PaperNestIconPicker` et `PaperNestDatePicker` ont été remplacés par des compositions Python ou des contrôles Flet natifs, puis supprimés de l’extension.
 
 Ordre retenu :
 
@@ -50,9 +50,9 @@ Roadmap détaillée :
 
 ## Architecture Flutter partagée
 
-- [ ] Centraliser uniquement les fonctions réellement dupliquées.
-- [ ] Regrouper les helpers par thèmes cohérents.
-- [ ] Ne pas déplacer la composition ou les variantes métier côté Flutter.
+- [x] Supprimer les duplications avec les anciens contrôles devenus inutiles.
+- [x] Conserver uniquement les helpers encore réellement partagés.
+- [x] Ne pas déplacer la composition ou les variantes métier côté Flutter.
 
 Roadmap détaillée :
 
@@ -62,8 +62,8 @@ Roadmap détaillée :
 
 - [x] Petite application navigable avec GlideRail.
 - [x] Page Actions créée.
-- [ ] Revalider PaperNestButton après la suppression des variantes Flutter.
-- [ ] Adapter les pages Pickers pendant la refonte Python-first.
+- [x] Revalider PaperNestButton après la suppression des variantes Flutter.
+- [x] Adapter les pages Pickers pendant la refonte Python-first.
 
 ## Règles de suivi
 
